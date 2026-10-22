@@ -1,0 +1,31 @@
+.cv-maker{background:#fff;border:1px solid #dce6f7;border-radius:18px;padding:24px;margin:18px 0;box-shadow:0 9px 28px #112b5910}
+.cv-head{display:flex;justify-content:space-between;align-items:flex-start;gap:16px;border-bottom:1px solid #e7edf7;padding-bottom:14px}
+.cv-head h2{color:#173c7a;margin:5px 0 7px;font-size:24px;letter-spacing:-.03em}
+.cv-head p{color:#587098;font-size:12px;margin:0}
+.cv-disclaimer{font-size:12px;color:#485e7f;background:#eef5ff;border:1px solid #dbe8fc;border-radius:10px;padding:13px;margin:16px 0;line-height:1.6}
+.cv-layout{display:grid;grid-template-columns:1.1fr 1fr;gap:16px}
+.cv-editor,.cv-advisor{background:#fafcff;border:1px solid #e2eaf6;border-radius:14px;padding:18px;min-width:0;display:flex;flex-direction:column;gap:13px}
+.cv-editor h3,.cv-advisor h3,.cv-export h3{font-size:17px;color:#1c447b;margin:0}
+.cv-hint{font-size:12px;color:#6a7890;line-height:1.6;margin:0}
+.cv-editor label{display:grid;gap:7px;font-size:12px;font-weight:650;color:#425a7e}
+.cv-editor input,.cv-editor textarea{font-size:12px;color:#233c62;background:#fff;border:1px solid #dce5f3;padding:11px;border-radius:9px;width:100%;line-height:1.5;font-family:inherit}
+.cv-editor textarea{resize:vertical}
+.cv-two{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+.cv-skill{background:#fff;border:1px solid #e4eaf3;border-radius:10px;padding:12px;display:grid;gap:7px}
+.cv-skill>label{display:flex;gap:8px;align-items:flex-start}
+.cv-skill input{accent-color:#135bc7;width:17px;height:17px;flex:0 0 17px}
+.cv-skill strong{font-size:12px;line-height:1.5;color:#244066}
+.cv-skill p,.cv-skill small{font-size:11px;color:#657692;line-height:1.6;margin:0;overflow-wrap:anywhere}
+.cv-fit{display:inline-block;font-size:10px;white-space:nowrap;font-weight:750;padding:3px 7px;border-radius:6px;margin-right:5px}
+.cv-direct{background:#e2f7ed;color:#13764d}
+.cv-related{background:#fff2dd;color:#936026}
+.cv-missing{background:#ffebed;color:#aa4151}
+.cv-none{background:#f1f5fc;border:1px dashed #ccd9ef;border-radius:9px;padding:12px;font-size:11px;color:#5b708d;line-height:1.6}
+.cv-export{margin-top:16px;border:1px solid #d7e6f8;background:#f7faff;border-radius:14px;padding:20px;display:grid;gap:14px}
+.cv-confirm{display:flex;gap:10px;align-items:flex-start;font-size:12px;color:#425f82}
+.cv-confirm input{accent-color:#125bcf;flex:0 0 17px;height:17px}
+.cv-buttons{display:flex;flex-wrap:wrap;gap:11px}
+.cv-buttons button{flex:1;min-height:45px;cursor:pointer}
+.cv-buttons button:disabled{opacity:.45;cursor:not-allowed}
+@media(max-width:850px){.cv-layout{grid-template-columns:1fr}}
+@media(max-width:600px){.cv-maker{padding:13px}.cv-head{display:grid}.cv-head h2{font-size:21px}.cv-editor,.cv-advisor,.cv-export{padding:14px}.cv-two{grid-template-columns:1fr}.cv-buttons{display:grid}.cv-buttons button{width:100%}}
