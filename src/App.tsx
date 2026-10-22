@@ -254,7 +254,13 @@ export default function App() {
             const exists = previous.some(a => (a.sourceUrl && a.sourceUrl === job.sourceUrl) ||
               (a.company.toLocaleLowerCase() === job.company.toLocaleLowerCase() &&
                a.role.toLocaleLowerCase() === job.role.toLocaleLowerCase()));
-            if (exists) return previous;
+            if (exists) return previous.map(app =>
+              (app.sourceUrl && app.sourceUrl === job.sourceUrl) ||
+              (app.company.toLocaleLowerCase() === job.company.toLocaleLowerCase() &&
+               app.role.toLocaleLowerCase() === job.role.toLocaleLowerCase())
+                ? { ...app, status: 'Applied' as const, appliedOn: todayLocal(), updatedAt: now,
+                    notes: (app.notes + '\nUser confirmed submission; not externally verified by APP-AI.').slice(0, 4000) }
+                : app);
             return [createApplication({
               ...EMPTY_FIELDS, company: job.company, role: job.role,
               location: job.location, sourceUrl: job.sourceUrl,
