@@ -41,11 +41,6 @@ function formatTime(value: string) {
 function hasExpired(feed: JobFeed) {
   return Date.now() - new Date(feed.generatedAt).getTime() > 12 * 60 * 60 * 1000;
 }
-function selectedToJob(job: DiscoveredJob) {
-  return { company: job.company, role: job.role, sourceUrl: job.sourceUrl,
-    description: job.description, location: job.location };
-}
-
 export default function JobsWorkspace({ applications, onAddApplication }: Props) {
   const [page, setPage] = useState<Page>('jobs');
   const [feed, setFeed] = useState<JobFeed | null>(parseSavedFeed);
