@@ -4,6 +4,7 @@ import { exportCsv, importCsv } from './csv';
 import { EMPTY_FIELDS, STATUSES, type ApplicationFields, type ApplicationStatus, type JobApplication } from './types';
 import AgentPanel from './AgentPanel';
 import WorkflowBoard from './WorkflowBoard';
+import AutoPilotPanel from './AutoPilotPanel';
 import type { DiscoveredJob } from './discovery';
 
 type SortBy = 'updated' | 'company' | 'deadline' | 'followUp';
@@ -161,6 +162,28 @@ export default function App() {
     }
   }
 
+  function handleConfirmedSubmission(job: DiscoveredJob) {
+    const now = new Date().toISOString();
+    setApplications(previous => {
+      const exists = previous.some(a => (a.sourceUrl && a.sourceUrl === job.sourceUrl) ||
+        (a.company.toLocaleLowerCase() === job.company.toLocaleLowerCase() &&
+         a.role.toLocaleLowerCase() === job.role.toLocaleLowerCase()));
+      if (exists) return previous.map(app =>
+        (app.sourceUrl && app.sourceUrl === job.sourceUrl) ||
+        (app.company.toLocaleLowerCase() === job.company.toLocaleLowerCase() &&
+         app.role.toLocaleLowerCase() === job.role.toLocaleLowerCase())
+        ? { ...app, status: 'Applied' as const, appliedOn: todayLocal(), updatedAt: now,
+            notes: (app.notes + '\nUser confirmed submission; not independently verified by APP-AI.').slice(0, 4000) }
+        : app);
+      return [createApplication({
+        ...EMPTY_FIELDS, company: job.company, role: job.role,
+        location: job.location, sourceUrl: job.sourceUrl,
+        status: 'Applied', appliedOn: todayLocal(),
+        notes: 'User confirmed submission; not independently verified by APP-AI. Source: ' + job.source,
+      }, now), ...previous];
+    });
+  }
+
   return (
     <div className="app-shell">
       <header className="site-header">
@@ -169,7 +192,7 @@ export default function App() {
             <span className="brand-mark">A</span>
             <span><strong>APP-AI</strong><small>JOB APPLICATION AGENT</small></span>
           </a>
-          <nav className="app-topnav" aria-label="Main navigation"><a href="#discover">Search jobs</a><a href="#pipeline-title">Applications</a><a href="#agent-heading">CV profile</a></nav><span className="local-pill"><span aria-hidden="true">●</span> Device-local CV</span>
+          <nav className="app-topnav" aria-label="Main navigation"><a href="#autopilot">Run Agent</a><a href="#pipeline-title">Applications</a><a href="#agent-heading">CV profile</a></nav><span className="local-pill"><span aria-hidden="true">●</span> Device-local CV</span>
         </div>
       </header>
 
@@ -178,8 +201,8 @@ export default function App() {
           <div className="hero-copy">
             <span className="eyebrow">YOUR CAREER WORKSPACE</span>
             <h1>Your next <em>opportunity</em> starts here.</h1>
-            <p>Search Qatar-eligible openings in one tap, select roles, review tailored drafts and decide what to send.</p>
-            <a className="primary-button" href="#discover">⌕ Search Jobs Now</a>
+            <p>One button discovers jobs and prepares matched application drafts and tailored CVs. You only review or trash.</p>
+            <a className="primary-button" href="#autopilot">✦ Run Job Agent</a>
           </div>
           <div className="hero-art" aria-hidden="true">
             <div className="orb orb-one"></div><div className="orb orb-two"></div>
@@ -248,30 +271,15 @@ export default function App() {
           </section>
         )}
 
-        <WorkflowBoard applications={applications} onConfirmedSend={(job: DiscoveredJob) => {
-          const now = new Date().toISOString();
-          setApplications(previous => {
-            const exists = previous.some(a => (a.sourceUrl && a.sourceUrl === job.sourceUrl) ||
-              (a.company.toLocaleLowerCase() === job.company.toLocaleLowerCase() &&
-               a.role.toLocaleLowerCase() === job.role.toLocaleLowerCase()));
-            if (exists) return previous.map(app =>
-              (app.sourceUrl && app.sourceUrl === job.sourceUrl) ||
-              (app.company.toLocaleLowerCase() === job.company.toLocaleLowerCase() &&
-               app.role.toLocaleLowerCase() === job.role.toLocaleLowerCase())
-                ? { ...app, status: 'Applied' as const, appliedOn: todayLocal(), updatedAt: now,
-                    notes: (app.notes + '\nUser confirmed submission; not externally verified by APP-AI.').slice(0, 4000) }
-                : app);
-            return [createApplication({
-              ...EMPTY_FIELDS, company: job.company, role: job.role,
-              location: job.location, sourceUrl: job.sourceUrl,
-              status: 'Applied', appliedOn: todayLocal(),
-              notes: 'User confirmed submission; not independently verified by APP-AI. Source: ' + job.source,
-            }, now), ...previous];
-          });
-        }} />
+        <AutoPilotPanel applications={applications} onConfirmedSend={handleConfirmedSubmission} />
 
-        <details className="legacy-agent-details">
-          <summary>CV profile and manual vacancy tools (private)</summary>
+        <details className="advanced-workflow">
+          <summary>Advanced manual search (optional)</summary>
+          <WorkflowBoard applications={applications} onConfirmedSend={handleConfirmedSubmission} />
+        </details>
+
+        <details id="profile-tools" className="legacy-agent-details">
+          <summary>Private CV profile — one-time setup, only if needed</summary>
         <AgentPanel applications={applications} onSaveLead={lead => {
           const now = new Date().toISOString();
           setApplications(previous => [createApplication(lead, now), ...previous]);
