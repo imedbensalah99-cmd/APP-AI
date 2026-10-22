@@ -3,6 +3,12 @@ on:
   schedule:
     - cron: '25 5 * * *'
   workflow_dispatch:
+  push:
+    branches:
+      - main
+    paths:
+      - scripts/refresh-jobs.mjs
+      - .github/workflows/job-refresh.yml
 permissions:
   contents: write
 jobs:
