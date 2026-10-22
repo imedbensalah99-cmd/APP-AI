@@ -139,3 +139,11 @@ h1 em { color: #b8cbff; font-style: normal; }
   .span-two { grid-column: auto; }
   .footer { line-height: 1.6; }
 }
+
+.classic-tracker{margin:20px 0 50px;border:1px solid #dce6f6;border-radius:13px;background:#fff;overflow:hidden}
+.classic-tracker>summary{cursor:pointer;font-size:13px;padding:17px 20px;color:#2755a1;font-weight:800;list-style-position:inside}
+.classic-tracker>summary:hover{background:#eff5ff}
+.classic-tracker-content{padding:2px 20px 20px}
+.classic-tracker-content>button{margin:12px 0}
+.classic-tracker .pipeline{padding-bottom:30px}
+@media(max-width:600px){.classic-tracker-content{padding:2px 10px 10px}}
