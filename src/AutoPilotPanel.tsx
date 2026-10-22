@@ -155,6 +155,54 @@ export default function AutoPilotPanel({ applications, onConfirmedSend }: {
     setWorking(false);
   }
 
+
+  async function uploadOriginalCv(file: File | undefined) {
+    if (!file) return;
+    try {
+      await saveOriginalPdf(file);
+      setOriginalCvReady(true);
+      setNote('Original CV template saved privately in this browser. Same-layout PDF versions can now be created.');
+    } catch (error) {
+      setNote(error instanceof Error ? error.message : 'Could not validate original CV.');
+    }
+  }
+
+  async function clearOriginalCv() {
+    if (!window.confirm('Delete the stored CV template from this device?')) return;
+    try {
+      await deleteOriginalPdf();
+      setOriginalCvReady(false);
+      setNote('Original CV template removed from this browser.');
+    } catch {
+      setNote('Could not delete private CV.');
+    }
+  }
+
+  async function downloadSameLayoutCv(job: DiscoveredJob) {
+    try {
+      const original = await getOriginalPdf();
+      if (!original) {
+        setOriginalCvReady(false);
+        setNote('Upload the exact original imed ben salah.pdf once below. APP-AI cannot truthfully promise identical formatting without the original.');
+        document.getElementById('original-cv-setup')?.scrollIntoView({ behavior: 'smooth' });
+        return;
+      }
+      const pdfBytes = await createOriginalLayoutCv(original, currentCv(job), job);
+      const url = URL.createObjectURL(new Blob([new Uint8Array(pdfBytes)], { type: 'application/pdf' }));
+      const name = (job.company + '-' + job.role).replace(/[^a-z0-9-]+/gi, '-').slice(0, 65);
+      const link = document.createElement('a');
+      link.href = url;
+      link.download = 'Imed-Ben-Salah-' + name + '-CV.pdf';
+      document.body.appendChild(link);
+      link.click();
+      link.remove();
+      window.setTimeout(() => URL.revokeObjectURL(url), 30000);
+      setNote('Original-layout PDF generated. Only summary and supported skills were adapted. Check it before applying.');
+    } catch (error) {
+      setNote(error instanceof Error ? error.message : 'Failed to create the original-format CV.');
+    }
+  }
+
   function choose(draft: ReviewDraft) {
     setActive(draft.id);
     const channel = channelForJob(draft.job);
@@ -176,23 +224,27 @@ export default function AutoPilotPanel({ applications, onConfirmedSend }: {
   }
   function approveHandoff() {
     if (!current) return;
-    if (email && (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email) || !emailChecked)) {
-      setNote('Verify the recruiter email against the employer website before using it.');
+    // An unverified email is never used without the user's explicit confirmation.
+    const recipient = emailChecked ? candidateEmail.trim() : '';
+    if (recipient && !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(recipient)) {
+      setNote('This email is invalid; check the official employer source.');
       return;
     }
-    const approved = window.confirm('Open the external ' + (email ? 'email draft' : 'job application page') +
-      ' for ' + current.job.company + '? You still must verify eligibility, attach the actual PDF CV, and submit yourself. Nothing is sent by APP-AI.');
-    if (!approved) return;
-    if (email) {
+    const route = recipient ? 'email draft' : 'job application website';
+    if (!window.confirm('Open ' + route + ' for ' + current.job.company +
+      '? APP-AI does not send emails, attach CVs, or submit applications. You must finish these steps yourself.')) return;
+    if (recipient) {
       const lines = current.body.split('\n');
-      const hasSubject = lines[0]?.startsWith('Subject: ');
-      const subject = hasSubject ? lines[0].slice(9) : 'Application – ' + current.job.role;
-      const body = hasSubject ? lines.slice(1).join('\n') : current.body;
-      window.location.href = 'mailto:' + encodeURIComponent(email.trim()).replace(/%40/g, '@') +
-        '?subject=' + encodeURIComponent(subject) + '&body=' + encodeURIComponent(body);
-    } else window.open(current.job.sourceUrl, '_blank', 'noopener,noreferrer');
-    setQueue(old => old.map(d => d.id === current.id ? { ...d, status: 'Handoff' } : d));
-    setNote('Opened the employer/application channel. APP-AI did not send an email or apply automatically.');
+      const subjectLine = lines[0]?.startsWith('Subject: ');
+      const subject = subjectLine ? lines[0].slice(9) : 'Application – ' + current.job.role;
+      const body = subjectLine ? lines.slice(1).join('\n') : current.body;
+      window.location.href = 'mailto:' + recipient + '?subject=' + encodeURIComponent(subject) +
+        '&body=' + encodeURIComponent(body);
+    } else {
+      window.open(current.job.sourceUrl, '_blank', 'noopener,noreferrer');
+    }
+    setQueue(old => old.map(d => d.id === current.id ? { ...d, recipient, status: 'Handoff' } : d));
+    setNote('Opened ' + route + '. Nothing was sent by APP-AI.');
   }
   function markSubmitted() {
     if (!current || current.status !== 'Handoff') return;
@@ -203,13 +255,7 @@ export default function AutoPilotPanel({ applications, onConfirmedSend }: {
   }
   function previewCv() {
     if (!current) return;
-    const cv = currentCv(current.job);
-    const page = window.open('', '_blank');
-    if (!page) { setNote('Please enable popup windows to preview the CV.'); return; }
-    page.document.open();
-    page.document.write(generateCvHtml(cv, current.job));
-    page.document.close();
-    setNote('Tailored CV opened. Use Print / Save as PDF and verify every line before submitting.');
+    void downloadSameLayoutCv(current.job);
   }
 
   return (
