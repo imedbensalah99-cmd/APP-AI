@@ -122,7 +122,7 @@ export function generateCvHtml(cv: TailoredCv, job: Pick<DiscoveredJob, 'role' |
   const verifiedSelected = directlySupported.filter(a => cv.selectedSkills.includes(a.skill));
   const fragments = lines(p.verifiedFacts);
   const ordered = [...fragments].sort((a, b) =>
-    verifiedSelected.filter(item => item.evidence === b).length - verifiedSelected.filter(item => item.evidence === a).length);
+    verifiedSelected.filter(item => item.evidence.includes(b) || b.includes(item.evidence)).length - verifiedSelected.filter(item => item.evidence.includes(a) || a.includes(item.evidence)).length);
   const skills = verifiedSelected.map(s => s.skill);
   const skillHtml = skills.length ? '<section><h2>RELEVANT VERIFIED SKILLS</h2><p>' +
     escapeHtml(skills.join('  •  ')) + '</p></section>' : '';
@@ -138,7 +138,7 @@ export function generateCvHtml(cv: TailoredCv, job: Pick<DiscoveredJob, 'role' |
   const role = plain(p.headline || 'Professional', 120);
   // Target title is intentionally not presented as an existing job title or qualification.
   const target = plain(job.role, 140) + ' at ' + plain(job.company, 120);
-  return \`<!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>\${escapeHtml(title)} - Tailored CV</title>
+  return `<!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>${escapeHtml(title)} - Tailored CV</title>
 <style>
 @page{size:A4;margin:17mm 19mm}*{box-sizing:border-box}
 body{font:10.5pt/1.55 Arial,Helvetica,sans-serif;color:#1b2941;max-width:800px;margin:0 auto;padding:22px;background:white}
@@ -152,16 +152,16 @@ p{margin:4px 0}ul{margin:5px 0;padding-left:18px}li{padding:2px 0;break-inside:a
 button{background:#125ed2;color:white;border:0;border-radius:6px;padding:9px 13px}
 </style></head><body>
 <div class="print-ui"><button type="button" onclick="window.print()">Print / Save as PDF</button> &nbsp; Verify every CV line before sending. This page is on your device.</div>
-<header><h1>\${escapeHtml(title)}</h1><div class="subtitle">\${escapeHtml(role)}</div>
-<div class="contact">\${escapeHtml(plain(p.contact, 300))}</div>
-<div class="target">Target opportunity: \${escapeHtml(target)}</div></header>
-<section><h2>PROFESSIONAL PROFILE</h2><p>\${escapeHtml(intro)}</p></section>
-\${skillHtml}
-\${ordered.length ? '<section><h2>PROFESSIONAL EXPERIENCE &amp; EVIDENCE</h2>' + ul(ordered) + '</section>' : ''}
-\${section('EDUCATION', p.education, true)}
-\${section('CERTIFICATIONS', p.certifications, true)}
-\${section('LANGUAGES', p.languages, false)}
-</body></html>\`;
+<header><h1>${escapeHtml(title)}</h1><div class="subtitle">${escapeHtml(role)}</div>
+<div class="contact">${escapeHtml(plain(p.contact, 300))}</div>
+<div class="target">Target opportunity: ${escapeHtml(target)}</div></header>
+<section><h2>PROFESSIONAL PROFILE</h2><p>${escapeHtml(intro)}</p></section>
+${skillHtml}
+${ordered.length ? '<section><h2>PROFESSIONAL EXPERIENCE &amp; EVIDENCE</h2>' + ul(ordered) + '</section>' : ''}
+${section('EDUCATION', p.education, true)}
+${section('CERTIFICATIONS', p.certifications, true)}
+${section('LANGUAGES', p.languages, false)}
+</body></html>`;
 }
 
 export function buildAiReviewPrompt(cv: TailoredCv, job: DiscoveredJob): string {
