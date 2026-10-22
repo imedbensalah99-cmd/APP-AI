@@ -1,0 +1,31 @@
+.agent-panel{background:#fff;border:1px solid #e1e9f8;border-radius:18px;padding:28px;margin:28px 0 4px;box-shadow:0 6px 22px #17294e08}
+.agent-beta{font-size:11px;letter-spacing:0;color:#506daa;background:#edf2ff;border-radius:12px;padding:5px 9px;vertical-align:middle}
+.agent-intro{font-size:13px;color:#61718b;line-height:1.7;max-width:900px;margin:0 0 20px}
+.agent-grid{display:grid;grid-template-columns:1fr 1fr;gap:22px}
+.agent-form,.agent-review{min-width:0;display:flex;flex-direction:column;gap:14px}
+.agent-form label,.agent-fields label{display:flex;flex-direction:column;gap:7px;color:#465773;font-size:12px;font-weight:700}
+.agent-form input,.agent-form textarea{width:100%;border:1px solid #dfe7f2;border-radius:10px;background:#fafbff;padding:11px;color:#203451;font-size:13px;font-weight:450;line-height:1.5;min-height:42px}
+.agent-form textarea{resize:vertical}
+.agent-fields{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1fr);gap:13px}
+.agent-clear{align-self:flex-start;background:transparent;border:0;color:#647eaa;font-size:12px;padding:0;text-decoration:underline}
+.agent-review{background:#f8faff;border:1px solid #edf0f7;border-radius:14px;padding:20px}
+.agent-review h3{font-size:18px;color:#213557;margin:0}
+.agent-quiet{color:#66758c;font-size:12px;line-height:1.6;margin:0}
+.agent-results{font-size:12px;color:#445571;line-height:1.6}
+.agent-results p{margin:0 0 9px}
+.agent-concerns{font-size:12px;color:#785823;background:#fff6e7;padding:13px;border-radius:10px;line-height:1.5}
+.agent-concerns ul{padding-left:20px;margin:8px 0 0}
+.agent-concerns li{margin:5px 0}
+.agent-checklist{display:grid;gap:12px;border-top:1px solid #e0e6f1;padding-top:16px}
+.agent-checklist label{font-size:12px;color:#3a4b65;display:flex;align-items:flex-start;gap:8px;line-height:1.45}
+.agent-checklist input{accent-color:#4166ef;margin:2px 0 0;flex-shrink:0}
+.agent-actions{display:flex;flex-wrap:wrap;gap:8px;margin-top:4px}
+.agent-actions button{flex:1 1 auto;min-height:41px}
+.agent-actions button:disabled{opacity:.46;cursor:not-allowed}
+.agent-notice{font-size:12px;color:#285b9b;background:#eaf3ff;padding:11px;border-radius:10px;margin:0}
+.agent-draft{background:#fff;border:1px solid #dbe4f4;border-radius:10px;padding:14px}
+.agent-draft h4{margin:0 0 10px}
+.agent-draft pre{font:12px/1.7 ui-monospace,monospace;white-space:pre-wrap;overflow-wrap:anywhere;color:#364560}
+.agent-draft p{font-size:11px;color:#81603c;margin-bottom:0}
+@media(max-width:800px){.agent-grid{grid-template-columns:1fr}}
+@media(max-width:600px){.agent-panel{padding:17px;margin-top:20px}.agent-fields{grid-template-columns:1fr}.agent-review{padding:15px}.agent-actions button{flex:1 1 44%}}
