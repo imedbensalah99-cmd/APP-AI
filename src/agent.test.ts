@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest';
-import { analyzeJob, generateDraft, isValidRecruiterEmail, sameJob, type AgentJob } from './agent';
+import { analyzeJob, generateDraft, isValidRecruiterEmail, parseCvProfileFragment, sameJob, type AgentJob } from './agent';
 import type { JobApplication } from './types';
 
 const job: AgentJob = {
@@ -34,6 +34,14 @@ describe('application agent', () => {
     expect(draft).toContain('[Attach your CV manually');
     expect(draft).not.toContain('bachelor');
     expect(draft).toContain('Test Candidate');
+  });
+  it('imports validated CV profile facts from a temporary hash only', () => {
+    const profile = { name: 'Test Candidate', facts: 'Worked in AML and KYC.' };
+    const imported = parseCvProfileFragment('#cv=' + encodeURIComponent(JSON.stringify(profile)));
+    expect(imported).toEqual({ fullName: 'Test Candidate', facts: 'Worked in AML and KYC.' });
+    expect(parseCvProfileFragment('#main')).toBeNull();
+    expect(parseCvProfileFragment('#cv=%7Bmalformed')).toBeNull();
+    expect(parseCvProfileFragment('#cv=' + encodeURIComponent(JSON.stringify({ name: '', facts: 'x' })))).toBeNull();
   });
   it('requires a syntactically valid recruiter email', () => {
     expect(isValidRecruiterEmail('recruitment@example.org')).toBe(true);
