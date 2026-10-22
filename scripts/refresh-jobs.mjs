@@ -1,4 +1,5 @@
 import { mkdir, writeFile } from 'node:fs/promises';
+import { detectContact } from './application-channel.mjs';
 
 // Public, no-key remote-job API. This script publishes only public listings,
 // never CV data, candidates, drafts, tokens or application history.
@@ -33,6 +34,7 @@ for (const term of terms) {
         sourceUrl: link, description, source: 'Himalayas',
         published: j.pubDate ? new Date(j.pubDate * 1000).toISOString().slice(0, 10) : '',
         remote: true, sourceChecked: true,
+        applicationChannel: detectContact(String(j.description || j.excerpt || '').replace(/<[^>]*>/g,' '), link),
         eligibility: 'Country filter only; verify employer requirements before applying.' });
     }
   } catch (error) { console.error('Source ' + term + ': ' + String(error)); }
