@@ -1,10 +1,11 @@
 import { useEffect, useMemo, useState } from 'react';
-import { analyzeJob, generateDraft, isValidRecruiterEmail, type AgentJob } from './agent';
+import { analyzeJob, generateDraft, isValidRecruiterEmail, parseCvProfileFragment, type AgentJob } from './agent';
 import { validWebUrl } from './data';
 import { EMPTY_FIELDS, type ApplicationFields, type JobApplication } from './types';
 import './agent.css';
 
 const PROFILE_KEY = 'app-ai:agent-profile:v1';
+const PROFILE_NAME_KEY = 'app-ai:agent-profile-name:v1';
 const BLANK: AgentJob = { company: '', role: '', location: 'Doha, Qatar', sourceUrl: '', description: '' };
 
 interface Props {
@@ -18,7 +19,10 @@ export default function AgentPanel({ applications, onSaveLead }: Props) {
     try { return localStorage.getItem(PROFILE_KEY) ?? ''; }
     catch { return ''; }
   });
-  const [fullName, setFullName] = useState('');
+  const [fullName, setFullName] = useState(() => {
+    try { return localStorage.getItem(PROFILE_NAME_KEY) ?? ''; }
+    catch { return ''; }
+  });
   const [recipient, setRecipient] = useState('');
   const [officialChecked, setOfficialChecked] = useState(false);
   const [eligibilityChecked, setEligibilityChecked] = useState(false);
@@ -30,6 +34,28 @@ export default function AgentPanel({ applications, onSaveLead }: Props) {
     try { localStorage.setItem(PROFILE_KEY, facts); }
     catch { /* A private browser may prohibit storage. */ }
   }, [facts]);
+
+  useEffect(() => {
+    try { localStorage.setItem(PROFILE_NAME_KEY, fullName); }
+    catch { /* A private browser may prohibit storage. */ }
+  }, [fullName]);
+
+  useEffect(() => {
+    // Hash fragments do not reach the host server. Immediately remove
+    // the temporary CV contents from the visible URL and browser history.
+    const hash = window.location.hash;
+    if (!hash.startsWith('#cv=')) return;
+    window.history.replaceState(null, '', window.location.pathname + window.location.search);
+    const profile = parseCvProfileFragment(hash);
+    if (!profile) {
+      setNotice('CV import link was invalid; nothing was changed.');
+      return;
+    }
+    setFullName(profile.fullName);
+    setFacts(profile.facts);
+    setNotice('Your verified professional CV details were filled into this browser. Review them below before using any application draft.');
+    window.requestAnimationFrame(() => document.getElementById('agent-heading')?.scrollIntoView({ behavior: 'smooth', block: 'start' }));
+  }, []);
 
   const assessment = useMemo(() => analyzeJob(job, facts, applications), [job, facts, applications]);
   const draft = useMemo(() => generateDraft(job, facts, fullName), [job, facts, fullName]);
@@ -104,7 +130,7 @@ export default function AgentPanel({ applications, onSaveLead }: Props) {
           <label>Verified CV facts (kept in this browser)
             <textarea rows={5} maxLength={5000} value={facts} onChange={e => setFacts(e.target.value)} placeholder="Paste 2–4 short, factual experience/education/skills statements. Do not paste QID, address or passwords." />
           </label>
-          <button className="agent-clear" type="button" onClick={() => { setFacts(''); setNotice('CV facts cleared from this browser profile.'); }}>Clear saved CV notes</button>
+          <button className="agent-clear" type="button" onClick={() => { setFacts(''); setFullName(''); setNotice('Name and CV facts cleared from this browser profile.'); }}>Clear saved profile</button>
           <div className="agent-fields">
             <label>Employer <input maxLength={120} value={job.company} onChange={e => setField('company', e.target.value)} placeholder="Company name" /></label>
             <label>Job title <input maxLength={120} value={job.role} onChange={e => setField('role', e.target.value)} placeholder="AML Analyst" /></label>
