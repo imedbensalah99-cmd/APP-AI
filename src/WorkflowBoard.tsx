@@ -3,6 +3,7 @@ import { generateDraft, isValidRecruiterEmail } from './agent';
 import { parseImportedJobs, rankLead, searchJobFeeds, uniqueLeads, type DiscoveredJob, type ReviewDraft } from './discovery';
 import type { JobApplication } from './types';
 import { validWebUrl } from './data';
+import CvMaker from './CvMaker';
 import './workflow.css';
 
 const JOBS_KEY = 'app-ai:discovered:v2';
@@ -33,13 +34,15 @@ interface Props {
   applications: JobApplication[];
   onConfirmedSend: (job: DiscoveredJob) => void;
 }
-type Panel = 'jobs' | 'drafts';
+type Panel = 'jobs' | 'drafts' | 'cv';
 
 export default function WorkflowBoard({ applications, onConfirmedSend }: Props) {
   const [jobs, setJobs] = useState<DiscoveredJob[]>(() => loadStored(JOBS_KEY, [], jobList));
   const [drafts, setDrafts] = useState<ReviewDraft[]>(() => loadStored(DRAFTS_KEY, [], draftList));
   const [lastSearch, setLastSearch] = useState(() => { try { return localStorage.getItem(LAST_KEY) || ''; } catch { return ''; } });
   const [panel, setPanel] = useState<Panel>('jobs');
+  const [cvJob, setCvJob] = useState<DiscoveredJob | null>(null);
+  const [returnPanel, setReturnPanel] = useState<'jobs' | 'drafts'>('jobs');
   const [selected, setSelected] = useState<string[]>([]);
   const [activeDraft, setActiveDraft] = useState<string>('');
   const [searching, setSearching] = useState(false);
@@ -133,6 +136,13 @@ export default function WorkflowBoard({ applications, onConfirmedSend }: Props) 
     } catch (err) {
       setStatus(err instanceof Error ? err.message : 'Import failed.');
     }
+  }
+
+  function openCvMaker(job: DiscoveredJob, from: 'jobs' | 'drafts') {
+    setCvJob(job);
+    setReturnPanel(from);
+    setPanel('cv');
+    setStatus('Customize a CV for ' + job.company + '. The CV remains on this device.');
   }
 
   function generateSelected() {
@@ -236,9 +246,12 @@ export default function WorkflowBoard({ applications, onConfirmedSend }: Props) 
       <div className="workflow-tabs" role="tablist" aria-label="Job application phases">
         <button type="button" role="tab" aria-selected={panel === 'jobs'} className={panel === 'jobs' ? 'is-on' : ''} onClick={() => setPanel('jobs')}>New Jobs ({sorted.length})</button>
         <button type="button" role="tab" aria-selected={panel === 'drafts'} className={panel === 'drafts' ? 'is-on' : ''} onClick={() => setPanel('drafts')}>Drafts ({pending.length})</button>
+        <button type="button" role="tab" aria-selected={panel === 'cv'} className={panel === 'cv' ? 'is-on' : ''} onClick={() => { if (cvJob) setPanel('cv'); else setStatus('Choose a job and click Make tailored CV first.'); }}>CV Maker</button>
         <span>Confirmed: {sent.length}</span>
       </div>
-      {panel === 'jobs' ? (
+      {panel === 'cv' && cvJob ? (
+        <CvMaker key={cvJob.sourceUrl} job={cvJob} onClose={() => setPanel(returnPanel)} />
+      ) : panel === 'jobs' ? (
         <div className="workflow-grid">
           <div className="workflow-list">
             <div className="workflow-list-toolbar">
@@ -262,6 +275,7 @@ export default function WorkflowBoard({ applications, onConfirmedSend }: Props) 
               <div className="workflow-job-info"><strong>{job.role}</strong><span>{job.company} · {job.location}</span>
                 <small>{job.source} {job.published && '· ' + job.published}</small>
                 <a href={job.sourceUrl} target="_blank" rel="noopener noreferrer">View original listing ↗</a>
+                <button type="button" className="workflow-link cv-make-link" onClick={() => openCvMaker(job, 'jobs')}>✦ Make tailored CV for this job</button>
                 {rank.concerns.length > 0 && <small className="workflow-warn">{rank.concerns[0]}</small>}
               </div>
               <span className="workflow-match">{rank.scoreLabel}</span>
@@ -286,6 +300,7 @@ export default function WorkflowBoard({ applications, onConfirmedSend }: Props) 
             <h3>Application Draft</h3>
             <p>{current.job.role} · {current.job.company}</p>
             <a href={current.job.sourceUrl} target="_blank" rel="noopener noreferrer">Verify current employer application ↗</a>
+            <button type="button" className="workflow-secondary" onClick={() => openCvMaker(current.job, 'drafts')}>✦ Make a tailored CV for this application</button>
             <label>Recruiter email (optional; enter only if verified by the employer)
               <input type="email" value={current.recipient} onChange={e => editDraft({recipient: e.target.value})} placeholder="Verified recruitment email" />
             </label>
