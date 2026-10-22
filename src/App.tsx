@@ -3,6 +3,8 @@ import { cleanFields, createApplication, isActive, needsAttention, readApplicati
 import { exportCsv, importCsv } from './csv';
 import { EMPTY_FIELDS, STATUSES, type ApplicationFields, type ApplicationStatus, type JobApplication } from './types';
 import AgentPanel from './AgentPanel';
+import WorkflowBoard from './WorkflowBoard';
+import type { DiscoveredJob } from './discovery';
 
 type SortBy = 'updated' | 'company' | 'deadline' | 'followUp';
 type FilterStatus = 'All' | ApplicationStatus;
@@ -165,9 +167,9 @@ export default function App() {
         <div className="container header-inner">
           <a className="brand" href="#main" aria-label="APP-AI home">
             <span className="brand-mark">A</span>
-            <span><strong>APP-AI</strong><small>JOB TRACKER</small></span>
+            <span><strong>APP-AI</strong><small>JOB APPLICATION AGENT</small></span>
           </a>
-          <span className="local-pill"><span aria-hidden="true">●</span> Private on this device</span>
+          <nav className="app-topnav" aria-label="Main navigation"><a href="#discover">Search jobs</a><a href="#pipeline-title">Applications</a><a href="#agent-heading">CV profile</a></nav><span className="local-pill"><span aria-hidden="true">●</span> Device-local CV</span>
         </div>
       </header>
 
@@ -175,13 +177,13 @@ export default function App() {
         <section className="hero">
           <div className="hero-copy">
             <span className="eyebrow">YOUR CAREER WORKSPACE</span>
-            <h1>Make every <em>opportunity</em> count.</h1>
-            <p>One calm place to organize applications, follow-ups, interviews, and the next steps in your job search.</p>
-            <button type="button" className="primary-button" onClick={openNew}>+ New application</button>
+            <h1>Your next <em>opportunity</em> starts here.</h1>
+            <p>Search Qatar-eligible openings in one tap, select roles, review tailored drafts and decide what to send.</p>
+            <a className="primary-button" href="#discover">⌕ Search Jobs Now</a>
           </div>
           <div className="hero-art" aria-hidden="true">
             <div className="orb orb-one"></div><div className="orb orb-two"></div>
-            <div className="floating-card"><span>YOUR NEXT STEP</span><strong>Stay organized.<br />Keep moving.</strong><i>↗</i></div>
+            <div className="floating-card"><span>YOUR JOB AGENT</span><strong>Discover.<br />Review. Apply.</strong><i>↗</i></div>
           </div>
         </section>
 
@@ -246,11 +248,31 @@ export default function App() {
           </section>
         )}
 
+        <WorkflowBoard applications={applications} onConfirmedSend={(job: DiscoveredJob) => {
+          const now = new Date().toISOString();
+          setApplications(previous => {
+            const exists = previous.some(a => (a.sourceUrl && a.sourceUrl === job.sourceUrl) ||
+              (a.company.toLocaleLowerCase() === job.company.toLocaleLowerCase() &&
+               a.role.toLocaleLowerCase() === job.role.toLocaleLowerCase()));
+            if (exists) return previous;
+            return [createApplication({
+              ...EMPTY_FIELDS, company: job.company, role: job.role,
+              location: job.location, sourceUrl: job.sourceUrl,
+              status: 'Applied', appliedOn: todayLocal(),
+              notes: 'User confirmed submission; not independently verified by APP-AI. Source: ' + job.source,
+            }, now), ...previous];
+          });
+        }} />
+
+        <details className="legacy-agent-details">
+          <summary>CV profile and manual vacancy tools (private)</summary>
         <AgentPanel applications={applications} onSaveLead={lead => {
           const now = new Date().toISOString();
           setApplications(previous => [createApplication(lead, now), ...previous]);
           setMessage('Agent saved a Wishlist lead; it has not been submitted.');
         }} />
+
+        </details>
 
         <section className="pipeline" aria-labelledby="pipeline-title">
           <div className="section-heading pipeline-heading">
@@ -311,7 +333,7 @@ export default function App() {
           )}
         </section>
       </main>
-      <footer className="container footer"><span>APP-AI · A thoughtful way to stay organized</span><span>No account · No paid services · Browser-local data</span></footer>
+      <footer className="container footer"><span>APP-AI · Theme 1 · Review-first applications</span><span>No account · No paid services · Browser-local data</span></footer>
     </div>
   );
 }
