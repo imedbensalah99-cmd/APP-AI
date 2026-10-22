@@ -43,7 +43,7 @@ function getCv(): CvSourceProfile {
   const fallbackFacts = (() => { try { return localStorage.getItem(PROFILE_KEY) || ''; } catch { return ''; } })();
   return {
     fullName: base?.fullName?.trim() || fallbackName,
-    headline: base?.headline || 'AML Analyst',
+    headline: base?.headline || 'Professional',
     contact: base?.contact || 'Doha, Qatar',
     verifiedFacts: base?.verifiedFacts?.trim() || fallbackFacts,
     education: base?.education || '',
@@ -103,6 +103,8 @@ export default function AutoPilotPanel({ applications, onConfirmedSend }: {
     const cv = getCv();
     if (!cv.fullName.trim() || !cv.verifiedFacts.trim()) {
       setNote('Your verified CV needs to be loaded once. Open CV Profile below, import your existing CV facts, then press Run Agent. No invented information will be used.');
+      const section = document.getElementById('profile-tools');
+      if (section instanceof HTMLDetailsElement) section.open = true;
       document.getElementById('agent-heading')?.scrollIntoView({ behavior: 'smooth' });
       return;
     }
