@@ -43,7 +43,8 @@ function defaultProfile(): CvSourceProfile {
 function getInitialCv(job: DiscoveredJob): TailoredCv {
   const saved = read<Record<string, unknown>>(FILE_KEY, (v): v is Record<string, unknown> =>
     !!v && typeof v === 'object' && !Array.isArray(v));
-  if (saved && validCv(saved[job.sourceUrl])) return saved[job.sourceUrl];
+  const previousCv: unknown = saved?.[job.sourceUrl];
+  if (validCv(previousCv)) return previousCv;
   return makeInitialCv(job, read(BASE_KEY, validProfile) || defaultProfile());
 }
 const saveFileName = (s: string) => s.toLowerCase().replace(/[^a-z0-9]+/g,'-').replace(/^-|-$/g,'').slice(0,65) || 'tailored-cv';
