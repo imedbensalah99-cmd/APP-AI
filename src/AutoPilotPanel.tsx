@@ -1,8 +1,10 @@
 import { useEffect, useState } from 'react';
 import { prepareAutopilot, assessForAutopilot, type JobDecision } from './autopilot';
 import { searchJobFeeds, uniqueLeads, type DiscoveredJob, type ReviewDraft } from './discovery';
-import { generateCvHtml, makeInitialCv, type TailoredCv, type CvSourceProfile } from './cvMaker';
+import { makeInitialCv, type TailoredCv, type CvSourceProfile } from './cvMaker';
 import type { JobApplication } from './types';
+import { channelForJob } from './applicationChannel';
+import { saveOriginalPdf, getOriginalPdf, deleteOriginalPdf, createOriginalLayoutCv } from './originalCvPdf';
 import './autopilot.css';
 
 const QUEUE_KEY = 'app-ai:autopilot-queue:v1';
@@ -85,9 +87,16 @@ export default function AutoPilotPanel({ applications, onConfirmedSend }: {
   const [tab, setTab] = useState<'review' | 'found'>('review');
   const [email, setEmail] = useState('');
   const [emailChecked, setEmailChecked] = useState(false);
+  const [originalCvReady, setOriginalCvReady] = useState(false);
   const current = queue.find(d => d.id === active) || queue.find(d => d.status !== 'Sent-confirmed') || queue[0];
+  const currentChannel = current ? channelForJob(current.job) : null;
+  const candidateEmail = email.trim() || (currentChannel?.kind === 'email_candidate' ? currentChannel.email : '');
   const unsent = queue.filter(d => d.status !== 'Sent-confirmed');
   const sent = queue.filter(d => d.status === 'Sent-confirmed');
+
+  useEffect(() => {
+    getOriginalPdf().then(bytes => setOriginalCvReady(!!bytes)).catch(() => setOriginalCvReady(false));
+  }, []);
 
   useEffect(() => {
     try { localStorage.setItem(QUEUE_KEY, JSON.stringify(queue)); }
@@ -146,9 +155,58 @@ export default function AutoPilotPanel({ applications, onConfirmedSend }: {
     setWorking(false);
   }
 
+
+  async function uploadOriginalCv(file: File | undefined) {
+    if (!file) return;
+    try {
+      await saveOriginalPdf(file);
+      setOriginalCvReady(true);
+      setNote('Original CV template saved privately in this browser. Same-layout PDF versions can now be created.');
+    } catch (error) {
+      setNote(error instanceof Error ? error.message : 'Could not validate original CV.');
+    }
+  }
+
+  async function clearOriginalCv() {
+    if (!window.confirm('Delete the stored CV template from this device?')) return;
+    try {
+      await deleteOriginalPdf();
+      setOriginalCvReady(false);
+      setNote('Original CV template removed from this browser.');
+    } catch {
+      setNote('Could not delete private CV.');
+    }
+  }
+
+  async function downloadSameLayoutCv(job: DiscoveredJob) {
+    try {
+      const original = await getOriginalPdf();
+      if (!original) {
+        setOriginalCvReady(false);
+        setNote('Upload the exact original imed ben salah.pdf once below. APP-AI cannot truthfully promise identical formatting without the original.');
+        document.getElementById('original-cv-setup')?.scrollIntoView({ behavior: 'smooth' });
+        return;
+      }
+      const pdfBytes = await createOriginalLayoutCv(original, currentCv(job), job);
+      const url = URL.createObjectURL(new Blob([new Uint8Array(pdfBytes)], { type: 'application/pdf' }));
+      const name = (job.company + '-' + job.role).replace(/[^a-z0-9-]+/gi, '-').slice(0, 65);
+      const link = document.createElement('a');
+      link.href = url;
+      link.download = 'Imed-Ben-Salah-' + name + '-CV.pdf';
+      document.body.appendChild(link);
+      link.click();
+      link.remove();
+      window.setTimeout(() => URL.revokeObjectURL(url), 30000);
+      setNote('Original-layout PDF generated. Only summary and supported skills were adapted. Check it before applying.');
+    } catch (error) {
+      setNote(error instanceof Error ? error.message : 'Failed to create the original-format CV.');
+    }
+  }
+
   function choose(draft: ReviewDraft) {
     setActive(draft.id);
-    setEmail(draft.recipient || '');
+    const channel = channelForJob(draft.job);
+    setEmail(draft.recipient || (channel.kind === 'email_candidate' ? channel.email : ''));
     setEmailChecked(false);
     setTab('review');
   }
@@ -166,23 +224,27 @@ export default function AutoPilotPanel({ applications, onConfirmedSend }: {
   }
   function approveHandoff() {
     if (!current) return;
-    if (email && (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email) || !emailChecked)) {
-      setNote('Verify the recruiter email against the employer website before using it.');
+    // An unverified email is never used without the user's explicit confirmation.
+    const recipient = emailChecked ? candidateEmail.trim() : '';
+    if (recipient && !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(recipient)) {
+      setNote('This email is invalid; check the official employer source.');
       return;
     }
-    const approved = window.confirm('Open the external ' + (email ? 'email draft' : 'job application page') +
-      ' for ' + current.job.company + '? You still must verify eligibility, attach the actual PDF CV, and submit yourself. Nothing is sent by APP-AI.');
-    if (!approved) return;
-    if (email) {
+    const route = recipient ? 'email draft' : 'job application website';
+    if (!window.confirm('Open ' + route + ' for ' + current.job.company +
+      '? APP-AI does not send emails, attach CVs, or submit applications. You must finish these steps yourself.')) return;
+    if (recipient) {
       const lines = current.body.split('\n');
-      const hasSubject = lines[0]?.startsWith('Subject: ');
-      const subject = hasSubject ? lines[0].slice(9) : 'Application – ' + current.job.role;
-      const body = hasSubject ? lines.slice(1).join('\n') : current.body;
-      window.location.href = 'mailto:' + encodeURIComponent(email.trim()).replace(/%40/g, '@') +
-        '?subject=' + encodeURIComponent(subject) + '&body=' + encodeURIComponent(body);
-    } else window.open(current.job.sourceUrl, '_blank', 'noopener,noreferrer');
-    setQueue(old => old.map(d => d.id === current.id ? { ...d, status: 'Handoff' } : d));
-    setNote('Opened the employer/application channel. APP-AI did not send an email or apply automatically.');
+      const subjectLine = lines[0]?.startsWith('Subject: ');
+      const subject = subjectLine ? lines[0].slice(9) : 'Application – ' + current.job.role;
+      const body = subjectLine ? lines.slice(1).join('\n') : current.body;
+      window.location.href = 'mailto:' + recipient + '?subject=' + encodeURIComponent(subject) +
+        '&body=' + encodeURIComponent(body);
+    } else {
+      window.open(current.job.sourceUrl, '_blank', 'noopener,noreferrer');
+    }
+    setQueue(old => old.map(d => d.id === current.id ? { ...d, recipient, status: 'Handoff' } : d));
+    setNote('Opened ' + route + '. Nothing was sent by APP-AI.');
   }
   function markSubmitted() {
     if (!current || current.status !== 'Handoff') return;
@@ -193,13 +255,7 @@ export default function AutoPilotPanel({ applications, onConfirmedSend }: {
   }
   function previewCv() {
     if (!current) return;
-    const cv = currentCv(current.job);
-    const page = window.open('', '_blank');
-    if (!page) { setNote('Please enable popup windows to preview the CV.'); return; }
-    page.document.open();
-    page.document.write(generateCvHtml(cv, current.job));
-    page.document.close();
-    setNote('Tailored CV opened. Use Print / Save as PDF and verify every line before submitting.');
+    void downloadSameLayoutCv(current.job);
   }
 
   return (
@@ -213,6 +269,16 @@ export default function AutoPilotPanel({ applications, onConfirmedSend }: {
         {working ? '⌛ Searching, matching & drafting…' : '✦ RUN JOB AGENT'}
       </button>
       <p className="auto-fine">Searches public remote-job feeds and falls back to the last daily snapshot. It cannot yet search every on-site Doha employer or securely send email from this public website.</p>
+      <div id="original-cv-setup" className="auto-template">
+        <div><strong>CV الأصلي — نفس التنسيق</strong>
+          <small>{originalCvReady ? 'ملف الـPDF الأصلي محفوظ على هذا الجهاز.' : 'ارفع PDF الأصلي مرة واحدة لإنشاء نسخ مخصصة بنفس الصفحة.'}</small>
+        </div>
+        <label className="auto-upload">اختيار الـCV الأصلي PDF
+          <input type="file" accept="application/pdf,.pdf"
+            onChange={e => { void uploadOriginalCv(e.target.files?.[0]); e.target.value = ''; }} />
+        </label>
+        {originalCvReady && <button type="button" className="auto-clear" onClick={() => void clearOriginalCv()}>إزالة الملف المحفوظ</button>}
+      </div>
       {note && <div className="auto-message" role="status">{note}</div>}
       <div className="auto-metrics">
         <div><strong>{unsent.length}</strong><small>Drafts to review</small></div>
@@ -229,7 +295,10 @@ export default function AutoPilotPanel({ applications, onConfirmedSend }: {
           {decisions.length === 0 && <p>Press RUN JOB AGENT to search online and assess opportunities.</p>}
           {decisions.map(d => <article className="auto-result" key={d.job.id}>
             <div><strong>{d.job.role}</strong><small>{d.job.company} · {d.job.location}</small>
-              <span>{d.explanation}</span><a target="_blank" rel="noopener noreferrer" href={d.job.sourceUrl}>Original vacancy ↗</a></div>
+              <span>{d.explanation}</span>
+              <span className="auto-contact-tag">{channelForJob(d.job).kind === 'email_candidate' ? 'إيميل مذكور في الإعلان — غير موثّق' : 'تقديم عبر الموقع فقط'}</span>
+              <a target="_blank" rel="noopener noreferrer" href={d.job.sourceUrl}>مصدر الوظيفة ↗</a>
+              <button type="button" className="auto-source-cv" onClick={() => void downloadSameLayoutCv(d.job)}>CV مخصص بنفس التصميم</button></div>
             <em className={'auto-' + d.suitability}>{d.suitability === 'prepare' ? 'CV match' : d.suitability === 'review' ? 'Review needed' : 'Excluded'}</em>
           </article>)}
         </div>
@@ -247,14 +316,24 @@ export default function AutoPilotPanel({ applications, onConfirmedSend }: {
             <div className="auto-skill-summary">
               {(() => { const a = assessForAutopilot(current.job, getCv().verifiedFacts, applications); return a.direct.length + ' CV matches · ' + a.transferable.length + ' related · ' + a.missing.length + ' missing'; })()}
             </div>
-            <button type="button" className="auto-cv-btn" onClick={previewCv}>↗ View tailored CV / Save as PDF</button>
+            <div className="auto-channel">
+              <strong>طريقة التقديم</strong>
+              <span>{currentChannel?.kind === 'email_candidate' ? 'إيميل مذكور في الإعلان — يحتاج تأكيدًا من الشركة' : 'التقديم عبر الموقع فقط — لا يوجد بريد تقديم مؤكد'}</span>
+              {currentChannel?.kind === 'email_candidate' && <span className="auto-email">{currentChannel.email}</span>}
+              <a href={current.job.sourceUrl} target="_blank" rel="noopener noreferrer">افتح المصدر للتحقق ↗</a>
+            </div>
+            <button type="button" className="auto-cv-btn" onClick={previewCv}>تحميل CV مخصص بنفس تصميم الملف الأصلي PDF</button>
             <label className="auto-field">Prepared application — editable
               <textarea rows={9} value={current.body} onChange={e => modifyBody(e.target.value)} />
             </label>
             <details className="auto-extra"><summary>Verified direct recruiter email (optional)</summary>
-              <label className="auto-field">Recipient
-                <input type="email" value={email} onChange={e => { setEmail(e.target.value); setEmailChecked(false); }} placeholder="Only if published by the employer" /></label>
-              {email && <label className="auto-verify"><input type="checkbox" checked={emailChecked} onChange={e => setEmailChecked(e.target.checked)} /> I checked the exact address on the employer website.</label>}
+              <label className="auto-field">البريد الموثّق من صاحب العمل (اختياري)
+                <input type="email" value={email || (currentChannel?.kind === 'email_candidate' ? currentChannel.email : '')}
+                  onChange={e => { setEmail(e.target.value); setEmailChecked(false); }}
+                  placeholder="بريد التقديم بعد التحقق" /></label>
+              <label className="auto-verify"><input type="checkbox" checked={emailChecked} onChange={e => setEmailChecked(e.target.checked)} />
+                تحققت بنفسي من هذا البريد في مصدر رسمي تابع للشركة. عند تركه دون تحديد، سيُفتح موقع الوظيفة بدل الإيميل.
+              </label>
             </details>
             <div className="auto-actions">
               <button type="button" className="auto-approve" onClick={approveHandoff}>✓ Approve & open application</button>
