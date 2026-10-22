@@ -17,3 +17,18 @@
 .advanced-workflow{background:#f6f9ff;border:1px solid #dce7f8;border-radius:15px;padding:14px;margin:20px 0}.advanced-workflow>summary{cursor:pointer;color:#456ca5;font-size:13px;font-weight:750;padding:7px}
 @media(max-width:750px){.auto-body{grid-template-columns:1fr}.auto-head{display:block}.auto-metrics{grid-template-columns:repeat(2,1fr)}}
 @media(max-width:500px){.autopilot{padding:15px}.auto-head h2{font-size:21px}.auto-run{font-size:16px;padding:18px}.auto-tabs button{flex:1;padding:12px 7px;font-size:11px}.auto-detail{padding:13px}.auto-result{flex-wrap:wrap}.auto-pill{display:inline-block;margin-bottom:10px}}
+/* Application-channel transparency and original-PDF template management */
+.auto-template{display:flex;flex-wrap:wrap;gap:12px;align-items:center;border:1px solid #bcd6fb;background:#f2f7ff;border-radius:13px;padding:14px;margin:13px 0 17px}
+.auto-template>div{display:grid;gap:5px;flex:1 1 220px}
+.auto-template strong{font-size:14px;color:#194d8a}
+.auto-template small{font-size:11px;line-height:1.6;color:#54759c}
+.auto-upload{position:relative;display:flex;flex-direction:column;gap:5px;align-items:center;justify-content:center;padding:11px 12px;border-radius:9px;background:#fff;border:1px solid #b4cdf0;color:#1c58a5;font-size:12px;font-weight:750;cursor:pointer;max-width:100%}
+.auto-upload input{font-size:11px;max-width:180px}
+.auto-clear{border:1px solid #eed0d0;background:#fff;color:#9b4550;border-radius:9px;padding:10px;font-size:11px;cursor:pointer}
+.auto-channel{display:grid;gap:6px;border:1px solid #d9e6f7;background:#edf4ff;border-radius:10px;padding:12px;font-size:12px;color:#45638c;overflow-wrap:anywhere}
+.auto-channel strong{color:#214e83}
+.auto-channel .auto-email{font-weight:800;color:#285da2}
+.auto-channel a{color:#145bc3;font-weight:700;text-decoration:underline}
+.auto-contact-tag{font-size:11px;color:#41699a;background:#eff5ff;border-radius:6px;padding:4px 6px;width:fit-content}
+.auto-source-cv{width:fit-content;background:#eaf3ff;color:#205baf;border:1px solid #b6d1f0;border-radius:7px;padding:7px 11px;font-size:11px;font-weight:750;cursor:pointer}
+@media(max-width:500px){.auto-template{display:grid}.auto-upload{align-items:stretch}.auto-upload input{max-width:100%}}
