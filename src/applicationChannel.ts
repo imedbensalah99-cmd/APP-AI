@@ -5,7 +5,7 @@ export type ApplicationChannel =
 
 const ADDRESS = /\b[A-Z0-9._%+-]+@[A-Z0-9.-]+\.[A-Z]{2,}\b/gi;
 const GENERAL = /^(?:info|support|help|contact|privacy|abuse|security|newsletter|hello|sales|billing|no-?reply|donotreply)@/i;
-const APPLICATION = /(?:send|email|submit|forward|apply)\\s+(?:your\\s+)?(?:cv|resume|application|details)\\s+(?:to|at)\\b|apply\\s+(?:by\\s+)?email|applications?\\s+(?:to|at)\\b|(?:email|send)\\s+your\\s+(?:cv|resume)/i;
+const APPLICATION = /(?:send|email|submit|forward|apply)\s+(?:your\s+)?(?:cv|resume|application|details)\s+(?:to|at)\b|apply\s+(?:by\s+)?email|applications?\s+(?:to|at)\b|(?:email|send)\s+your\s+(?:cv|resume)/i;
 
 export function resolveApplicationChannel(
   description: string,
