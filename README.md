@@ -13,12 +13,12 @@ A free, mobile-friendly job application tracker built with React, TypeScript and
 ## Local development
 Requires Node.js 20.19+ or 22+.
 
-\`\`\`sh
+```sh
 npm install
 npm run dev
 npm test
 npm run build
-\`\`\`
+```
 
 Open the local URL printed by Vite. No backend or API keys are needed.
 
@@ -28,7 +28,7 @@ Records are kept in localStorage on the device and browser profile where you use
 ## Optional publishing (manual only)
 The Pages workflow is triggered by **Actions → Deploy to GitHub Pages → Run workflow**. It does **not** publish on every push. To publish, first approve the deployment, configure GitHub Settings → Pages → Source: GitHub Actions, and run the workflow yourself. The public site contains only the app code, not private application records. Test builds run in GitHub Actions automatically on pull requests.
 
-The Vite base path is set to \`/APP-AI/\` for a GitHub project page. Do not commit exported CSVs or personal records.
+The Vite base path is set to `/APP-AI/` for a GitHub project page. Do not commit exported CSVs or personal records.
 
 ## Development workflow
 Work is proposed in feature branches and pull requests. Review and merge explicitly; this branch does not automatically publish the app.
