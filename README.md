@@ -11,9 +11,21 @@ A free, mobile-friendly job application tracker built with React, TypeScript and
 - Responsive interface for Android and desktop
 - Free, open-source dependencies; no paid APIs, no analytics or accounts
 
-## Application Agent (review-first)
+## Modern Blue: One-button job discovery and review queue
 
-Open **Job Application Agent** on the home page. Enter your own verified CV facts (not passwords, passport or QID details), paste an employer's vacancy text, then review overlap and flagged terms. Only information you enter is used when creating an email template; it is not AI-generated and does not verify skills, suitability, live vacancies or employer authenticity. The optional CV notes are saved only in localStorage in this browser. Click **Clear saved CV notes** to remove them from that local profile.
+Open the website. The **Search Jobs Now** button reloads the **latest published job feed** in your browser, then filters and displays available records. It does not launch an instantaneous fresh web crawl: a free GitHub Actions workflow collects public data on deployment and approximately every 6 hours (scheduled runs can be delayed). The page displays the last collection time and source errors. Nothing is invented when feeds are empty.
+
+Sources:
+- **Himalayas**: free public remote listings queried for AML, KYC, compliance, finance, operations, and customer service. Display attribution and link to the feed-provided applicationLink. Being listed does **not** prove the job is open or that Qatar-based applicants are eligible; check before applying. Data is fetched server-side during the Pages build, not from the Android browser.
+- **Google News RSS**: Qatar recruitment-related headlines. These are explicitly **unverified leads**, not verified job openings and not necessarily employer career links. Check the employer's current official vacancy before any application. Never use a news story itself as proof the role is open.
+
+Workflow: **Search → check role/eligibility and original source → select → generate drafts from the user's locally stored name and factual CV notes → edit email and recruiter recipient → manually confirm vacancy/eligibility/recipient → approve email handoff or Trash**. Approving opens an email draft in the user's email app; APP-AI cannot send, attach a PDF, or prove delivery. The user must attach the real CV and press Send themselves; they can then mark a draft "I actually sent" to record a **user-reported** application in the classic tracker. The Sent tab is *not* authenticated email confirmation.
+
+Neither local CV facts nor drafts are uploaded to GitHub, collected by Actions, placed in public JSON, or synchronized to connected Outlook/Gmail. The browser-only review queue also cannot see the user's other emails or existing Google Sheets tracker. Export existing classic tracker records securely as CSV. Avoid clearing browser data without backing up your work. No paid APIs or external accounts are added.
+
+## Previous application assistant (historical)
+
+The previous manual Job Application Agent code is retained in the repository but the website now opens the Modern Blue workflow. Enter your own verified CV facts (not passwords, passport or QID details), paste an employer's vacancy text, then review overlap and flagged terms. Only information you enter is used when creating an email template; it is not AI-generated and does not verify skills, suitability, live vacancies or employer authenticity. The optional CV notes are saved only in localStorage in this browser. Click **Clear saved CV notes** to remove them from that local profile.
 
 If this browser tracker already contains the same employer and role, APP-AI flags a duplicate. This check cannot see your separate Outlook emails or Google Drive workbook; review those before sending. Saving an opportunity always creates a **Wishlist** lead, never a submitted application. Opening the mail app only creates a draft; you must verify the recipient, manually attach your PDF CV and send it yourself.
 
