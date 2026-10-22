@@ -2,6 +2,7 @@ import { useEffect, useMemo, useState } from 'react';
 import { generateDraft, isValidRecruiterEmail } from './agent';
 import { parseImportedJobs, rankLead, searchJobFeeds, uniqueLeads, type DiscoveredJob, type ReviewDraft } from './discovery';
 import type { JobApplication } from './types';
+import { validWebUrl } from './data';
 import './workflow.css';
 
 const JOBS_KEY = 'app-ai:discovered:v2';
@@ -20,13 +21,13 @@ function loadStored<T>(key: string, fallback: T, validator: (value: unknown) => 
 }
 const isJob = (j: unknown): j is DiscoveredJob =>
   !!j && typeof j === 'object' && typeof (j as DiscoveredJob).id === 'string' &&
-  typeof (j as DiscoveredJob).role === 'string' && typeof (j as DiscoveredJob).sourceUrl === 'string';
+  typeof (j as DiscoveredJob).role === 'string' && typeof (j as DiscoveredJob).sourceUrl === 'string' && !!(j as DiscoveredJob).company && !!validWebUrl((j as DiscoveredJob).sourceUrl);
 const isDraft = (j: unknown): j is ReviewDraft =>
   !!j && typeof j === 'object' && typeof (j as ReviewDraft).id === 'string' &&
   typeof (j as ReviewDraft).body === 'string' && isJob((j as ReviewDraft).job);
 const jobList = (value: unknown): value is DiscoveredJob[] => Array.isArray(value) && value.length <= 300 && value.every(isJob);
 const draftList = (value: unknown): value is ReviewDraft[] => Array.isArray(value) && value.length <= 300 && value.every(isDraft);
-const cleanHtmlText = (value: string) => value.replace(/[\u0000-\u001f]/g, ' ').trim();
+const cleanHtmlText = (value: string) => value.replace(/[\u0000-\u0008\u000b\u000c\u000e-\u001f]/g, '').slice(0, 12000);
 
 interface Props {
   applications: JobApplication[];
@@ -110,6 +111,7 @@ export default function WorkflowBoard({ applications, onConfirmedSend }: Props) 
     }
     const next = uniqueLeads([...listings, ...jobs], applications);
     setJobs(next);
+    setSelected([]);
     const now = new Date().toISOString();
     setLastSearch(now);
     try { localStorage.setItem(LAST_KEY, now); } catch { /* Nonpersistent browser. */ }
