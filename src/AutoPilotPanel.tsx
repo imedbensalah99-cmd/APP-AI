@@ -269,6 +269,16 @@ export default function AutoPilotPanel({ applications, onConfirmedSend }: {
         {working ? '⌛ Searching, matching & drafting…' : '✦ RUN JOB AGENT'}
       </button>
       <p className="auto-fine">Searches public remote-job feeds and falls back to the last daily snapshot. It cannot yet search every on-site Doha employer or securely send email from this public website.</p>
+      <div id="original-cv-setup" className="auto-template">
+        <div><strong>CV الأصلي — نفس التنسيق</strong>
+          <small>{originalCvReady ? 'ملف الـPDF الأصلي محفوظ على هذا الجهاز.' : 'ارفع PDF الأصلي مرة واحدة لإنشاء نسخ مخصصة بنفس الصفحة.'}</small>
+        </div>
+        <label className="auto-upload">اختيار الـCV الأصلي PDF
+          <input type="file" accept="application/pdf,.pdf"
+            onChange={e => { void uploadOriginalCv(e.target.files?.[0]); e.target.value = ''; }} />
+        </label>
+        {originalCvReady && <button type="button" className="auto-clear" onClick={() => void clearOriginalCv()}>إزالة الملف المحفوظ</button>}
+      </div>
       {note && <div className="auto-message" role="status">{note}</div>}
       <div className="auto-metrics">
         <div><strong>{unsent.length}</strong><small>Drafts to review</small></div>
@@ -285,7 +295,10 @@ export default function AutoPilotPanel({ applications, onConfirmedSend }: {
           {decisions.length === 0 && <p>Press RUN JOB AGENT to search online and assess opportunities.</p>}
           {decisions.map(d => <article className="auto-result" key={d.job.id}>
             <div><strong>{d.job.role}</strong><small>{d.job.company} · {d.job.location}</small>
-              <span>{d.explanation}</span><a target="_blank" rel="noopener noreferrer" href={d.job.sourceUrl}>Original vacancy ↗</a></div>
+              <span>{d.explanation}</span>
+              <span className="auto-contact-tag">{channelForJob(d.job).kind === 'email_candidate' ? 'إيميل مذكور في الإعلان — غير موثّق' : 'تقديم عبر الموقع فقط'}</span>
+              <a target="_blank" rel="noopener noreferrer" href={d.job.sourceUrl}>مصدر الوظيفة ↗</a>
+              <button type="button" className="auto-source-cv" onClick={() => void downloadSameLayoutCv(d.job)}>CV مخصص بنفس التصميم</button></div>
             <em className={'auto-' + d.suitability}>{d.suitability === 'prepare' ? 'CV match' : d.suitability === 'review' ? 'Review needed' : 'Excluded'}</em>
           </article>)}
         </div>
@@ -303,7 +316,13 @@ export default function AutoPilotPanel({ applications, onConfirmedSend }: {
             <div className="auto-skill-summary">
               {(() => { const a = assessForAutopilot(current.job, getCv().verifiedFacts, applications); return a.direct.length + ' CV matches · ' + a.transferable.length + ' related · ' + a.missing.length + ' missing'; })()}
             </div>
-            <button type="button" className="auto-cv-btn" onClick={previewCv}>↗ View tailored CV / Save as PDF</button>
+            <div className="auto-channel">
+              <strong>طريقة التقديم</strong>
+              <span>{currentChannel?.kind === 'email_candidate' ? 'إيميل مذكور في الإعلان — يحتاج تأكيدًا من الشركة' : 'التقديم عبر الموقع فقط — لا يوجد بريد تقديم مؤكد'}</span>
+              {currentChannel?.kind === 'email_candidate' && <span className="auto-email">{currentChannel.email}</span>}
+              <a href={current.job.sourceUrl} target="_blank" rel="noopener noreferrer">افتح المصدر للتحقق ↗</a>
+            </div>
+            <button type="button" className="auto-cv-btn" onClick={previewCv}>تحميل CV مخصص بنفس تصميم الملف الأصلي PDF</button>
             <label className="auto-field">Prepared application — editable
               <textarea rows={9} value={current.body} onChange={e => modifyBody(e.target.value)} />
             </label>
