@@ -2,6 +2,7 @@ import { useMemo, useRef, useState, useEffect, type FormEvent } from 'react';
 import { cleanFields, createApplication, isActive, needsAttention, readApplications, saveApplications, todayLocal, validWebUrl } from './data';
 import { exportCsv, importCsv } from './csv';
 import { EMPTY_FIELDS, STATUSES, type ApplicationFields, type ApplicationStatus, type JobApplication } from './types';
+import AgentPanel from './AgentPanel';
 
 type SortBy = 'updated' | 'company' | 'deadline' | 'followUp';
 type FilterStatus = 'All' | ApplicationStatus;
@@ -244,6 +245,12 @@ export default function App() {
             </form>
           </section>
         )}
+
+        <AgentPanel applications={applications} onSaveLead={lead => {
+          const now = new Date().toISOString();
+          setApplications(previous => [createApplication(lead, now), ...previous]);
+          setMessage('Agent saved a Wishlist lead; it has not been submitted.');
+        }} />
 
         <section className="pipeline" aria-labelledby="pipeline-title">
           <div className="section-heading pipeline-heading">
