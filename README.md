@@ -11,6 +11,17 @@ A free, mobile-friendly job application tracker built with React, TypeScript and
 - Responsive interface for Android and desktop
 - Free, open-source dependencies; no paid APIs, no analytics or accounts
 
+## Theme 1 — one-button search and review
+
+The **Search Jobs Now** button queries the public Himalayas jobs API directly from the user's browser for remote listings accepting applicants based in Qatar. Requests are real network calls, not decorative buttons. The API's underlying data refreshes about once a day. Only Qatar-eligible or worldwide remote listings are included; this does not cover most on-site Doha vacancies.
+
+If live queries fail, the app reads the latest scheduled public snapshot from public/jobs-cache.json. A free GitHub Actions workflow at .github/workflows/job-refresh.yml attempts to update it daily; repository Actions must have write permissions. An empty or inaccessible feed shows an honest message, not fabricated jobs.
+
+**Import ChatGPT leads** accepts a JSON array with company, role, sourceUrl, and optional location and description (1–50 jobs). The app can also import a URL-encoded array through a temporary #jobs= fragment and immediately strips it from the URL. Imported leads are unverified until the user checks the employer's actual site.
+
+Select any jobs and press **Prepare application drafts**. The draft text uses only the verified CV facts saved privately in this browser. Edit the message and verify the employer's job posting and optional email address. **Approve & open** uses the user's email app (mailto) or opens the official job URL; it does NOT send email, attach a CV, fill an employer form, or submit. **Trash draft** really removes the draft. The user manually attaches the PDF CV and submits. **I sent / submitted** marks the application Applied only after a further confirmation; delivery cannot be independently verified by this website.
+
+A fully automatic email sender would require a secure authenticated email backend/OAuth integration and provider permission, which is not configured here. No paid APIs or external accounts are activated. Public GitHub Pages never receives user CV details, drafts, or sent records; those are stored in browser localStorage. Keep a CSV backup. Match counts are keyword overlaps, not an objective hiring probability or guarantee of eligibility.
 ## Application Agent (review-first)
 
 Open **Job Application Agent** on the home page. Enter your own verified CV facts (not passwords, passport or QID details), paste an employer's vacancy text, then review overlap and flagged terms. Only information you enter is used when creating an email template; it is not AI-generated and does not verify skills, suitability, live vacancies or employer authenticity. The optional CV notes are saved only in localStorage in this browser. Click **Clear saved CV notes** to remove them from that local profile.
