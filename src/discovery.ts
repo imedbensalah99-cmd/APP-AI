@@ -44,15 +44,15 @@ export function normalizeHimalayas(data: unknown, now = Date.now()): DiscoveredJ
     const expiry = typeof j.expiryDate === 'number' ? j.expiryDate : 0;
     if (expiry && now >= expiry * 1000) continue;
     const countries = Array.isArray(j.locationRestrictions) ? j.locationRestrictions as unknown[] : [];
-    const restricted = countries.some(c => {
-      if (typeof c === 'string') return !/^(qa|qatar|worldwide)$/i.test(c);
+    const restricted = countries.length > 0 && !countries.some(c => {
+      if (typeof c === 'string') return /^(qa|qatar|worldwide)$/i.test(c);
       if (c && typeof c === 'object') {
         const country = c as Record<string, unknown>;
         const alpha = String(country.alpha2 ?? '').toUpperCase();
         const name = String(country.name ?? '').toLowerCase();
-        return alpha !== 'QA' && name !== 'qatar';
+        return alpha === 'QA' || name === 'qatar';
       }
-      return true;
+      return false;
     });
     // Avoid false eligibility when a listing names a non-Qatar country only.
     if (restricted) continue;
