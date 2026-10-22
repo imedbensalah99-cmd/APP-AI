@@ -327,9 +327,13 @@ export default function AutoPilotPanel({ applications, onConfirmedSend }: {
               <textarea rows={9} value={current.body} onChange={e => modifyBody(e.target.value)} />
             </label>
             <details className="auto-extra"><summary>Verified direct recruiter email (optional)</summary>
-              <label className="auto-field">Recipient
-                <input type="email" value={email} onChange={e => { setEmail(e.target.value); setEmailChecked(false); }} placeholder="Only if published by the employer" /></label>
-              {email && <label className="auto-verify"><input type="checkbox" checked={emailChecked} onChange={e => setEmailChecked(e.target.checked)} /> I checked the exact address on the employer website.</label>}
+              <label className="auto-field">البريد الموثّق من صاحب العمل (اختياري)
+                <input type="email" value={email || (currentChannel?.kind === 'email_candidate' ? currentChannel.email : '')}
+                  onChange={e => { setEmail(e.target.value); setEmailChecked(false); }}
+                  placeholder="بريد التقديم بعد التحقق" /></label>
+              <label className="auto-verify"><input type="checkbox" checked={emailChecked} onChange={e => setEmailChecked(e.target.checked)} />
+                تحققت بنفسي من هذا البريد في مصدر رسمي تابع للشركة. عند تركه دون تحديد، سيُفتح موقع الوظيفة بدل الإيميل.
+              </label>
             </details>
             <div className="auto-actions">
               <button type="button" className="auto-approve" onClick={approveHandoff}>✓ Approve & open application</button>
