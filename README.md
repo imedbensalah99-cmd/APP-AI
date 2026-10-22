@@ -12,6 +12,15 @@ A free, mobile-friendly job application tracker built with React, TypeScript and
 - Responsive interface for Android and desktop
 - Free, open-source dependencies; no paid APIs, no analytics or accounts
 
+## One-button Autopilot — no manual job selection
+
+The new APP-AI home shows **RUN JOB AGENT**. With a verified private CV profile saved in your current browser, pressing it searches live public Qatar-eligible remote-job feeds, uses the daily public snapshot as fallback, filters ineligible/senior/high-experience vacancies, checks evidenced CV skills, and **automatically prepares tailored email drafts and per-vacancy CV files** for suitable leads. There is no copying of job JSON, manual selection, or separate CV-generation step for those matches. Zero supported matches and unknown eligibility are kept in a review-needed list rather than falsely deemed suitable. An opening can be stale or unsuitable even when a public listing links to it.
+
+**Ready to review** shows the prepared message, ready-to-print tailored CV, and two principal choices: **Approve & open application** or **Trash**. Trashed vacancies are remembered on this browser so they are not regenerated next time. The app stores its queue and private CV variants locally, not in this public repository. Existing tracking and advanced manual options remain accessible separately.
+
+**Important sending limitation:** This is autonomous preparation, not autonomous delivery. Approve performs a real employer-site or mail-app handoff after a final user confirmation. The user still must verify the posting and eligibility, save/attach the CV and submit the job form or email. The static public GitHub Pages site has **no authenticated email-sending backend or employer API**; it cannot securely press Send, attach CV files or confirm submission. Only a subsequent user confirmation marks a job Applied. A truly one-tap sent-email action requires an authenticated email connector/OAuth integration and secure backend, with the user's explicit authorization; none is enabled or purchased. There is no paid API and no hidden automatic submission.
+
+**Privacy and setup:** The agent reads your verified CV only from browser localStorage. If it is missing, it opens the one-time private profile setup rather than inventing experience. Use your private CV import link or enter your existing verified details. Remote eligibility and every published vacancy must still be verified before applying. The optional old search/import/manual queue remains under **Advanced manual search**; the main home is designed around one-click automatic preparation.
 ## Per-job CV Maker (free, private, review-first)
 
 On every discovered job card and in the application draft queue, choose **Make tailored CV**. The new CV Studio preloads your browser-local professional facts from APP-AI, or your previously saved base CV, and lets you review source work history, actual title, education, certifications, languages and contact details. All information is saved in the browser; no CV or candidate data is committed to this public repository.
