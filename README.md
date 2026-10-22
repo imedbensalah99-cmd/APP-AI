@@ -25,10 +25,10 @@ Open the local URL printed by Vite. No backend or API keys are needed.
 ## Privacy and limitations
 Records are kept in localStorage on the device and browser profile where you use the application. Clearing site data, using incognito, or switching devices can lose your records. **Export a CSV backup regularly.** CSV exports contain personal application information: keep them private. This project is a productivity tool; deadline alerts appear **inside the app**, not as background mobile notifications. No recruitment emails are automatically sent.
 
-## Optional publishing (manual only)
-The Pages workflow is triggered by **Actions → Deploy to GitHub Pages → Run workflow**. It does **not** publish on every push. To publish, first approve the deployment, configure GitHub Settings → Pages → Source: GitHub Actions, and run the workflow yourself. The public site contains only the app code, not private application records. Test builds run in GitHub Actions automatically on pull requests.
+## Publishing on free GitHub Pages
+The repository owner approved publication on October 22, 2026. The Pages workflow runs on pushes to `main` and can be triggered manually from **Actions → Publish APP-AI to GitHub Pages → Run workflow**. If GitHub Pages is not yet enabled, configure **Settings → Pages → Build and deployment → Source: GitHub Actions** first. The expected free site URL is `https://imedbensalah99-cmd.github.io/APP-AI/`. The site only contains source-built static assets, not users' personal application records. GitHub Actions also runs automated tests on pull requests.
 
 The Vite base path is set to `/APP-AI/` for a GitHub project page. Do not commit exported CSVs or personal records.
 
 ## Development workflow
-Work is proposed in feature branches and pull requests. Review and merge explicitly; this branch does not automatically publish the app.
+Work is proposed in feature branches and pull requests. Review and merge explicitly. Changes merged to the main branch now trigger a Pages deployment when Pages is enabled.
