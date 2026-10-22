@@ -7,10 +7,20 @@ A free, mobile-friendly job application tracker built with React, TypeScript and
 - Status dashboard and follow-up/deadline alerts
 - Sort by recent update, deadline, follow-up or company
 - Import and export CSV files, skipping duplicates
+- Job-specific CV Maker with direct/related/missing skill guidance and print-to-PDF / HTML export
 - Application Agent workspace: CV-keyword overlap, visible eligibility warnings, duplicate checking, factual email-draft preparation, and manual recruiter email handoff (no auto-send)
 - Responsive interface for Android and desktop
 - Free, open-source dependencies; no paid APIs, no analytics or accounts
 
+## Per-job CV Maker (free, private, review-first)
+
+On every discovered job card and in the application draft queue, choose **Make tailored CV**. The new CV Studio preloads your browser-local professional facts from APP-AI, or your previously saved base CV, and lets you review source work history, actual title, education, certifications, languages and contact details. All information is saved in the browser; no CV or candidate data is committed to this public repository.
+
+The skill advisor compares the job description with your own CV evidence. It labels requirements **Direct match** (supported by exact wording), **Related only** (transferable evidence but not proof of that requirement), or **Not evidenced** (do not claim the skill). Only exact, user-selected skills can appear in the exported skills list, and all experience text is taken from the user's verified source. Job target roles are labelled as target opportunities, never misrepresented as previous/current positions. The analyzer is a deterministic, transparent keyword engine, **not a live AI model**. To obtain an additional AI language review without a paid API, use **Copy prompt for ChatGPT AI review** and paste it into ChatGPT yourself; nothing is sent automatically.
+
+Each job's tailored CV is stored separately in localStorage. After checking the source-CV confirmation box, **Preview / Save as PDF** opens an A4-printable ATS-style CV and the user can choose Print → Save as PDF, while **Download editable HTML CV** downloads a standalone HTML version. Android print support depends on the browser. Neither export sends an application. To prevent false claims, never add unsupported credentials to your source CV, and cross-check the generated document before use.
+
+Limitation: no authenticated AI model, PDF-generation server, employer auto-fill, or automatic outbound emails have been installed. The free deterministic advisor identifies supported wording and flags transferability; unknown technical requirements and mandatory eligibility must still be checked manually.
 ## Theme 1 — one-button search and review
 
 The **Search Jobs Now** button queries the public Himalayas jobs API directly from the user's browser for remote listings accepting applicants based in Qatar. Requests are real network calls, not decorative buttons. The API's underlying data refreshes about once a day. Only Qatar-eligible or worldwide remote listings are included; this does not cover most on-site Doha vacancies.
