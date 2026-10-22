@@ -89,3 +89,25 @@ export function generateDraft(job: AgentJob, candidateFacts: string, fullName: s
 export function isValidRecruiterEmail(email: string): boolean {
   return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email.trim()) && email.trim().length <= 254;
 }
+
+/**
+ * Import a user-supplied professional profile from an optional URL fragment.
+ * GitHub Pages never receives fragment data in the HTTP request.
+ * The caller must remove the fragment immediately after reading it.
+ * No profile contents are embedded in this public repository.
+ */
+export function parseCvProfileFragment(hash: string): { fullName: string; facts: string } | null {
+  if (!hash.startsWith('#cv=') || hash.length > 12000) return null;
+  try {
+    const value: unknown = JSON.parse(decodeURIComponent(hash.slice(4)));
+    if (!value || typeof value !== 'object') return null;
+    const profile = value as Record<string, unknown>;
+    if (typeof profile.name !== 'string' || typeof profile.facts !== 'string') return null;
+    const fullName = profile.name.trim();
+    const facts = profile.facts.trim();
+    if (!fullName || !facts || fullName.length > 120 || facts.length > 5000) return null;
+    return { fullName, facts };
+  } catch {
+    return null;
+  }
+}
