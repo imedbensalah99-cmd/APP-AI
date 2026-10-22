@@ -47,7 +47,7 @@ export function assessForAutopilot(
   if (!TARGET.test(job.role)) return { ...base, suitability: 'review', explanation: 'Role title is not clearly aligned with your target career areas.' };
   if (experienceRequirement(words) >= 5) return { ...base, suitability: 'review', explanation: 'Five or more years requested: confirm eligibility before applying.' };
   if (missing.some(s => /certification/i.test(s)) &&
-      /(?:\bCAMS\b|\bCPA\b).{0,30}(?:required|mandatory|must.have)|(?:must.have|required|mandatory).{0,30}(?:\bCAMS\b|\bCPA\b)/i.test(words))
+      /\b(?:CAMS|CPA)(?:\s+certification)?\s+(?:is\s+)?(?:required|mandatory)\b|\b(?:must\s+have|requires?)\s+(?:a\s+)?(?:CAMS|CPA)\b/i.test(words))
     return { ...base, suitability: 'review', explanation: 'A required certification is not evidenced by your CV.' };
   if (/\b(?:US|USA|United States)\s+(?:residents|citizens|only)\b|must\s+(?:live|reside)\s+in\s+(?:the\s+)?(?:US|USA|United States)\b/i.test(words))
     return { ...base, suitability: 'review', explanation: 'Posting may restrict applicants outside the United States.' };
