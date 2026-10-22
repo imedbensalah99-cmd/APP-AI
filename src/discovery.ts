@@ -1,5 +1,6 @@
 import { analyzeJob, sameJob, type AgentJob } from './agent';
 import { validWebUrl } from './data';
+import { resolveApplicationChannel, type ApplicationChannel } from './applicationChannel';
 import type { JobApplication } from './types';
 
 export interface DiscoveredJob extends AgentJob {
@@ -9,6 +10,7 @@ export interface DiscoveredJob extends AgentJob {
   remote: boolean;
   eligibility: string;
   sourceChecked: boolean;
+  applicationChannel?: ApplicationChannel;
 }
 
 export interface ReviewDraft {
@@ -67,6 +69,7 @@ export function normalizeHimalayas(data: unknown, now = Date.now()): DiscoveredJ
       sourceUrl, description: plain, source: 'Himalayas',
       published: timestamp ? new Date(timestamp * 1000).toISOString().slice(0, 10) : '',
       remote: true, sourceChecked: true,
+      applicationChannel: resolveApplicationChannel(String(j.description || j.excerpt || '').replace(/<[^>]*>/g,' '), sourceUrl),
       eligibility: 'Country filtering only; confirm employer screening requirements yourself.',
     });
   }
@@ -92,6 +95,7 @@ export function parseImportedJobs(input: string): DiscoveredJob[] {
       description: String(obj.description ?? '').slice(0, 5000),
       published: '', source: 'Imported research — verify independently',
       remote: false, sourceChecked: false,
+      applicationChannel: resolveApplicationChannel(String(obj.description || ''), sourceUrl),
       eligibility: 'Unverified. Open the employer site and check the vacancy is live.',
     });
     if (index >= 49) break;
