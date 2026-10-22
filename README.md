@@ -19,6 +19,10 @@ If this browser tracker already contains the same employer and role, APP-AI flag
 
 **Important:** The public GitHub Pages website cannot securely access Outlook, your private CV, job portals, your existing daily job-search automations, or external recruitment systems. This is a preparation assistant; it is not a background crawler or autonomous job submitter. Do not publish CV data or exported CSVs to this public repository. All features work with existing free React/TypeScript dependencies and no paid APIs.
 
+## Optional private CV prefill link
+
+The owner can open an optional, one-time profile import link with URL fragment `#cv=` followed by URL-encoded JSON containing `name` and `facts`. The browser-only app immediately removes the fragment from the URL and stores those professional facts in localStorage on this device; the public repository contains no CV or candidate data. Review imported data before preparing an application. The link itself includes the information, so keep it private, do not share it or post screenshots of it, and clear the saved browser profile if using a shared device. The import never contacts employers and does not create or send an application.
+
 ## Local development
 Requires Node.js 20.19+ or 22+.
 
