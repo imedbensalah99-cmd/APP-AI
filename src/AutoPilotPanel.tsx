@@ -1,8 +1,10 @@
 import { useEffect, useState } from 'react';
 import { prepareAutopilot, assessForAutopilot, type JobDecision } from './autopilot';
 import { searchJobFeeds, uniqueLeads, type DiscoveredJob, type ReviewDraft } from './discovery';
-import { generateCvHtml, makeInitialCv, type TailoredCv, type CvSourceProfile } from './cvMaker';
+import { makeInitialCv, type TailoredCv, type CvSourceProfile } from './cvMaker';
 import type { JobApplication } from './types';
+import { channelForJob } from './applicationChannel';
+import { saveOriginalPdf, getOriginalPdf, deleteOriginalPdf, createOriginalLayoutCv } from './originalCvPdf';
 import './autopilot.css';
 
 const QUEUE_KEY = 'app-ai:autopilot-queue:v1';
@@ -85,9 +87,16 @@ export default function AutoPilotPanel({ applications, onConfirmedSend }: {
   const [tab, setTab] = useState<'review' | 'found'>('review');
   const [email, setEmail] = useState('');
   const [emailChecked, setEmailChecked] = useState(false);
+  const [originalCvReady, setOriginalCvReady] = useState(false);
   const current = queue.find(d => d.id === active) || queue.find(d => d.status !== 'Sent-confirmed') || queue[0];
+  const currentChannel = current ? channelForJob(current.job) : null;
+  const candidateEmail = email.trim() || (currentChannel?.kind === 'email_candidate' ? currentChannel.email : '');
   const unsent = queue.filter(d => d.status !== 'Sent-confirmed');
   const sent = queue.filter(d => d.status === 'Sent-confirmed');
+
+  useEffect(() => {
+    getOriginalPdf().then(bytes => setOriginalCvReady(!!bytes)).catch(() => setOriginalCvReady(false));
+  }, []);
 
   useEffect(() => {
     try { localStorage.setItem(QUEUE_KEY, JSON.stringify(queue)); }
@@ -148,7 +157,8 @@ export default function AutoPilotPanel({ applications, onConfirmedSend }: {
 
   function choose(draft: ReviewDraft) {
     setActive(draft.id);
-    setEmail(draft.recipient || '');
+    const channel = channelForJob(draft.job);
+    setEmail(draft.recipient || (channel.kind === 'email_candidate' ? channel.email : ''));
     setEmailChecked(false);
     setTab('review');
   }
