@@ -2,7 +2,7 @@ import { useMemo, useRef, useState, useEffect, type FormEvent } from 'react';
 import { cleanFields, createApplication, isActive, needsAttention, readApplications, saveApplications, todayLocal, validWebUrl } from './data';
 import { exportCsv, importCsv } from './csv';
 import { EMPTY_FIELDS, STATUSES, type ApplicationFields, type ApplicationStatus, type JobApplication } from './types';
-import AgentPanel from './AgentPanel';
+import JobsWorkspace from './JobsWorkspace';
 
 type SortBy = 'updated' | 'company' | 'deadline' | 'followUp';
 type FilterStatus = 'All' | ApplicationStatus;
@@ -161,30 +161,16 @@ export default function App() {
 
   return (
     <div className="app-shell">
-      <header className="site-header">
-        <div className="container header-inner">
-          <a className="brand" href="#main" aria-label="APP-AI home">
-            <span className="brand-mark">A</span>
-            <span><strong>APP-AI</strong><small>JOB TRACKER</small></span>
-          </a>
-          <span className="local-pill"><span aria-hidden="true">●</span> Private on this device</span>
-        </div>
-      </header>
-
       <main id="main" className="container">
-        <section className="hero">
-          <div className="hero-copy">
-            <span className="eyebrow">YOUR CAREER WORKSPACE</span>
-            <h1>Make every <em>opportunity</em> count.</h1>
-            <p>One calm place to organize applications, follow-ups, interviews, and the next steps in your job search.</p>
-            <button type="button" className="primary-button" onClick={openNew}>+ New application</button>
-          </div>
-          <div className="hero-art" aria-hidden="true">
-            <div className="orb orb-one"></div><div className="orb orb-two"></div>
-            <div className="floating-card"><span>YOUR NEXT STEP</span><strong>Stay organized.<br />Keep moving.</strong><i>↗</i></div>
-          </div>
-        </section>
-
+        <JobsWorkspace applications={applications} onAddApplication={lead => {
+          const now = new Date().toISOString();
+          setApplications(previous => [createApplication(lead, now), ...previous]);
+          setMessage('Application recorded from the review queue.');
+        }} />
+        <details className="classic-tracker">
+          <summary>Classic application tracker · Import / Export CSV · Follow-ups</summary>
+          <div className="classic-tracker-content">
+            <button type="button" className="primary-button" onClick={openNew}>+ Manually add an application</button>
         <div className="privacy-note">
           <span aria-hidden="true">🔒</span>
           <span>Your information stays in this browser. Export a CSV backup before clearing browser data or changing devices.</span>
@@ -246,12 +232,6 @@ export default function App() {
           </section>
         )}
 
-        <AgentPanel applications={applications} onSaveLead={lead => {
-          const now = new Date().toISOString();
-          setApplications(previous => [createApplication(lead, now), ...previous]);
-          setMessage('Agent saved a Wishlist lead; it has not been submitted.');
-        }} />
-
         <section className="pipeline" aria-labelledby="pipeline-title">
           <div className="section-heading pipeline-heading">
             <div><span className="eyebrow">STAY ON TOP OF THINGS</span><h2 id="pipeline-title">Your applications <span className="heading-count">{visible.length}</span></h2></div>
@@ -310,6 +290,8 @@ export default function App() {
             </div>
           )}
         </section>
+          </div>
+        </details>
       </main>
       <footer className="container footer"><span>APP-AI · A thoughtful way to stay organized</span><span>No account · No paid services · Browser-local data</span></footer>
     </div>
