@@ -1,0 +1,28 @@
+name: Refresh free public job leads
+on:
+  schedule:
+    - cron: '25 5 * * *'
+  workflow_dispatch:
+permissions:
+  contents: write
+jobs:
+  refresh:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          persist-credentials: true
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+      - name: Fetch public Qatar-eligible remote leads
+        run: node scripts/refresh-jobs.mjs
+      - name: Commit public job snapshot only
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add public/jobs-cache.json
+          if ! git diff --cached --quiet; then
+            git commit -m "Refresh public job listings"
+            git push
+          fi

@@ -139,3 +139,20 @@ h1 em { color: #b8cbff; font-style: normal; }
   .span-two { grid-column: auto; }
   .footer { line-height: 1.6; }
 }
+
+/* Theme 1: professional blue navigation, with the original tracker intact. */
+.site-header{background:linear-gradient(110deg,#063681,#0860cf);color:#fff;border:0;box-shadow:0 6px 30px #0c3b8b22}
+.site-header .brand-mark{background:#eff5ff;color:#124ca7;box-shadow:none}
+.site-header .brand small{color:#b6dbff}
+.site-header .local-pill{color:#f6fbff;background:#ffffff1c}
+.site-header .local-pill span{color:#73efc4}
+.app-topnav{display:flex;gap:22px;align-items:center;margin-left:auto}
+.app-topnav a{color:#d8eaff;text-decoration:none;font-size:12px;font-weight:650}
+.app-topnav a:hover{color:#fff;text-decoration:underline}
+.hero{background:radial-gradient(circle at 88% 18%,#236eea,#062c6a 56%,#071b45 100%);min-height:262px;padding:42px 51px}
+.hero .primary-button{display:inline-flex;align-items:center;text-decoration:none}
+.legacy-agent-details{margin:22px 0;border:1px solid #e0eafa;border-radius:16px;background:#f6f9ff;padding:13px}
+.legacy-agent-details>summary{font-size:14px;color:#28518f;font-weight:800;cursor:pointer;padding:10px;list-style:revert}
+.legacy-agent-details .agent-panel{margin:16px 0 0}
+@media(max-width:800px){.app-topnav{gap:12px}}
+@media(max-width:600px){.app-topnav{order:3;flex-basis:100%;justify-content:space-around;padding-bottom:13px;margin:0}.site-header .header-inner{flex-wrap:wrap;min-height:85px;padding-top:12px}.app-topnav a{font-size:11px}.site-header .local-pill{margin-left:auto}.hero{min-height:235px;padding:29px 22px}}
