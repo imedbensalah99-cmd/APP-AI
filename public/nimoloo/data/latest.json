@@ -1,0 +1,67 @@
+{
+  "schemaVersion": 1,
+  "updatedAt": null,
+  "source": "Awaiting verified YouTube API sync",
+  "timezone": "Asia/Qatar",
+  "channels": [
+    {
+      "id": "nimoloo",
+      "name": "Nimoloo Kids",
+      "youtubeId": "UCRY6p6rLZkco7tkPiiQ_qeQ",
+      "subscribers": null,
+      "totalViews": null,
+      "videoCount": null,
+      "uploadMode": "private",
+      "lastUploadAt": null,
+      "lastCheckedAt": null
+    },
+    {
+      "id": "sardera",
+      "name": "SARDERA Stories",
+      "youtubeId": null,
+      "subscribers": null,
+      "totalViews": null,
+      "videoCount": null,
+      "uploadMode": "private",
+      "lastUploadAt": null,
+      "lastCheckedAt": null
+    }
+  ],
+  "videos": [],
+  "agents": [
+    {
+      "name": "Nimoloo Kids",
+      "status": "needs-attention",
+      "schedule": "09:00 / 18:00 Asia/Qatar",
+      "details": "Last phone report on 2026-10-24 at 00:51 Qatar time: crond NOT RUNNING; scheduled jobs cannot be trusted until started."
+    },
+    {
+      "name": "SARDERA Stories",
+      "status": "blocked",
+      "schedule": "Not configured",
+      "details": "Last phone report: first story has 6 images, 0 narration; remaining stories not ready; uploads disabled."
+    }
+  ],
+  "alerts": [
+    {
+      "severity": "high",
+      "title": "Cron stopped on phone",
+      "detail": "Start crond in Termux, verify Termux:Boot and remove Android battery restrictions."
+    },
+    {
+      "severity": "high",
+      "title": "Missing SARDERA narration",
+      "detail": "Audio generation and completed renders must pass preflight before any private uploads."
+    },
+    {
+      "severity": "medium",
+      "title": "YouTube sync unavailable",
+      "detail": "No authenticated statistics feed is connected to this public dashboard; metrics remain unknown rather than showing fabricated zeros."
+    },
+    {
+      "severity": "medium",
+      "title": "Upload not confirmed",
+      "detail": "A local private-upload test was previously reported, but no fresh YouTube upload receipt or video link has been verified."
+    }
+  ]
+}
