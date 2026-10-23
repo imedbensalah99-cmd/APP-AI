@@ -68,6 +68,12 @@
       "severity": "high",
       "title": "Nimoloo channel ID not verified",
       "detail": "Previously saved ID failed the official YouTube RSS request (HTTP 404). Removed the unverified channel ID to prevent wrong-channel statistics. A verified ID must come from the existing signed-in YouTube account; do not create a new channel."
+    },
+    {
+      "code": "youtube_public_sync",
+      "severity": "medium",
+      "title": "View counters require API authorization",
+      "detail": "Automatic RSS sync checks public video titles only. For views and subscribers add a YouTube Data API key as a GitHub Actions repository secret, or connect from the web dashboard. Private uploads require OAuth in Termux."
     }
   ]
 }
