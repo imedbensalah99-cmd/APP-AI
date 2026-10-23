@@ -2,7 +2,7 @@
 <html lang="ar" dir="rtl">
 <head>
 <meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
-<meta name="theme-color" content="#0c1424"><meta name="description" content="Nimoloo Kids & SARDERA verified YouTube monitoring">
+<meta name="theme-color" content="#0c1424"><meta name="apple-mobile-web-app-capable" content="yes"><link rel="manifest" href="./manifest.webmanifest"><meta name="description" content="Nimoloo Kids & SARDERA verified YouTube monitoring">
 <title>NIMOLOO CONTROL | Video Operations</title>
 <style>
 :root{color-scheme:dark;--bg:#090f1c;--panel:#141f32;--panel2:#1c2940;--border:#2c3a52;--txt:#eaf0fa;--muted:#9dabbe;--cyan:#62e4d2;--amber:#ffc078;--red:#ff8d9b;--blue:#92bbff}
@@ -13,7 +13,7 @@ button,select,input{font:inherit;border-radius:10px;border:1px solid var(--borde
 </head>
 <body><main>
 <header><div class="brand"><div class="logo">N</div><div><div class="eyebrow">VIDEO OPERATIONS · QATAR</div><h1>NIMOLOO CONTROL</h1><div class="sub">لوحة متابعة قناتَي Nimoloo Kids و SARDERA</div></div></div>
-<div class="controls"><span class="pill neutral" id="connection">بانتظار البيانات</span><button class="compact secondary" id="settingsBtn" type="button">ربط YouTube</button><button class="compact" id="refreshBtn" type="button">تحديث الآن ↻</button><button class="compact primary" id="excelBtn" type="button">تصدير Excel ↓</button></div></header>
+<div class="controls"><span class="pill neutral" id="connection">بانتظار البيانات</span><button class="compact secondary" id="settingsBtn" type="button">ربط YouTube</button><button class="compact" id="refreshBtn" type="button">تحديث الآن ↻</button><button class="compact primary" id="excelBtn" type="button">تصدير الآن ↓</button><a class="compact" style="border:1px solid var(--border);border-radius:10px;color:var(--cyan);text-decoration:none;background:var(--panel)" href="./reports/latest.xlsx" download>Excel تلقائي ↧</a></div></header>
 <div class="setting" id="setting"><input type="password" id="apiKey" autocomplete="off" placeholder="YouTube Data API key — يبقى في هذا التبويب فقط" aria-label="YouTube Data API key"><button id="connectBtn" type="button">اتصال بالقناة</button><button id="clearBtn" type="button">إلغاء الربط</button><small class="hint">اختياري، بدون حفظ المفتاح في GitHub. الإحصاءات العامة فقط؛ الفيديوهات الخاصة تحتاج OAuth داخل Termux.</small></div>
 <div class="info"><strong id="notice">البيانات الحقيقية فقط:</strong> <span id="lastSync">يجري تحميل حالة المشروع…</span></div>
 <div class="metric-title"><h2>نظرة عامة</h2><select id="channelFilter" aria-label="اختر القناة"><option value="all">كل القنوات</option><option value="nimoloo">Nimoloo Kids</option><option value="sardera">SARDERA Stories</option></select></div>
@@ -25,7 +25,7 @@ button,select,input{font:inherit;border-radius:10px;border:1px solid var(--borde
 </section>
 <div class="two"><section class="card"><h2>حالة الوكلاء والأتمتة</h2><div id="agents"></div></section><section class="card"><h2>الأخطاء وما يلزم إصلاحه</h2><div id="alerts"></div></section></div>
 <section class="section card"><div class="metric-title"><h2>الفيديوهات والمشاهدات</h2><span class="hint">أرقام YouTube ليست لحظية؛ تتأخر حسب المنصة</span></div><div class="scroll"><table><thead><tr><th>القناة</th><th>الفيديو</th><th>تاريخ الرفع</th><th>الخصوصية</th><th>المشاهدات</th><th>الإعجابات</th><th>الأداء</th></tr></thead><tbody id="videoRows"><tr><td colspan="7" class="empty">لا توجد بيانات فيديوهات مؤكدة</td></tr></tbody></table></div></section>
-<section class="section card"><h2>القنوات والمصادر</h2><div id="channels"></div><div class="explain">التحديث الآلي يفحص ملف الحالة كل دقيقة. إذا ربطت مفتاح YouTube API تُجلب الإحصاءات العامة كل 5 دقائق. لعرض الفيديوهات الخاصة يلزم إرسال ملخص آمن من Termux؛ لا تنشر رموز OAuth أو بيانات الدخول.</div></section>
+<section class="section card"><h2>القنوات والمصادر</h2><div id="channels"></div><div class="explain">الصفحة تفحص ملف الحالة كل دقيقة؛ GitHub يحاول تحديث الملف كل 3 ساعات. يمكن تحديث الإحصاءات العامة كل 5 دقائق في المتصفح بعد ربط YouTube API. لعرض الفيديوهات الخاصة يلزم إرسال ملخص آمن من Termux؛ لا تنشر رموز OAuth أو بيانات الدخول.</div></section>
 <footer class="footer">المنطقة الزمنية: Asia/Qatar (UTC+3) · هذا الموقع لا ينشر فيديوهات ولا يغيّر خصوصيتها · عمليات YouTube تتطلب مصادقة فعلية وصلاحية تشغيل الهاتف · تصدير Excel يأخذ صورة من المعلومات الظاهرة لحظة الضغط.</footer>
 </main>
 <script>
@@ -44,10 +44,10 @@ function badge(status){var t=status==="ok"?"جاهز":status==="blocked"?"متو
 function render(){
  var ch=useChannels(), vids=useVideos();
  $("views").textContent=val(sumKnown("totalViews"));$("subs").textContent=val(sumKnown("subscribers"));$("videoCount").textContent=val(sumKnown("videoCount"));
- $("confirmed").textContent=vids.length?nf.format(vids.length):"—";
+ $("confirmed").textContent=state.updatedAt?nf.format(vids.length):"—";
  $("lastSync").textContent=state.updatedAt?"آخر مزامنة: "+stamp(state.updatedAt)+" · "+(state.source||"مصدر غير محدد"):"لا يوجد اتصال موثّق ببيانات YouTube. لن تظهر أرقام افتراضية.";
  var live=!!state.updatedAt;
- $("connection").className="pill "+(live?"good":"warn");$("connection").textContent=live?"بيانات "+stamp(state.updatedAt):"غير متصل";
+ var apiStats=state.source&&state.source.includes("YouTube Data API");var stale=live&&(Date.now()-new Date(state.updatedAt).getTime()>4*60*60*1000);$("connection").className="pill "+(apiStats&&!stale?"good":"warn");$("connection").textContent=!live?"غير متصل":stale?"آخر البيانات قديمة":apiStats?"إحصاءات API":"عناوين RSS فقط";
  $("agents").innerHTML=(state.agents||[]).map(function(a){return '<div class="row"><div><strong>'+esc(a.name)+'</strong><p>'+esc(a.schedule||"")+'</p><p>'+esc(a.details||"")+'</p></div>'+badge(a.status)+'</div>'}).join("")||'<p class="empty">لا توجد بيانات للوكيل</p>';
  $("alerts").innerHTML=(state.alerts||[]).map(function(a){return '<div class="row"><div><strong>'+esc(a.title)+'</strong><p>'+esc(a.detail)+'</p></div><span class="pill '+(a.severity==="high"?"bad":"warn")+'">'+(a.severity==="high"?"مهم":"تنبيه")+'</span></div>'}).join("")||'<p class="empty">لم تصل تنبيهات</p>';
  var ordered=vids.slice().sort(function(a,b){return (b.views||0)-(a.views||0)}).slice(0,100);
@@ -84,7 +84,7 @@ async function fetchYT(force){
 $("refreshBtn").onclick=async function(){await refreshJson();await fetchYT(true)};
 $("settingsBtn").onclick=function(){$("setting").classList.toggle("open")};
 $("connectBtn").onclick=async function(){apiKey=$("apiKey").value.trim();if(!apiKey){$("lastSync").textContent="أدخل مفتاح YouTube API للتحقق المباشر";return}await fetchYT(true)};
-$("clearBtn").onclick=function(){apiKey="";$("apiKey").value="";lastApi=0;refreshJson()};
+$("clearBtn").onclick=function(){apiKey="";$("apiKey").value="";lastApi=0;state=base;refreshJson()};
 $("channelFilter").onchange=function(){selected=this.value;render()};
 function xml(v){return esc(v)}
 function letter(i){var s="";for(i++;i;i=Math.floor((i-1)/26))s=String.fromCharCode(65+(i-1)%26)+s;return s}
