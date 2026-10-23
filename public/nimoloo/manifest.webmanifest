@@ -1,0 +1,20 @@
+{
+  "name": "Nimoloo Control | YouTube Operations",
+  "short_name": "Nimoloo",
+  "id": "/APP-AI/nimoloo/",
+  "start_url": "/APP-AI/nimoloo/",
+  "scope": "/APP-AI/nimoloo/",
+  "display": "standalone",
+  "background_color": "#090f1c",
+  "theme_color": "#0c1424",
+  "lang": "ar",
+  "dir": "rtl",
+  "icons": [
+    {
+      "src": "./nimoloo-icon.svg",
+      "sizes": "any",
+      "type": "image/svg+xml",
+      "purpose": "any"
+    }
+  ]
+}
