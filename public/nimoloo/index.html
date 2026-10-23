@@ -60,7 +60,7 @@ async function fetchYT(force){
  if(!apiKey)return;
  if(!force&&Date.now()-lastApi<300000)return;
  try{
-   var updated=[],videos=[];
+   var updated=[],videos=[],verifiedCount=0;
    for(var c of base.channels.length?base.channels:state.channels){
      if(!c.youtubeId){updated.push(c);continue}
      var endpoint="https://www.googleapis.com/youtube/v3/";
@@ -68,6 +68,7 @@ async function fetchYT(force){
      var res=await get("channels",{part:"statistics,contentDetails",id:c.youtubeId});
      var item=res.items&&res.items[0];
      if(!item){updated.push(c);continue}
+     verifiedCount++;
      var s=item.statistics||{};
      updated.push(Object.assign({},c,{subscribers:s.hiddenSubscriberCount?null:(s.subscriberCount==null?null:Number(s.subscriberCount)),totalViews:s.viewCount==null?null:Number(s.viewCount),videoCount:s.videoCount==null?null:Number(s.videoCount),lastCheckedAt:new Date().toISOString()}));
      var playlist=item.contentDetails&&item.contentDetails.relatedPlaylists&&item.contentDetails.relatedPlaylists.uploads;
@@ -77,6 +78,7 @@ async function fetchYT(force){
        if(ids.length){var vr=await get("videos",{part:"snippet,statistics,status",id:ids.join(",")});for(var video of vr.items||[]){videos.push({channel:c.id,channelName:c.name,id:video.id,title:video.snippet&&video.snippet.title||"",publishedAt:video.snippet&&video.snippet.publishedAt,privacy:video.status&&video.status.privacyStatus||"public",views:video.statistics&&video.statistics.viewCount==null?null:Number(video.statistics.viewCount),likes:video.statistics&&video.statistics.likeCount==null?null:Number(video.statistics.likeCount)})}}
      }
    }
+   if(verifiedCount===0)throw Error("No verified YouTube channel ID available; verify the existing channel via your authorized account first.");
    state=Object.assign({},state,{channels:updated,videos:videos,updatedAt:new Date().toISOString(),source:"YouTube Data API (browser)"});
    lastApi=Date.now();render();
  }catch(e){$("notice").textContent="تعذر تحديث YouTube API:";$("lastSync").textContent=String(e.message||e)+" · تأكد من تفعيل API والمفتاح والقيود";apiKey="";$("apiKey").value="";}
@@ -117,4 +119,5 @@ function excel(){
 $("excelBtn").onclick=excel;
 async function start(){await refreshJson();setInterval(async function(){await refreshJson();await fetchYT(false)},60000)}
 start();
+if("serviceWorker" in navigator){window.addEventListener("load",function(){navigator.serviceWorker.register("./sw.js").catch(function(){})})}
 </script></body></html>
