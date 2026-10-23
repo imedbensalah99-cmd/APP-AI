@@ -1,0 +1,57 @@
+name: Nimoloo YouTube metrics and Excel snapshot
+on:
+  schedule:
+    - cron: '10 */3 * * *'
+  workflow_dispatch:
+  push:
+    branches: [main]
+    paths:
+      - scripts/refresh-nimoloo.mjs
+      - scripts/export-nimoloo.py
+      - .github/workflows/nimoloo-sync.yml
+permissions:
+  contents: write
+  actions: write
+concurrency:
+  group: nimoloo-sync
+  cancel-in-progress: false
+jobs:
+  sync:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          persist-credentials: true
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - name: Refresh official read-only YouTube data
+        env:
+          YOUTUBE_DATA_API_KEY: ${{ secrets.YOUTUBE_DATA_API_KEY }}
+        run: node scripts/refresh-nimoloo.mjs
+      - name: Export matching downloadable Excel workbook
+        run: python scripts/export-nimoloo.py
+      - name: Commit verified metadata only
+        id: save
+        shell: bash
+        run: |
+          git config user.name 'github-actions[bot]'
+          git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
+          git add public/nimoloo/data/latest.json public/nimoloo/reports/latest.xlsx
+          if ! git diff --cached --quiet; then
+            git commit -m 'Update Nimoloo read-only metrics and Excel report'
+            git pull --rebase origin main
+            git push origin main
+            echo 'changed=true' >> "$GITHUB_OUTPUT"
+          else
+            echo 'changed=false' >> "$GITHUB_OUTPUT"
+          fi
+      - name: Trigger Pages publish when data changed
+        if: steps.save.outputs.changed == 'true'
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: gh workflow run pages.yml --ref main
