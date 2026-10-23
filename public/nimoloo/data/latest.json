@@ -62,6 +62,12 @@
       "severity": "medium",
       "title": "Upload not confirmed",
       "detail": "A local private-upload test was previously reported, but no fresh YouTube upload receipt or video link has been verified."
+    },
+    {
+      "code": "youtube_public_sync",
+      "severity": "medium",
+      "title": "Public YouTube refresh incomplete",
+      "detail": "Nimoloo Kids: YouTube HTTP 404"
     }
   ]
 }
