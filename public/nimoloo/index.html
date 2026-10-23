@@ -1,0 +1,120 @@
+<!doctype html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<meta name="theme-color" content="#0c1424"><meta name="description" content="Nimoloo Kids & SARDERA verified YouTube monitoring">
+<title>NIMOLOO CONTROL | Video Operations</title>
+<style>
+:root{color-scheme:dark;--bg:#090f1c;--panel:#141f32;--panel2:#1c2940;--border:#2c3a52;--txt:#eaf0fa;--muted:#9dabbe;--cyan:#62e4d2;--amber:#ffc078;--red:#ff8d9b;--blue:#92bbff}
+*{box-sizing:border-box}body{margin:0;background:radial-gradient(circle at 90% 0%,#172c42,transparent 40%),var(--bg);color:var(--txt);font-family:system-ui,-apple-system,"Segoe UI",Tahoma,sans-serif;line-height:1.6}
+main{max-width:1330px;margin:auto;padding:24px clamp(14px,3vw,36px) 76px}header{display:flex;gap:16px;align-items:center;justify-content:space-between;flex-wrap:wrap;padding-bottom:23px;border-bottom:1px solid var(--border)}.brand{display:flex;gap:14px;align-items:center}.logo{background:linear-gradient(135deg,#32b9bb,#5278df);height:52px;width:52px;border-radius:16px;display:grid;place-items:center;font-weight:900;color:#04151e;font-size:24px}.eyebrow{letter-spacing:2px;color:var(--cyan);font-size:12px;font-weight:800}h1{font-size:clamp(21px,3vw,33px);letter-spacing:-.5px;margin:0}h2{font-size:18px;margin:0 0 15px}.sub{font-size:13px;color:var(--muted)}.controls{display:flex;align-items:center;gap:8px;flex-wrap:wrap}
+button,select,input{font:inherit;border-radius:10px;border:1px solid var(--border);background:var(--panel);color:var(--txt);padding:10px 13px}button{cursor:pointer}button:hover{border-color:var(--cyan)}button:focus-visible,input:focus-visible,select:focus-visible{outline:2px solid var(--cyan)}.primary{background:var(--cyan);color:#051823;font-weight:900;border-color:var(--cyan)}.secondary{background:#263b51}.compact{font-size:13px;padding:8px 12px}.info{border:1px solid #31566a;background:#133145;padding:13px 18px;margin:20px 0;border-radius:14px;font-size:13px}.info strong{color:#fff}.kpis{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:14px;margin:20px 0}.card{background:linear-gradient(145deg,#17243a,#101a2a);border:1px solid var(--border);border-radius:16px;padding:19px;min-width:0}.card label{color:var(--muted);font-size:13px}.val{font-size:clamp(25px,3vw,39px);font-weight:800;letter-spacing:-1px;margin:8px 0 2px;font-variant-numeric:tabular-nums}.val small{font-size:13px;color:var(--muted);font-weight:400}.two{display:grid;grid-template-columns:1.25fr 1fr;gap:15px}.stack{display:grid;gap:15px}.pill{display:inline-flex;border-radius:100px;padding:3px 9px;font-size:12px;border:1px solid var(--border);font-weight:700}.bad{color:var(--red);background:#482538}.warn{color:var(--amber);background:#453724}.good{color:var(--cyan);background:#1b3f3a}.neutral{color:var(--muted);background:#263249}.row{display:flex;justify-content:space-between;align-items:center;gap:12px;border-bottom:1px solid var(--border);padding:12px 0}.row:last-child{border:0}.row strong{font-size:14px}.row div p{color:var(--muted);font-size:13px;margin:2px 0 0}.section{margin:22px 0}.gridStat{display:flex;gap:20px;flex-wrap:wrap;color:var(--muted);font-size:12px}.gridStat b{color:var(--txt)}.scroll{overflow-x:auto}table{width:100%;border-collapse:collapse;min-width:700px;text-align:right}th,td{padding:13px 11px;border-bottom:1px solid var(--border);font-size:13px}th{color:var(--muted);font-weight:600}td a{color:var(--cyan)}.empty{color:var(--muted);text-align:center;padding:28px}.tag{font-size:12px;color:var(--cyan);border:1px solid #3c7f79;border-radius:7px;padding:3px 8px}.footer{color:var(--muted);font-size:12px;border-top:1px solid var(--border);padding-top:19px;margin-top:28px}.setting{display:none;gap:10px;flex-wrap:wrap;margin-top:12px}.setting.open{display:flex}.setting input{min-width:240px;flex:1}.metric-title{display:flex;gap:10px;align-items:center;justify-content:space-between;flex-wrap:wrap}.bar{height:9px;background:#22334a;border-radius:10px;overflow:hidden;margin-top:6px}.bar span{height:100%;display:block;background:linear-gradient(90deg,#4484db,#51dac3);border-radius:10px}.hint{color:var(--muted);font-size:12px}.tiny{font-size:12px}.explain{background:#172a3b;border-radius:10px;padding:10px 14px;color:#a3dacf;font-size:12px;margin-top:15px}@media(max-width:850px){.kpis{grid-template-columns:repeat(2,minmax(0,1fr))}.two{grid-template-columns:1fr}}@media(max-width:440px){.val{font-size:26px}main{padding:17px 11px 50px}header{align-items:flex-start}.controls{width:100%}.controls button{flex:1}.card{padding:14px}.logo{width:44px;height:44px}.info{padding:12px}}
+</style>
+</head>
+<body><main>
+<header><div class="brand"><div class="logo">N</div><div><div class="eyebrow">VIDEO OPERATIONS · QATAR</div><h1>NIMOLOO CONTROL</h1><div class="sub">لوحة متابعة قناتَي Nimoloo Kids و SARDERA</div></div></div>
+<div class="controls"><span class="pill neutral" id="connection">بانتظار البيانات</span><button class="compact secondary" id="settingsBtn" type="button">ربط YouTube</button><button class="compact" id="refreshBtn" type="button">تحديث الآن ↻</button><button class="compact primary" id="excelBtn" type="button">تصدير Excel ↓</button></div></header>
+<div class="setting" id="setting"><input type="password" id="apiKey" autocomplete="off" placeholder="YouTube Data API key — يبقى في هذا التبويب فقط" aria-label="YouTube Data API key"><button id="connectBtn" type="button">اتصال بالقناة</button><button id="clearBtn" type="button">إلغاء الربط</button><small class="hint">اختياري، بدون حفظ المفتاح في GitHub. الإحصاءات العامة فقط؛ الفيديوهات الخاصة تحتاج OAuth داخل Termux.</small></div>
+<div class="info"><strong id="notice">البيانات الحقيقية فقط:</strong> <span id="lastSync">يجري تحميل حالة المشروع…</span></div>
+<div class="metric-title"><h2>نظرة عامة</h2><select id="channelFilter" aria-label="اختر القناة"><option value="all">كل القنوات</option><option value="nimoloo">Nimoloo Kids</option><option value="sardera">SARDERA Stories</option></select></div>
+<section class="kpis" aria-label="مؤشرات الأداء">
+<div class="card"><label>إجمالي المشاهدات</label><div class="val" id="views">—</div><span class="hint">حسب أحدث مزامنة رسمية</span></div>
+<div class="card"><label>المشتركون</label><div class="val" id="subs">—</div><span class="hint">قد يخفي YouTube بعض القيم</span></div>
+<div class="card"><label>الفيديوهات على YouTube</label><div class="val" id="videoCount">—</div><span class="hint">المتاح من واجهة القناة</span></div>
+<div class="card"><label>الفيديوهات المؤكدة في السجل</label><div class="val" id="confirmed">—</div><span class="hint">لا نعدّ المحاولات نجاحًا</span></div>
+</section>
+<div class="two"><section class="card"><h2>حالة الوكلاء والأتمتة</h2><div id="agents"></div></section><section class="card"><h2>الأخطاء وما يلزم إصلاحه</h2><div id="alerts"></div></section></div>
+<section class="section card"><div class="metric-title"><h2>الفيديوهات والمشاهدات</h2><span class="hint">أرقام YouTube ليست لحظية؛ تتأخر حسب المنصة</span></div><div class="scroll"><table><thead><tr><th>القناة</th><th>الفيديو</th><th>تاريخ الرفع</th><th>الخصوصية</th><th>المشاهدات</th><th>الإعجابات</th><th>الأداء</th></tr></thead><tbody id="videoRows"><tr><td colspan="7" class="empty">لا توجد بيانات فيديوهات مؤكدة</td></tr></tbody></table></div></section>
+<section class="section card"><h2>القنوات والمصادر</h2><div id="channels"></div><div class="explain">التحديث الآلي يفحص ملف الحالة كل دقيقة. إذا ربطت مفتاح YouTube API تُجلب الإحصاءات العامة كل 5 دقائق. لعرض الفيديوهات الخاصة يلزم إرسال ملخص آمن من Termux؛ لا تنشر رموز OAuth أو بيانات الدخول.</div></section>
+<footer class="footer">المنطقة الزمنية: Asia/Qatar (UTC+3) · هذا الموقع لا ينشر فيديوهات ولا يغيّر خصوصيتها · عمليات YouTube تتطلب مصادقة فعلية وصلاحية تشغيل الهاتف · تصدير Excel يأخذ صورة من المعلومات الظاهرة لحظة الضغط.</footer>
+</main>
+<script>
+"use strict";
+var base={channels:[],videos:[],agents:[],alerts:[],updatedAt:null,source:""};
+var state=base, selected="all", lastApi=0, apiKey="";
+var $=function(id){return document.getElementById(id)};
+var nf=new Intl.NumberFormat("en-US");
+function val(v){return v===null||v===undefined||v===""?"—":nf.format(Number(v)||0)}
+function esc(v){return String(v==null?"":v).replace(/[&<>"']/g,function(c){return {"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]})}
+function stamp(x){if(!x)return "لم تحدث مزامنة مؤكدة";var d=new Date(x);return isNaN(d)?"غير محدد":new Intl.DateTimeFormat("ar",{dateStyle:"medium",timeStyle:"short",timeZone:"Asia/Qatar"}).format(d)}
+function useChannels(){return (state.channels||[]).filter(function(c){return selected==="all"||c.id===selected})}
+function useVideos(){return (state.videos||[]).filter(function(v){return selected==="all"||v.channel===selected})}
+function sumKnown(key){var items=useChannels();return items.length>0&&items.every(function(v){return typeof v[key]==="number"&&Number.isFinite(v[key])})?items.reduce(function(s,v){return s+v[key]},0):null}
+function badge(status){var t=status==="ok"?"جاهز":status==="blocked"?"متوقف":"يحتاج متابعة";return '<span class="pill '+(status==="ok"?"good":status==="blocked"?"bad":"warn")+'">'+t+'</span>'}
+function render(){
+ var ch=useChannels(), vids=useVideos();
+ $("views").textContent=val(sumKnown("totalViews"));$("subs").textContent=val(sumKnown("subscribers"));$("videoCount").textContent=val(sumKnown("videoCount"));
+ $("confirmed").textContent=vids.length?nf.format(vids.length):"—";
+ $("lastSync").textContent=state.updatedAt?"آخر مزامنة: "+stamp(state.updatedAt)+" · "+(state.source||"مصدر غير محدد"):"لا يوجد اتصال موثّق ببيانات YouTube. لن تظهر أرقام افتراضية.";
+ var live=!!state.updatedAt;
+ $("connection").className="pill "+(live?"good":"warn");$("connection").textContent=live?"بيانات "+stamp(state.updatedAt):"غير متصل";
+ $("agents").innerHTML=(state.agents||[]).map(function(a){return '<div class="row"><div><strong>'+esc(a.name)+'</strong><p>'+esc(a.schedule||"")+'</p><p>'+esc(a.details||"")+'</p></div>'+badge(a.status)+'</div>'}).join("")||'<p class="empty">لا توجد بيانات للوكيل</p>';
+ $("alerts").innerHTML=(state.alerts||[]).map(function(a){return '<div class="row"><div><strong>'+esc(a.title)+'</strong><p>'+esc(a.detail)+'</p></div><span class="pill '+(a.severity==="high"?"bad":"warn")+'">'+(a.severity==="high"?"مهم":"تنبيه")+'</span></div>'}).join("")||'<p class="empty">لم تصل تنبيهات</p>';
+ var ordered=vids.slice().sort(function(a,b){return (b.views||0)-(a.views||0)}).slice(0,100);
+ var max=Math.max(1,...ordered.map(function(v){return v.views||0}));
+ $("videoRows").innerHTML=ordered.map(function(v){var href=/^[\w-]{11}$/.test(v.id||"")?"https://www.youtube.com/watch?v="+encodeURIComponent(v.id):null;return '<tr><td>'+esc(v.channelName||v.channel)+'</td><td>'+(href?'<a target="_blank" rel="noopener noreferrer" href="'+href+'">'+esc(v.title||v.id)+'</a>':esc(v.title||"—"))+'</td><td>'+esc(v.publishedAt?stamp(v.publishedAt):"—")+'</td><td>'+esc(v.privacy||"غير معلوم")+'</td><td>'+val(v.views)+'</td><td>'+val(v.likes)+'</td><td><div class="bar"><span style="width:'+Math.round((v.views||0)/max*100)+'%"></span></div></td></tr>'}).join("")||'<tr><td class="empty" colspan="7">لا توجد فيديوهات أكدها مصدر البيانات بعد</td></tr>';
+ $("channels").innerHTML=ch.map(function(c){return '<div class="row"><div><strong>'+esc(c.name)+'</strong><p>'+esc(c.youtubeId||"معرّف القناة غير متوفر")+' · '+esc(c.uploadMode==="private"?"رفع خاص افتراضيًا":"")+'</p></div><span class="tag">'+(c.youtubeId?'<a style="color:inherit" target="_blank" rel="noopener" href="https://www.youtube.com/channel/'+encodeURIComponent(c.youtubeId)+'">فتح القناة ↗</a>':"قيد الإعداد")+'</span></div>'}).join("");
+}
+async function refreshJson(){try{var r=await fetch("./data/latest.json?t="+Date.now(),{cache:"no-store"});if(!r.ok)throw Error("HTTP "+r.status);var j=await r.json();if(j.schemaVersion!==1)throw Error("Invalid schema");var wasLive=state.source==="YouTube Data API (browser)";if(!wasLive)state=j;else {state.agents=j.agents||[];state.alerts=j.alerts||[]}render()}catch(e){$("notice").textContent="تعذر قراءة ملف الحالة:";$("lastSync").textContent=String(e.message||e)}}
+async function fetchYT(force){
+ if(!apiKey)return;
+ if(!force&&Date.now()-lastApi<300000)return;
+ try{
+   var updated=[],videos=[];
+   for(var c of base.channels.length?base.channels:state.channels){
+     if(!c.youtubeId){updated.push(c);continue}
+     var endpoint="https://www.googleapis.com/youtube/v3/";
+     var get=async function(path,params){var q=new URLSearchParams(Object.assign({key:apiKey},params));var r=await fetch(endpoint+path+"?"+q);var j=await r.json();if(!r.ok)throw Error(j.error&&j.error.message||"HTTP "+r.status);return j};
+     var res=await get("channels",{part:"statistics,contentDetails",id:c.youtubeId});
+     var item=res.items&&res.items[0];
+     if(!item){updated.push(c);continue}
+     var s=item.statistics||{};
+     updated.push(Object.assign({},c,{subscribers:s.hiddenSubscriberCount?null:(s.subscriberCount==null?null:Number(s.subscriberCount)),totalViews:s.viewCount==null?null:Number(s.viewCount),videoCount:s.videoCount==null?null:Number(s.videoCount),lastCheckedAt:new Date().toISOString()}));
+     var playlist=item.contentDetails&&item.contentDetails.relatedPlaylists&&item.contentDetails.relatedPlaylists.uploads;
+     if(playlist){
+       var pl=await get("playlistItems",{part:"snippet,contentDetails",playlistId:playlist,maxResults:"50"});
+       var ids=(pl.items||[]).map(function(v){return v.contentDetails&&v.contentDetails.videoId}).filter(Boolean);
+       if(ids.length){var vr=await get("videos",{part:"snippet,statistics,status",id:ids.join(",")});for(var video of vr.items||[]){videos.push({channel:c.id,channelName:c.name,id:video.id,title:video.snippet&&video.snippet.title||"",publishedAt:video.snippet&&video.snippet.publishedAt,privacy:video.status&&video.status.privacyStatus||"public",views:video.statistics&&video.statistics.viewCount==null?null:Number(video.statistics.viewCount),likes:video.statistics&&video.statistics.likeCount==null?null:Number(video.statistics.likeCount)})}}
+     }
+   }
+   state=Object.assign({},state,{channels:updated,videos:videos,updatedAt:new Date().toISOString(),source:"YouTube Data API (browser)"});
+   lastApi=Date.now();render();
+ }catch(e){$("notice").textContent="تعذر تحديث YouTube API:";$("lastSync").textContent=String(e.message||e)+" · تأكد من تفعيل API والمفتاح والقيود";apiKey="";$("apiKey").value="";}
+}
+$("refreshBtn").onclick=async function(){await refreshJson();await fetchYT(true)};
+$("settingsBtn").onclick=function(){$("setting").classList.toggle("open")};
+$("connectBtn").onclick=async function(){apiKey=$("apiKey").value.trim();if(!apiKey){$("lastSync").textContent="أدخل مفتاح YouTube API للتحقق المباشر";return}await fetchYT(true)};
+$("clearBtn").onclick=function(){apiKey="";$("apiKey").value="";lastApi=0;refreshJson()};
+$("channelFilter").onchange=function(){selected=this.value;render()};
+function xml(v){return esc(v)}
+function letter(i){var s="";for(i++;i;i=Math.floor((i-1)/26))s=String.fromCharCode(65+(i-1)%26)+s;return s}
+function worksheet(rows){var result=['<?xml version="1.0" encoding="UTF-8" standalone="yes"?>','<worksheet xmlns="http://schemas.openxmlformats.org/spreadsheetml/2006/main"><sheetData>'];rows.forEach(function(row,ri){result.push('<row r="'+(ri+1)+'">');row.forEach(function(value,ci){var cell=letter(ci)+(ri+1);if(typeof value==="number"&&Number.isFinite(value))result.push('<c r="'+cell+'"><v>'+value+'</v></c>');else result.push('<c r="'+cell+'" t="inlineStr"><is><t>'+xml(value===null||value===undefined?"":value)+'</t></is></c>')});result.push("</row>")});result.push("</sheetData></worksheet>");return result.join("")}
+function crc(bytes){var c=~0;for(var b of bytes){c^=b;for(var i=0;i<8;i++)c=(c>>>1)^((c&1)?0xEDB88320:0)}return (~c)>>>0}
+function zip(files){var enc=new TextEncoder(),local=[],central=[],offset=0;function u16(n){return [n&255,(n>>>8)&255]}function u32(n){return [n&255,(n>>>8)&255,(n>>>16)&255,(n>>>24)&255]}function pack(parts){return Uint8Array.from(parts.flatMap(function(x){return Array.from(x)}))}
+ for(var f of files){var name=enc.encode(f[0]),data=enc.encode(f[1]),sum=crc(data);
+ var head=pack([u32(0x04034b50),u16(20),u16(0),u16(0),u16(0),u16(0),u32(sum),u32(data.length),u32(data.length),u16(name.length),u16(0),name]);
+ local.push(head,data);
+ central.push(pack([u32(0x02014b50),u16(20),u16(20),u16(0),u16(0),u16(0),u16(0),u32(sum),u32(data.length),u32(data.length),u16(name.length),u16(0),u16(0),u16(0),u16(0),u32(0),u32(offset),name]));
+ offset+=head.length+data.length}
+ var cs=central.reduce(function(s,x){return s+x.length},0);
+ return new Blob([...local,...central,pack([u32(0x06054b50),u16(0),u16(0),u16(files.length),u16(files.length),u32(cs),u32(offset),u16(0)])],{type:"application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"})}
+function excel(){
+ var summary=[["NIMOLOO CONTROL — YouTube operations"],["Exported UTC",new Date().toISOString()],["Source",state.source],["Data updated",state.updatedAt||"Not verified"],[],["Channel","Channel ID","Views","Subscribers","Video count","Last check"]];
+ (state.channels||[]).forEach(function(c){summary.push([c.name,c.youtubeId||"",c.totalViews,c.subscribers,c.videoCount,c.lastCheckedAt||""])});
+ var vids=[["Channel","Video ID","Title","Published","Visibility","Views","Likes","Video URL"]];
+ (state.videos||[]).forEach(function(v){vids.push([v.channelName||v.channel,v.id,v.title,v.publishedAt||"",v.privacy||"",v.views,v.likes,v.id?"https://www.youtube.com/watch?v="+v.id:""])});
+ var agents=[["Agent","Status","Schedule","Details"]];(state.agents||[]).forEach(function(a){agents.push([a.name,a.status,a.schedule,a.details])});
+ var alerts=[["Severity","Issue","Resolution"]];(state.alerts||[]).forEach(function(a){alerts.push([a.severity,a.title,a.detail])});
+ var sheets=[summary,vids,agents,alerts],names=["Overview","Videos","Agents","Alerts"];
+ var types='<?xml version="1.0" encoding="UTF-8"?><Types xmlns="http://schemas.openxmlformats.org/package/2006/content-types"><Default Extension="rels" ContentType="application/vnd.openxmlformats-package.relationships+xml"/><Default Extension="xml" ContentType="application/xml"/><Override PartName="/xl/workbook.xml" ContentType="application/vnd.openxmlformats-officedocument.spreadsheetml.sheet.main+xml"/>'+sheets.map(function(s,i){return '<Override PartName="/xl/worksheets/sheet'+(i+1)+'.xml" ContentType="application/vnd.openxmlformats-officedocument.spreadsheetml.worksheet+xml"/>'}).join("")+'</Types>';
+ var rels='<?xml version="1.0" encoding="UTF-8"?><Relationships xmlns="http://schemas.openxmlformats.org/package/2006/relationships"><Relationship Id="rId1" Type="http://schemas.openxmlformats.org/officeDocument/2006/relationships/officeDocument" Target="xl/workbook.xml"/></Relationships>';
+ var book='<?xml version="1.0" encoding="UTF-8"?><workbook xmlns="http://schemas.openxmlformats.org/spreadsheetml/2006/main" xmlns:r="http://schemas.openxmlformats.org/officeDocument/2006/relationships"><sheets>'+names.map(function(n,i){return '<sheet name="'+n+'" sheetId="'+(i+1)+'" r:id="rId'+(i+1)+'"/>'}).join("")+'</sheets></workbook>';
+ var br='<?xml version="1.0" encoding="UTF-8"?><Relationships xmlns="http://schemas.openxmlformats.org/package/2006/relationships">'+names.map(function(n,i){return '<Relationship Id="rId'+(i+1)+'" Type="http://schemas.openxmlformats.org/officeDocument/2006/relationships/worksheet" Target="worksheets/sheet'+(i+1)+'.xml"/>'}).join("")+'</Relationships>';
+ var files=[["[Content_Types].xml",types],["_rels/.rels",rels],["xl/workbook.xml",book],["xl/_rels/workbook.xml.rels",br]];
+ sheets.forEach(function(s,i){files.push(["xl/worksheets/sheet"+(i+1)+".xml",worksheet(s)])});
+ var link=document.createElement("a");link.href=URL.createObjectURL(zip(files));link.download="NIMOLOO_YouTube_Report_"+new Date().toISOString().slice(0,10)+".xlsx";document.body.appendChild(link);link.click();setTimeout(function(){URL.revokeObjectURL(link.href);link.remove()},1000);
+}
+$("excelBtn").onclick=excel;
+async function start(){await refreshJson();setInterval(async function(){await refreshJson();await fetchYT(false)},60000)}
+start();
+</script></body></html>
