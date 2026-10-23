@@ -8,6 +8,7 @@ on:
     paths:
       - scripts/refresh-nimoloo.mjs
       - scripts/export-nimoloo.py
+      - scripts/verify-nimoloo.mjs
       - .github/workflows/nimoloo-sync.yml
 permissions:
   contents: write
@@ -35,6 +36,20 @@ jobs:
         run: node scripts/refresh-nimoloo.mjs
       - name: Export matching downloadable Excel workbook
         run: python scripts/export-nimoloo.py
+      - name: Validate dashboard data, JavaScript, PWA, and Excel
+        run: |
+          node --check scripts/refresh-nimoloo.mjs
+          python -m py_compile scripts/export-nimoloo.py
+          node scripts/verify-nimoloo.mjs
+          python - <<'PY'
+          import zipfile
+          p='public/nimoloo/reports/latest.xlsx'
+          with zipfile.ZipFile(p) as z:
+              assert z.testzip() is None
+              assert 'xl/workbook.xml' in z.namelist()
+              assert len([n for n in z.namelist() if n.startswith('xl/worksheets/sheet')]) == 6
+          print('PASS: Excel ZIP and six worksheets')
+          PY
       - name: Commit verified metadata only
         id: save
         shell: bash
