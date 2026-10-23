@@ -3,7 +3,7 @@
 # Installs/restarts cron only, preserves all existing schedules and OAuth.
 # NEVER publishes videos, modifies existing upload script, or sends local secrets.
 set -Eeuo pipefail
-PREFIX="\${PREFIX:-/data/data/com.termux/files/usr}"
+PREFIX="/data/data/com.termux/files/usr"
 ROOT="$HOME/Kids_Video_Agent"
 BOOTDIR="$HOME/.termux/boot"
 LOG="$HOME/.nimoloo-control-health.log"
