@@ -1,0 +1,42 @@
+name: OMDA NOIR — Android debug APK
+on:
+  push:
+    branches: [omda-noir-launcher]
+    paths:
+      - 'launcher/source.zip.b64'
+      - '.github/workflows/build-omda-noir.yml'
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  android-beta:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: '17'
+      - uses: android-actions/setup-android@v3
+      - name: Install Android platform
+        run: sdkmanager 'platforms;android-35' 'build-tools;35.0.0'
+      - uses: gradle/actions/setup-gradle@v4
+        with:
+          gradle-version: '8.9'
+      - name: Unpack versioned launcher sources
+        run: |
+          mkdir -p launcher/unpacked
+          base64 -d launcher/source.zip.b64 > /tmp/omda-noir-source.zip
+          unzip -q /tmp/omda-noir-source.zip -d launcher/unpacked
+          test -f launcher/unpacked/OMDA-NOIR-Launcher/app/build.gradle
+      - name: Compile OMDA NOIR APK
+        working-directory: launcher/unpacked/OMDA-NOIR-Launcher
+        run: gradle --no-daemon --stacktrace assembleDebug
+      - name: Publish APK artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: OMDA-NOIR-v0.1-beta-debug-APK
+          path: launcher/unpacked/OMDA-NOIR-Launcher/app/build/outputs/apk/debug/app-debug.apk
+          if-no-files-found: error
