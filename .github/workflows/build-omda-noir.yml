@@ -37,6 +37,11 @@ jobs:
       - name: Compile OMDA NOIR APK
         working-directory: launcher/unpacked/OMDA-NOIR-Launcher
         run: gradle --no-daemon --stacktrace assembleDebug
+      - name: Verify APK signature and Android package
+        run: |
+          APK="launcher/unpacked/OMDA-NOIR-Launcher/app/build/outputs/apk/debug/app-debug.apk"
+          "$ANDROID_HOME/build-tools/35.0.0/apksigner" verify --verbose --print-certs "$APK"
+          "$ANDROID_HOME/build-tools/35.0.0/aapt" dump badging "$APK" | head -n 12
       - name: Publish APK artifact
         uses: actions/upload-artifact@v4
         with:
