@@ -19,10 +19,12 @@ jobs:
         with:
           distribution: temurin
           java-version: '17'
-      - name: Use preinstalled Android SDK
+      - name: Install SDK platform using runner's command-line tools
         run: |
-          echo "ANDROID_HOME=${ANDROID_HOME}"
-          sdkmanager 'platforms;android-35' 'build-tools;35.0.0'
+          SDK_MANAGER="$(find "$ANDROID_HOME/cmdline-tools" -type f -name sdkmanager | head -1)"
+          test -n "$SDK_MANAGER"
+          echo "Using $SDK_MANAGER"
+          "$SDK_MANAGER" 'platforms;android-35' 'build-tools;35.0.0'
       - uses: gradle/actions/setup-gradle@v4
         with:
           gradle-version: '8.9'
