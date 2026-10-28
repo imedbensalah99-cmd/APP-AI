@@ -35,7 +35,7 @@ class FakeGoogle:
         self.seq.append((request.get_method(), url))
         if url == drive.TOKEN_URL:
             return Reply(body=b'{"access_token":"unit-test-access-token-long-value"}')
-        if url.startswith(drive.UPLOAD_ROOT+"?"):
+        if request.get_method() == "POST" and url.startswith(drive.UPLOAD_ROOT+"?"):
             base = "https://www.googleapis.com" if self.trusted else "https://attacker.test"
             return Reply(headers={"Location": base+"/upload/drive/v3/files?upload_id=unit"})
         if "upload_id=unit" in url:
@@ -100,6 +100,7 @@ if __name__ == "__main__": unittest.main()
 class FakeDownload:
     def __init__(self, file, tamper=False):
         self.raw = file.read_bytes()
+        self.file = file
         self.tamper = tamper
         self.calls = []
     def __call__(self, request, timeout=45):
