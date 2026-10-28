@@ -20,7 +20,7 @@ FILE_ROOT = "https://www.googleapis.com/drive/v3/files"
 TOKEN_URL = "https://oauth2.googleapis.com/token"
 CHUNK_SIZE = 5 * 1024 * 1024
 MAX_FILE_BYTES = 2 * 1024 * 1024 * 1024
-KINDS = {"video": "video/mp4", "narration": "audio/wav", "captions": "application/x-subrip",
+KINDS = {"video": "video/mp4", "narration": "audio/wav", "music": "audio/wav", "captions": "application/x-subrip",
          "manifest": "application/json", "quality_report": "application/json"}
 class StorageBlocked(RuntimeError):
     """Fail closed with non-secret error codes only."""
@@ -188,7 +188,7 @@ def download_verified(file_id: str, *, folder_id: str, job_id: str, kind: str,
     target_dir = Path(workspace).resolve(strict=True)
     if not target_dir.is_dir(): raise StorageBlocked("DRIVE_WORKSPACE_INVALID")
     filename = job_id + "_" + kind + "." + {
-        "video": "mp4", "narration": "wav", "captions": "srt",
+        "video": "mp4", "narration": "wav", "music": "wav", "captions": "srt",
         "manifest": "json", "quality_report": "json"}[kind]
     target = target_dir / filename
     temp = target_dir / (filename + ".part")
