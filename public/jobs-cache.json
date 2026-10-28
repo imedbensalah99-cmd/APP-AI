@@ -1,7 +1,26 @@
 {
-  "generatedAt": "2026-10-27T10:43:20.247Z",
+  "generatedAt": "2026-10-28T11:27:33.822Z",
   "source": "Himalayas public API",
   "jobs": [
+    {
+      "id": "himalayas:https://himalayas.app/companies/safetywing/jobs/ai-support-operations-specialist",
+      "company": "SafetyWing",
+      "role": "AI Support Operations Specialist",
+      "location": "Remote · worldwide listing",
+      "sourceUrl": "https://himalayas.app/companies/safetywing/jobs/ai-support-operations-specialist?utm_source=api",
+      "description": " At   SafetyWing  (YC W18) , we’re building a global social safety net for remote workers—simple health, insurance, and retirement products designed to replace national welfare systems. Our mission is to remove geographical borders as a barrier to equal opportunity and freedom for everyone. If we succeed, we believe this will be one of the most important tasks of our time.  🌎 About this Role   Somewhere in the world right now, a  SafetyWing  member is messaging us. Maybe they're stuck abroad and need help fast, or they're trying to understand what their plan covers. Often the first one to answer is our AI agent, built on Intercom Fin.   We're looking for an AI Support Operations Specialist to fully own the AI agent: to make it sharper, more helpful, more human, and to keep us at the front as AI support keeps changing. You’ll own how the AI Agent performs: what it resolves, how well it resolves it, and when it hands off. You’ll also measure the difference it makes for members.   👩‍💻 What you’ll do:  \n  Turn our AI agent into a top performer  \n \n Make sure our AI agent always has the most up to date information about our products, by checking with our internal policy experts \n Look at where it succeeds, hands off or misses, find the root cause and add it to our roadmap \n Test changes before and after launch, and keep record of what changed and what it achieved \n Spot the next opportunities to expand the AI agent into new products and more complex support journeys \n \n  Shape how it behaves  \n \n Write and refine the AI agent's guidance, tone, and handoff behavior so every answer sounds like  SafetyWing : warm, clear, and accurate \n Build, test, and maintain procedures and Intercom workflows, and partner with Engineering when you need integrations or technical work \n Make sure members reach a person smoothly whenever the AI agent isn't the right one to help \n \n  Stay ahead of AI support  \n \n Keep track of new Intercom capabilities and the wider AI support field \n Separate real breakthroughs from hype, run small pilots, and recommend what we should adopt next \n Share what you learn in a way the team can act on right away \n \n  Work with others  \n \n Turn your findings into clear, prioritized requests for knowledge owners, and coordinate the updates that improve the AI agent's answers \n Work with Product, Engineering, and Compliance on bugs, data questions, and new capabilities. \n Report on the AI agent's performance to Customer Care leadership \n Build a feedback loop so anyone in Customer Care can flag an issue and see how it was resolved \n \n \n 🧪  We are looking for someone who: \n \n \n Has configured and improved Intercom Fin, including Guidance, workflows, or Procedures, and can show the results \n Writes responses that are clear, accurate, and human, and can tell when one isn't \n Finds patterns in the data, gets to the root cause, tests a fix, and measures whether it worked \n Is comfortable with technical setup and can talk through integrations and configuration confidently with engineers \n Follows AI closely and tests new tools, but can tell hype from real value \n Brings teams together with clear evidence and simple explanations, and follows through \n Extra-shine if you have experience with data privacy, insurance or healthcare \n \n  😀 We like to work with people who:  \n \n Want to help build a global social safety net on the Internet \n Think for themselves instead of copying others \n Are willing to try new things, even with the risk of failure \n Are intellectually curious and open to new ideas \n Are creative and bold in the face of any problems \n Have strong integrity and do the right thing \n \n  🧘 Benefits beyond base pay:  \n \n Fully remote work environment – work from anywhere globally \n Our own global safety net, giving you worldwide health, income, and travel coverage \n A minimum of four weeks of vacation per year \n A new laptop \n Potential to unlock equity compensation, yearly home office allowance and more! \n \n 🚀 We look forward to hearing from you! \n  Originally posted on  Himalayas  ",
+      "source": "Himalayas",
+      "published": "2026-10-28",
+      "remote": true,
+      "sourceChecked": true,
+      "applicationChannel": {
+        "kind": "website_only",
+        "sourceUrl": "https://himalayas.app/companies/safetywing/jobs/ai-support-operations-specialist?utm_source=api",
+        "verified": false,
+        "evidence": "job_ad"
+      },
+      "eligibility": "Country filter only; verify employer requirements before applying."
+    },
     {
       "id": "himalayas:https://himalayas.app/companies/xperteez-technology/jobs/retail-trade-operations-expert-remote-contract",
       "company": "Xperteez Technology",
@@ -79,63 +98,6 @@
       "eligibility": "Country filter only; verify employer requirements before applying."
     },
     {
-      "id": "himalayas:https://himalayas.app/companies/micro1/jobs/structured-finance-attorney",
-      "company": "micro1",
-      "role": "Structured Finance Attorney",
-      "location": "Remote · worldwide listing",
-      "sourceUrl": "https://himalayas.app/companies/micro1/jobs/structured-finance-attorney?utm_source=api",
-      "description": " Role Title: Structured Finance Attorney  Role Type: Contractor  Location: Remote   micro1  is engaging Structured Finance Attorneys to contribute their legal expertise to a customer's dynamic project. In this role, you'll apply your expertise to help train next-generation AI systems. Your work will shape how models learn, reason, and perform through high-quality, real-world input. No prior experience in AI is required — your domain knowledge is what matters.  Scope of Work  \n Review, analyze, and annotate legal contracts and transaction documents related to structured finance products, such as asset-backed securities, mortgage-backed securities, and collateralized debt obligations. \n Draft or evaluate sample documents, clauses, and legal frameworks pertinent to structured finance transactions. \n Provide detailed feedback on hypothetical scenarios or AI-generated content for legal sufficiency, accuracy, and clarity. \n Identify and explain industry-specific terminology, regulatory requirements, and common legal structures within structured finance. \n Contribute to the development of training datasets that reflect current legal standards and best practices in structured finance. \n Collaborate asynchronously with platform coordinators and other subject matter professionals to ensure the project’s legal content meets high standards. \n Deliver insights on evolving market practices, common pitfalls, and recent regulatory developments in the structured finance sector. \n  Preferred Qualifications  \n Juris Doctor (JD) degree or international equivalent, with active admission to practice in at least one jurisdiction. \n Extensive experience (typically 5+ years) advising on structured finance transactions, including drafting and negotiating transaction documents. \n Thorough knowledge of securities law, regulatory compliance frameworks, and relevant market regulations. \n Outstanding written and verbal communication skills, with a strong focus on clarity and precision in legal language. \n Experience reviewing and providing feedback on a range of financial legal documents, including prospectuses, term sheets, and offering memoranda. \n Proven ability to break down complex legal concepts for varied audiences or technology applications. \n Strong attention to detail, analytical mindset, and the ability to work independently in a remote setting. \n  Originally posted on  Himalayas  ",
-      "source": "Himalayas",
-      "published": "2026-10-22",
-      "remote": true,
-      "sourceChecked": true,
-      "applicationChannel": {
-        "kind": "website_only",
-        "sourceUrl": "https://himalayas.app/companies/micro1/jobs/structured-finance-attorney?utm_source=api",
-        "verified": false,
-        "evidence": "job_ad"
-      },
-      "eligibility": "Country filter only; verify employer requirements before applying."
-    },
-    {
-      "id": "himalayas:https://himalayas.app/companies/micro1/jobs/military-operations-expert",
-      "company": "micro1",
-      "role": "Military Operations Expert",
-      "location": "Remote · worldwide listing",
-      "sourceUrl": "https://himalayas.app/companies/micro1/jobs/military-operations-expert?utm_source=api",
-      "description": " Role Title: Military Operations Expert  Role Type: Contractor  Location: Remote  About the Role   micro1  is seeking current or former military professionals with firsthand operational experience to contribute to an AI development project focused on military operations, tactical decision-making, and international humanitarian law. You'll evaluate AI-generated military scenarios, identify inaccuracies, and provide expert feedback to improve AI reasoning and reliability.  Scope of Work  \n Evaluate AI-generated military scenarios for operational realism, tactical accuracy, and sound decision-making. \n Review military planning, combat operations, targeting, and weapons employment scenarios. \n Assess the application of Rules of Engagement (ROE), Law of Armed Conflict (LOAC), and operational constraints. \n Identify inaccuracies and provide clear, structured written feedback. \n  Qualifications  \n Military operational experience in areas such as infantry, Special Operations Forces, combat aviation, artillery, targeting, air defense, naval operations, or military intelligence. \n Strong understanding of military operations, tactical planning, and operational decision-making. \n Ability to assess complex scenarios and communicate findings clearly in writing. \n Combat deployments, operational command, weapons specialization, or military instructional experience are highly desirable. \n Familiarity with ROE, LOAC, or international humanitarian law is a plus. \n  Originally posted on  Himalayas  ",
-      "source": "Himalayas",
-      "published": "2026-10-26",
-      "remote": true,
-      "sourceChecked": true,
-      "applicationChannel": {
-        "kind": "website_only",
-        "sourceUrl": "https://himalayas.app/companies/micro1/jobs/military-operations-expert?utm_source=api",
-        "verified": false,
-        "evidence": "job_ad"
-      },
-      "eligibility": "Country filter only; verify employer requirements before applying."
-    },
-    {
-      "id": "himalayas:https://himalayas.app/companies/micro1/jobs/army-combat-operations-expert",
-      "company": "micro1",
-      "role": "Army Combat Operations Expert",
-      "location": "Remote · worldwide listing",
-      "sourceUrl": "https://himalayas.app/companies/micro1/jobs/army-combat-operations-expert?utm_source=api",
-      "description": " Role Title: Army Combat Operations Expert  Role Type: Contractor  Location: Remote  About the Role   micro1  is seeking current or former Army professionals with firsthand combat operations experience to contribute to an AI development project focused on military tactics, operational decision-making, and battlefield scenarios. You'll evaluate AI-generated military content, identify operational inaccuracies, and provide expert feedback to improve AI reasoning and reliability.  Scope of Work  \n Evaluate AI-generated scenarios involving ground combat, tactical planning, and military operations. \n Assess operational realism, weapons employment, targeting, and battlefield decision-making. \n Review scenarios for accuracy, sound reasoning, and alignment with Rules of Engagement (ROE) and the Law of Armed Conflict (LOAC). \n Identify operational errors and provide clear, structured written feedback. \n  Qualifications  \n Current or former Army professional with experience in infantry, artillery, armor, combat engineering, Army aviation, or other combat-arms specialties. \n Hands-on experience in tactical operations, mission planning, or weapons employment. \n Strong understanding of Army tactics, operational procedures, and combat decision-making. \n Ability to communicate complex military concepts clearly in writing. \n Combat deployments, Ranger qualifications, weapons specialization, or tactical instructor experience are highly desirable. \n  Originally posted on  Himalayas  ",
-      "source": "Himalayas",
-      "published": "2026-10-26",
-      "remote": true,
-      "sourceChecked": true,
-      "applicationChannel": {
-        "kind": "website_only",
-        "sourceUrl": "https://himalayas.app/companies/micro1/jobs/army-combat-operations-expert?utm_source=api",
-        "verified": false,
-        "evidence": "job_ad"
-      },
-      "eligibility": "Country filter only; verify employer requirements before applying."
-    },
-    {
       "id": "himalayas:https://himalayas.app/companies/xperteez-technology/jobs/business-operations-expert-remote-contract",
       "company": "Xperteez Technology",
       "role": "🌎Business Operations Expert, Remote- Contract",
@@ -168,44 +130,6 @@
       "applicationChannel": {
         "kind": "website_only",
         "sourceUrl": "https://himalayas.app/companies/growe-talents/jobs/finance-specialist?utm_source=api",
-        "verified": false,
-        "evidence": "job_ad"
-      },
-      "eligibility": "Country filter only; verify employer requirements before applying."
-    },
-    {
-      "id": "himalayas:https://himalayas.app/companies/vitalis-outsourcing-llc/jobs/executive-assistant-operations-virtual-assistant",
-      "company": "Vitalis Outsourcing LLC",
-      "role": "Executive Assistant / Operations Virtual Assistant",
-      "location": "Remote · worldwide listing",
-      "sourceUrl": "https://himalayas.app/companies/vitalis-outsourcing-llc/jobs/executive-assistant-operations-virtual-assistant?utm_source=api",
-      "description": " We are looking for an  Executive Assistant / Operations Virtual Assistant  to support business owners, executives, real estate teams, and operations managers with daily administrative and operational responsibilities.  The primary responsibility is to  manage executive calendars and communications, track priorities and projects, prepare reports, organize information, and ensure important tasks are followed through to completion .  This is an ideal opportunity for someone with experience in  executive assistance, operations support, virtual assistance, project coordination, or administrative management  who is proactive, highly organized, professional, and interested in stable, long-term career growth.  KEY RESPONSIBILITIES  \n  Manage executive calendars, appointments, meetings, reminders, and scheduling.  \n  Organize executive email inboxes, prioritize messages, and complete approved follow-up activities.  \n  Track priorities, deadlines, projects, assignments, and pending items to ensure timely completion.  \n  Prepare reports, summaries, meeting notes, task updates, presentations, and internal documentation.  \n  Organize and maintain digital files, folders, client information, and operational records.  \n  Coordinate with clients, vendors, team members, and internal departments.  \n  Assist with administrative workflows, process documentation, and task management.  \n  Support client onboarding, internal operations, and project coordination as assigned.  \n  Schedule internal and external meetings and confirm attendance, agendas, and required materials.  \n  Follow up with team members and stakeholders regarding outstanding tasks, deadlines, and requested information.  \n  Maintain task boards, project management systems, CRM platforms, spreadsheets, and internal tracking tools.  \n  Identify scheduling conflicts, missed deadlines, incomplete tasks, and potential operational blockers.  \n  Provide clear daily updates regarding completed tasks, pending items, priorities, deadlines, and blockers.  \n  Manage multiple assignments, projects, and priorities simultaneously.  \n  Follow established Standard Operating Procedures, checklists, deadlines, and manager instructions.  \n  Handle confidential and sensitive business, client, and executive information professionally.  \n  REQUIRED QUALIFICATIONS  \n  Previous experience in  executive assistance, operations support, virtual assistance, project coordination, or administrative management .  \n  Strong written and spoken English communication skills.  \n  Excellent organization, time management, and attention to detail.  \n  Experience managing executive calendars, email inboxes, meetings, and reminders.  \n  Strong task-management, deadline-tracking, and follow-up skills.  \n  Comfortable communicating professionally with executives, clients, vendors, and team members.  \n  Able to prioritize competing requests and remain calm under pressure.  \n  Good computer, spreadsheet, CRM, and project management software skills.  \n  Able to follow Standard Operating Procedures and detailed instructions.  \n  High level of discretion when handling confidential or sensitive information.  \n  Reliable internet connection and a professional remote-work setup.  \n  Reliable and consistent attendance during scheduled working hours.  \n  Able to work independently while providing clear and regular updates.  \n  High school diploma or equivalent.  \n  Proactive, professional, resourceful, detail-oriented, coachable, and ownership-driven.  \n  PREFERRED EXPERIENCE  \n  Supporting U.S.-based executives or business owners  \n  Real estate administrative or operations support  \n  Executive calendar and inbox management  \n  Meeting preparation and follow-up  \n  Client onboarding  \n  Project coordination  \n  Operations management  \n  Process and SOP documentation  \n  Report and presentation preparation  \n  CRM management  \n  Google Workspace  \n  Microsoft Office  \n  ClickUp  \n  Trello  \n  Asana  \n    \n  Notion  \n  Slack  \n  Associate’s or bachelor’s degree in business administration, operations, management, or a related field  \n  Originally posted on  Himalayas  ",
-      "source": "Himalayas",
-      "published": "2026-10-25",
-      "remote": true,
-      "sourceChecked": true,
-      "applicationChannel": {
-        "kind": "website_only",
-        "sourceUrl": "https://himalayas.app/companies/vitalis-outsourcing-llc/jobs/executive-assistant-operations-virtual-assistant?utm_source=api",
-        "verified": false,
-        "evidence": "job_ad"
-      },
-      "eligibility": "Country filter only; verify employer requirements before applying."
-    },
-    {
-      "id": "himalayas:https://himalayas.app/companies/ppmi/jobs/data-processing-analyst",
-      "company": "PPMI",
-      "role": "Data processing analyst",
-      "location": "Remote · worldwide listing",
-      "sourceUrl": "https://himalayas.app/companies/ppmi/jobs/data-processing-analyst?utm_source=api",
-      "description": " Verianis an independent research, evidence, evaluation, and communications agency that helps governments solve public policy challenges by working with citizens and the public realm.  We provide services to government and public sector organizations, drawing on expertise in social research, policy development, and communication.  The agency operates globally, with offices across Europe, Asia Pacific, and the US.  About the role  Data processing analyst  · Remote (EU) · 12-month service contract, with intention to extend   Why this role is different  Verian runs some of the largest and most complex survey programmes in Europe - for EU institutions, national governments of the UK and EU Member States, national statistical offices, and other national and regional public bodies. The data outputs you help produce will directly inform public policy decisions across the continent.  The core of the role is the craft itself: producing accurate, high-quality data outputs in a fast-paced delivery environment where attention to detail matters every day. At the same time, Verian is investing heavily in automation, coding and AI-assisted approaches to data processing, and you will be part of that journey from the start - learning Python, R and AI-assisted techniques alongside the engineers and senior analysts building these solutions.  What you will do  \n Support the processing, validation and quality assurance of survey data across the project lifecycle \n Produce standard deliverables: datasets, data tables, codeframes and documentation \n Support weighting, significance testing and statistical analyses under guidance from senior analysts \n Learn and apply Python, R and automated processing techniques to reduce manual effort \n Use AI-assisted tools for coding, QA and documentation \n Help develop and improve automated processing workflows alongside existing tools \n  What you need from day one  \n Strong numerical and analytical skills, and meticulous attention to detail — accurate data is the whole job \n Experience in a data, analysis or research-related role, or a strong quantitative background (e.g. statistics, economics, data science, social science with a quantitative focus) — direct survey experience is welcome but not required \n Good command of Excel and general data handling \n Willingness and genuine appetite to learn Python and/or R - some exposure is a plus, but we will teach you \n Professional working proficiency in English. Knowledge of German and/or French would be an advantage \n  What will strengthen your application (not required)  \n Exposure to Python, R, SQL, SPSS or other statistical software \n Familiarity with survey research or survey datasets \n Interest in AI-assisted coding or analytical tools \n  Expect a structured learning path: training in survey data processing, statistics and coding, with direct mentoring from senior analysts.  What we offer  \n Indicative rate of €2,000–3,000 per month - the final offer will be agreed based on your specific skills and experience \n Full-time engagement on an initial 12-month service contract (independent contractor or affiliate arrangement), with the intention to extend \n Fully remote, based anywhere in the EU \n A place in Verian's global Data Solutions team, reporting to a global manager in London, working on large assignments alongside project managers across Europe \n Hands-on experience with Python, R, automation and AI-assisted development on real, large-scale programmes - a foundation for a serious technical career \n  The process - quick and simple  One introductory call, which will also cover the technical side; potentially a small practical task; then a fast decision. The work is available now and waiting - we will come back to you immediately, so if this sounds interesting, please get in touch as soon as you can. Salary: 2,000–3,000 Originally posted on  Himalayas  ",
-      "source": "Himalayas",
-      "published": "2026-10-25",
-      "remote": true,
-      "sourceChecked": true,
-      "applicationChannel": {
-        "kind": "website_only",
-        "sourceUrl": "https://himalayas.app/companies/ppmi/jobs/data-processing-analyst?utm_source=api",
         "verified": false,
         "evidence": "job_ad"
       },
@@ -250,6 +174,25 @@
       "eligibility": "Country filter only; verify employer requirements before applying."
     },
     {
+      "id": "himalayas:https://himalayas.app/companies/micro1/jobs/structured-finance-attorney",
+      "company": "micro1",
+      "role": "Structured Finance Attorney",
+      "location": "Remote · worldwide listing",
+      "sourceUrl": "https://himalayas.app/companies/micro1/jobs/structured-finance-attorney?utm_source=api",
+      "description": " Role Title: Structured Finance Attorney  Role Type: Contractor  Location: Remote   micro1  is engaging Structured Finance Attorneys to contribute their legal expertise to a customer's dynamic project. In this role, you'll apply your expertise to help train next-generation AI systems. Your work will shape how models learn, reason, and perform through high-quality, real-world input. No prior experience in AI is required — your domain knowledge is what matters.  Scope of Work  \n Review, analyze, and annotate legal contracts and transaction documents related to structured finance products, such as asset-backed securities, mortgage-backed securities, and collateralized debt obligations. \n Draft or evaluate sample documents, clauses, and legal frameworks pertinent to structured finance transactions. \n Provide detailed feedback on hypothetical scenarios or AI-generated content for legal sufficiency, accuracy, and clarity. \n Identify and explain industry-specific terminology, regulatory requirements, and common legal structures within structured finance. \n Contribute to the development of training datasets that reflect current legal standards and best practices in structured finance. \n Collaborate asynchronously with platform coordinators and other subject matter professionals to ensure the project’s legal content meets high standards. \n Deliver insights on evolving market practices, common pitfalls, and recent regulatory developments in the structured finance sector. \n  Preferred Qualifications  \n Juris Doctor (JD) degree or international equivalent, with active admission to practice in at least one jurisdiction. \n Extensive experience (typically 5+ years) advising on structured finance transactions, including drafting and negotiating transaction documents. \n Thorough knowledge of securities law, regulatory compliance frameworks, and relevant market regulations. \n Outstanding written and verbal communication skills, with a strong focus on clarity and precision in legal language. \n Experience reviewing and providing feedback on a range of financial legal documents, including prospectuses, term sheets, and offering memoranda. \n Proven ability to break down complex legal concepts for varied audiences or technology applications. \n Strong attention to detail, analytical mindset, and the ability to work independently in a remote setting. \n  Originally posted on  Himalayas  ",
+      "source": "Himalayas",
+      "published": "2026-10-22",
+      "remote": true,
+      "sourceChecked": true,
+      "applicationChannel": {
+        "kind": "website_only",
+        "sourceUrl": "https://himalayas.app/companies/micro1/jobs/structured-finance-attorney?utm_source=api",
+        "verified": false,
+        "evidence": "job_ad"
+      },
+      "eligibility": "Country filter only; verify employer requirements before applying."
+    },
+    {
       "id": "himalayas:https://himalayas.app/companies/micro1/jobs/domain-researcher-finance-m-a",
       "company": "micro1",
       "role": "Domain Researcher, Finance (M&A)",
@@ -282,63 +225,6 @@
       "applicationChannel": {
         "kind": "website_only",
         "sourceUrl": "https://himalayas.app/companies/zelh/jobs/customer-operations-representative?utm_source=api",
-        "verified": false,
-        "evidence": "job_ad"
-      },
-      "eligibility": "Country filter only; verify employer requirements before applying."
-    },
-    {
-      "id": "himalayas:https://himalayas.app/companies/iclosed/jobs/customer-support-representative",
-      "company": "iClosed",
-      "role": "Customer Support Representative",
-      "location": "Remote · worldwide listing",
-      "sourceUrl": "https://himalayas.app/companies/iclosed/jobs/customer-support-representative?utm_source=api",
-      "description": " 📍 Location: Remote (Worldwide)  🕒 Shift: Shifts within Central European Time (8am to 10pm CET) 📅 Experience: 1+ year in customer support or any customer communication role 🗣 Languages: English (spoken B2, written C1) – must have · French – nice to have 💰 Starting salary: $1,200–$1,700 per month, depending on experience and knowledge  💼 Type: Full-time  About  iClosed \n  Do you love helping people and solving problems? Do you want every customer to walk away with a great experience? Then we'd like to meet you.   iClosed  is a profit maximizer for high-ticket sales teams, helping them capture more leads, book more calls, and close more deals. We work with customers like Hyros.com, Iman Gadzhi, Whop, Instantly.ai, and thousands of users.  As a Customer Support Representative, you'll be the friendly voice of the company. You'll help our users with their questions, fix what's blocking them, and keep their experience smooth. Most of our support happens over chat. Premium customers also get video support, so you'll jump on calls from time to time.  What You'll Own  Customer Support  \n Support customers over chat, email, and occasional video calls. \n Stay quick, friendly, patient, and professional in every conversation. \n Escalate issues to the right internal team and follow them through to resolution. \n  Technical Troubleshooting  \n Troubleshoot technical issues and walk users through the fix. \n Help users connect  iClosed  with automation tools like Zapier, Make, n8n, webhooks or API. \n  Feedback &amp; Improvement  \n Suggest improvements to our support processes and to the product itself. \n Help improve our product by providing feedback and suggestions. \n  Who We're Looking For  Required  \n 1+ year of experience in customer support or a similar role. \n English: B2 spoken and C1 written. \n Basic knowledge of web apps and SaaS products (Intercom, ClickUp, Slack, email, Zapier/Make/n8n, scheduling tools). \n Strong communication skills and the ability to explain complex things simply. \n A problem-solving mindset and eagerness to learn. \n Dedicated and hardworking, and happy when you've helped someone. \n Available to work shifts within 8am to 10pm CET. \n  Nice to Have   French language skills.   Success in This Role  \n Customers get quick, friendly, and accurate answers. \n Technical blockers are fixed, or escalated with clear context and followed through to resolution. \n Users get their  iClosed  integrations and automations working. \n Customer feedback reaches the team and helps improve the product and our support processes. \n  What We Offer  \n 🌍 Remote-friendly – work from anywhere. \n 📈 Growth opportunities – expand your skills and career. \n 💡 A supportive team – people who help each other out. \n 🎯 Impactful work – help customers and make a difference every day, internally and publicly. \n 🎉 A positive, energetic culture – we take our work seriously, but that doesn’t mean we can’t have fun while doing it. \n  Why is this one different?  You're the first person our customers talk to when something gets in their way. Every conversation is a chance to turn a blocked user into a happy one.  Nail it, and you’ll keep growing your skills and your career with us.  How to Apply  Our hiring process has three steps:  \n Intro video + Resume: Send us a Loom video (up to 5 minutes) introducing yourself. Tell us who you are, your support experience, and why you want this role. Applications without a Loom won't be reviewed. \n Skills test: If we think you're a good fit, we'll send you a short practical test. \n Interview: Candidates who do well on the test are invited to an interview with our team. \n  If you're excited to join a team that cares about customer happiness, teamwork, and growth, we'd love to hear from you! Salary: $1,200-$1,700 per month DOE Originally posted on  Himalayas  ",
-      "source": "Himalayas",
-      "published": "2026-10-26",
-      "remote": true,
-      "sourceChecked": true,
-      "applicationChannel": {
-        "kind": "website_only",
-        "sourceUrl": "https://himalayas.app/companies/iclosed/jobs/customer-support-representative?utm_source=api",
-        "verified": false,
-        "evidence": "job_ad"
-      },
-      "eligibility": "Country filter only; verify employer requirements before applying."
-    },
-    {
-      "id": "himalayas:https://himalayas.app/companies/supportyourapp/jobs/fluent-english-french-customer-support-consultant",
-      "company": "SupportYourApp",
-      "role": "(fluent English & French) Customer Support Consultant",
-      "location": "Remote · worldwide listing",
-      "sourceUrl": "https://himalayas.app/companies/supportyourapp/jobs/fluent-english-french-customer-support-consultant?utm_source=api",
-      "description": " Who are we?    SupportYourApp   is a global Intelligent Support-as-a-Service leader, partnering with tech companies and industry leaders like MasterCard, Calm and MacPaw in 30+ countries since 2010 to deliver secure customer and technical support. We operate globally, supporting clients in 60 languages across diverse industries. So what if you had a chance to be a part of the world’s leading SaaS, software, or hardware solutions?  Join our community as a  Customer Support Consultant  today and thrive in a multicultural and multilingual environment while enjoying your home office. Unlock your potential by mastering new skills and achieving challenging goals in cooperation with our People First management approach. Excited? Let’s see what it takes.  What you will do:  \n Deliver outstanding customer support via emails, chats and calls; \n Follow internal procedures and SOPs; \n Collaborate with internal teams to ensure efficient issue resolution; \n Handle sensitive customer data with care and security; \n Apply the latest and greatest customer happiness practices; \n Maintain deep understanding of client solutions and meet KPI; \n Communicate with developers and cross-functional specialists. \n  What you need to succeed in this role:   \n  Fluency in French and English (C1 or higher), both spoken and written;  \n  At least 6-12 months of experience in customer support;  \n Strong analytical thinking and research skills; \n Positive, proactive and responsible attitude; \n Personal computer (at least 8Gb of RAM) with a stable internet connection (minimum 50 Mbps–download and 40 Mbps–upload). \n  Benefits:   \n Flexible schedule; \n Opportunity to cooperate fully  remotely; \n \n Inclusive international environment; \n Compensation in USD; \n Rewards for referring friends; \n Balance between project workload and personal time, but also – internal health policy; \n Responsive leadership interested in your development and long-lasting cooperation; \n Greenhouse conditions for self-development; \n A culture built on trust, with no time-tracking requirements. \n  *The items listed in this section may vary depending on the terms of your engagement. Certain benefits and conditions typically apply to employees; independent contractors may not be eligible for all of these. The specific terms, including compensation, benefits, and work conditions, will be clearly defined in your agreement if selected.  You can learn more about the company and its culture by visiting our official website and social pages on Facebook, Instagram, and LinkedIn.  So if you're a proactive  Support Specialist  who thrives on solving problems, ensuring customer satisfaction, and delivering outstanding service, don't miss this opportunity and send us your CV in English to collaborate with us!  Over 1500+ specialists who already deliver exceptional customer experiences collaborating with  SupportYourApp .  Know someone perfect for the role? Refer them and get rewarded!   We adhere to the principles of equal treatment of candidates and prohibit discrimination on any grounds protected by law.    Your personal data will be processed as described in the  SupportYourApp    Candidate Privacy Notice  .   Originally posted on  Himalayas  ",
-      "source": "Himalayas",
-      "published": "2026-10-16",
-      "remote": true,
-      "sourceChecked": true,
-      "applicationChannel": {
-        "kind": "website_only",
-        "sourceUrl": "https://himalayas.app/companies/supportyourapp/jobs/fluent-english-french-customer-support-consultant?utm_source=api",
-        "verified": false,
-        "evidence": "job_ad"
-      },
-      "eligibility": "Country filter only; verify employer requirements before applying."
-    },
-    {
-      "id": "himalayas:https://himalayas.app/companies/zelh/jobs/customer-service-representative-1147142458",
-      "company": "Zelh",
-      "role": "Customer Service Representative",
-      "location": "Remote · worldwide listing",
-      "sourceUrl": "https://himalayas.app/companies/zelh/jobs/customer-service-representative-1147142458?utm_source=api",
-      "description": " About the Role  We are looking for a  Customer Service Representative  to support customer accounts throughout the order fulfillment process. In this role, you will be responsible for processing purchase orders, coordinating with internal teams, monitoring order and shipping status, and ensuring customers receive timely and accurate updates.  The ideal candidate is highly organized, detail-oriented, proactive in communication, and comfortable coordinating across multiple teams to ensure customer requirements and delivery commitments are met.  Key Responsibilities  Purchase Order Management  \n  Review purchase orders, including pricing, raw material availability, and production schedules.  \n  Coordinate with the  RFQ team  when a quotation is required.  \n  Enter and upload purchase orders into the system, ensuring all customer requirements, quantities, and due dates are accurately recorded.  \n  Coordinate same-day with the  Production Scheduler  and  Materials Manager  to ensure orders are created and lead times are confirmed.  \n  Send order acknowledgments to customers via email or customer portals.  \n  Customer Communication &amp; Support  \n  Respond to customer requests, questions, and complaints on the same business day.  \n  Investigate customer inquiries by coordinating with relevant internal teams and gathering the required information.  \n  Clearly communicate timelines and provide updates when additional information or more time is needed to resolve a customer request.  \n  Maintain professional, proactive, and timely communication with customers throughout the order process.  \n  Customer Release &amp; Schedule Management  \n  Review, modify, and update customer  blanket release schedules  as needed.  \n  Process customer releases received through  EDI, customer portals, and email .  \n  Ensure customer schedules and requirements are accurately reflected in internal systems.  \n  Order &amp; Delivery Monitoring  \n  Review current and two-week future shipping lines to monitor  on-time delivery performance .  \n  Identify potential delays or risks to customer delivery dates.  \n  Proactively communicate delays to customers and coordinate internally to determine realistic recovery timelines.  \n  Follow up on recovery plans to ensure customer commitments are met.  \n  Parts &amp; Production Follow-Up  \n  Track parts through  OSS  and monitor their progress to ensure timely processing.  \n  Coordinate with OSS and relevant internal teams to identify potential issues and prevent delays.  \n  Provide customers with accurate status updates when required.  \n  Working conditions:  \n  Work schedule:  Monday - Friday 7 am-4 pm CST   \n  Competitive Salary in USD  \n  Remote mode of work  \n  10+ business days of paid time off  \n  Team building and corporate events  \n  Equipment provided  \n  A supportive team  \n  Requirements  Requirements  \n  Previous experience in  Customer Service, Order Management, Logistics, Supply Chain, Manufacturing, or a related field .  \n  Experience working with  Purchase Orders, customer schedules, and order fulfillment processes .  \n  Strong written and verbal communication skills.  \n  Ability to manage multiple customer requests and priorities simultaneously.  \n  Strong attention to detail and accuracy.  \n  Proactive approach to problem-solving and follow-up.  \n  Experience working with  EDI, customer portals, and/or ERP systems  is a plus.  \n  Ability to communicate effectively with both customers and internal departments.  \n  Good organizational and time-management skills.  \n  What We’re Looking For  \n   Customer-focused:  You prioritize customer needs and ensure timely, clear communication.  \n   Detail-oriented:  You carefully review orders, schedules, pricing, quantities, and delivery dates.  \n   Proactive:  You identify potential issues before they impact customers and take action to resolve them.  \n   Collaborative:  You work effectively with production, materials, scheduling, RFQ, and OSS teams.  \n   Reliable:  You follow through on requests and ensure commitments are met.  \n  Originally posted on  Himalayas  ",
-      "source": "Himalayas",
-      "published": "2026-10-14",
-      "remote": true,
-      "sourceChecked": true,
-      "applicationChannel": {
-        "kind": "website_only",
-        "sourceUrl": "https://himalayas.app/companies/zelh/jobs/customer-service-representative-1147142458?utm_source=api",
         "verified": false,
         "evidence": "job_ad"
       },
