@@ -156,3 +156,69 @@ def upload_verified(path: str | Path, *, folder_id: str, job_id: str, kind: str,
             "sha256": proof["sha256"], "drive_md5": proof["md5"],
             "verified": True, "published": False, "cost_usd": 0,
             "view_url": "https://drive.google.com/file/d/" + remote_id + "/view"}
+
+
+def _drive_id(value: str) -> str:
+    if not value or not 8 <= len(value) <= 150 or not all(c.isalnum() or c in "_-" for c in value):
+        raise StorageBlocked("DRIVE_FILE_ID_INVALID")
+    return value
+
+
+def download_verified(file_id: str, *, folder_id: str, job_id: str, kind: str,
+                      workspace: str | Path, expected_sha256: str,
+                      opener=urlopen, env=os.environ) -> dict:
+    """Fetch existing authorized Drive media, verify exact bytes before use.
+
+    Requires caller to provide a trusted SHA-256 from a separately verified
+    asset manifest. The file is never rendered until its checksum matches.
+    """
+    _drive_id(file_id)
+    _folder(folder_id)
+    if kind not in KINDS: raise StorageBlocked("DRIVE_KIND_INVALID")
+    if not job_id or len(job_id) > 120 or not all(c.isalnum() or c in "-_" for c in job_id):
+        raise StorageBlocked("DRIVE_JOB_ID_INVALID")
+    if len(expected_sha256) != 64 or any(x not in "0123456789abcdef" for x in expected_sha256):
+        raise StorageBlocked("DRIVE_EXPECTED_SHA256_INVALID")
+    target_dir = Path(workspace).resolve(strict=True)
+    if not target_dir.is_dir(): raise StorageBlocked("DRIVE_WORKSPACE_INVALID")
+    filename = job_id + "_" + kind + "." + {
+        "video": "mp4", "narration": "wav", "captions": "srt",
+        "manifest": "json", "quality_report": "json"}[kind]
+    target = target_dir / filename
+    temp = target_dir / (filename + ".part")
+    if target.exists() or temp.exists():
+        raise StorageBlocked("DRIVE_FILE_ALREADY_EXISTS")
+    token = access_token(opener, env)
+    headers = {"Authorization": "Bearer " + token}
+    metadata_url = FILE_ROOT + "/" + file_id + "?fields=id,mimeType,size,md5Checksum,parents"
+    metadata = _read_json(_request(opener, Request(metadata_url, headers=headers)))
+    if metadata.get("id") != file_id or folder_id not in metadata.get("parents", []) or \
+       metadata.get("mimeType") != KINDS[kind]:
+        raise StorageBlocked("DRIVE_FILE_METADATA_INVALID")
+    size = int(metadata.get("size") or 0)
+    if not 0 < size <= MAX_FILE_BYTES:
+        raise StorageBlocked("DRIVE_FILE_INVALID_SIZE")
+    if not isinstance(metadata.get("md5Checksum"), str):
+        raise StorageBlocked("DRIVE_FILE_MD5_MISSING")
+    remote = _request(opener, Request(FILE_ROOT + "/" + file_id + "?alt=media", headers=headers), timeout=120)
+    sha = hashlib.sha256()
+    md5 = hashlib.md5(usedforsecurity=False)
+    total = 0
+    try:
+        with temp.open("xb") as fd:
+            while True:
+                block = remote.read(CHUNK_SIZE)
+                if not block: break
+                total += len(block)
+                if total > size: raise StorageBlocked("DRIVE_DOWNLOAD_SIZE_EXCEEDED")
+                fd.write(block)
+                sha.update(block)
+                md5.update(block)
+        if total != size or sha.hexdigest() != expected_sha256 or md5.hexdigest() != metadata["md5Checksum"]:
+            raise StorageBlocked("DRIVE_DOWNLOAD_CHECKSUM_MISMATCH")
+        temp.replace(target)
+    except Exception:
+        temp.unlink(missing_ok=True)
+        raise
+    return {"path": str(target), "bytes": total, "sha256": sha.hexdigest(),
+            "drive_id": file_id, "verified": True}
