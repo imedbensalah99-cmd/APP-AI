@@ -81,12 +81,54 @@ def execute(job_id: str, request: VideoRequest):
             JOBS[job_id]['completed_at']=int(time.time())
 
 
+
+# One-shot staging-only smoke check, disabled unless explicitly enabled in Render.
+# It uses bundled original graphics, local Piper speech and zero external paid APIs.
+SELFTEST_JOB_ID = 'staging-smoke-10s'
+@app.on_event('startup')
+def start_smoke_test():
+    if os.getenv('OMDA_STAGING_SELFTEST', '0') != '1':
+        return
+    request = VideoRequest(
+        channel='SARDERA', duration_seconds=10, title='الطابق الثالث عشر',
+        scenes=[Scene(text=s) for s in (
+            'في منتصف الليل', 'توقف المصعد', 'ظهر طابق غريب',
+            'انفتح الباب', 'سمعت همسة', 'لا تلتفت')],
+        provider='NO_SPEND_SYNTHETIC', idempotency_key='staging-startup-selftest-10s',
+        require_narration=True,
+    )
+    with JOB_LOCK:
+        JOBS[SELFTEST_JOB_ID] = {'state':'QUEUED', 'fingerprint':'staging-selftest', 'created_at':int(time.time())}
+    POOL.submit(execute, SELFTEST_JOB_ID, request)
+
+
+def selftest_summary():
+    if os.getenv('OMDA_STAGING_SELFTEST', '0') != '1':
+        return {'enabled': False}
+    with JOB_LOCK:
+        entry = JOBS.get(SELFTEST_JOB_ID)
+        if not entry:
+            return {'enabled': True, 'state': 'NOT_STARTED'}
+        result = entry.get('result') or {}
+        return {
+            'enabled': True, 'state': entry.get('state'),
+            'error_code': entry.get('error_code'),
+            'sha256': result.get('sha256'),
+            'duration_seconds': result.get('duration_seconds'),
+            'narration_present': result.get('narration_present'),
+            'ai_video_generated': result.get('ai_video_generated'),
+            'bytes': result.get('bytes'),
+            'flow_credits_used': result.get('flow_credits_used'),
+            'api_cost_usd': result.get('api_cost_usd')
+        }
+
+
 @app.get('/health')
 def health():
     return {'status':'RENDERER_AVAILABLE' if shutil.which('ffmpeg') and shutil.which('ffprobe') else 'BLOCKED_FFMPEG',
             'capabilities':{'synthetic_mp4':bool(shutil.which('ffmpeg')),'piper_model_ready':bool(os.getenv('OMDA_PIPER_MODEL') and Path(os.getenv('OMDA_PIPER_MODEL')).exists()),
                             'gemini_video':False,'flow_video':False,'youtube_upload':False},
-            'storage':'EPHEMERAL','publishing_locked':True,'spend_enabled':False}
+            'storage':'EPHEMERAL','publishing_locked':True,'spend_enabled':False,'staging_selftest':selftest_summary()}
 
 
 @app.post('/v1/render',status_code=202)
