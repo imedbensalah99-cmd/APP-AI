@@ -95,3 +95,55 @@ class DriveStorageTests(unittest.TestCase):
 
 
 if __name__ == "__main__": unittest.main()
+
+
+class FakeDownload:
+    def __init__(self, file, tamper=False):
+        self.raw = file.read_bytes()
+        self.tamper = tamper
+        self.calls = []
+    def __call__(self, request, timeout=45):
+        url = request.full_url
+        self.calls.append(url)
+        if url == drive.TOKEN_URL:
+            return Reply(body=b'{"access_token":"unit-test-access-token-long-value"}')
+        if "?fields=id,mimeType,size,md5Checksum,parents" in url:
+            md5 = drive.digest_file(self.file)["md5"]
+            raw = ('{"id":"safeDriveFile123","size":"%s","md5Checksum":"%s",'
+                   '"mimeType":"video/mp4","parents":["%s"]}' %
+                   (len(self.raw), md5, FOLDER)).encode()
+            return Reply(body=raw)
+        if url.endswith("?alt=media"):
+            return Reply(body=b"altered" if self.tamper else self.raw)
+        raise AssertionError("Not allowed: "+url)
+
+
+class DriveDownloadTests(unittest.TestCase):
+    def setUp(self):
+        self.tmp = tempfile.TemporaryDirectory()
+        self.work = Path(self.tmp.name)
+        self.video = self.work / "fixture.mp4"
+        self.video.write_bytes(b"fake-video-test-content-only")
+        self.sha = drive.digest_file(self.video)["sha256"]
+    def tearDown(self): self.tmp.cleanup()
+    def test_verified_download(self):
+        transport = FakeDownload(self.video)
+        result = drive.download_verified("safeDriveFile123", folder_id=FOLDER,
+                    job_id="germany-001", kind="video", workspace=self.work,
+                    expected_sha256=self.sha, opener=transport, env=ENV)
+        self.assertEqual(Path(result["path"]).read_bytes(), self.video.read_bytes())
+        self.assertTrue(result["verified"])
+        self.assertEqual(len(transport.calls), 3)
+    def test_mismatched_content_cleaned_up(self):
+        transport = FakeDownload(self.video, tamper=True)
+        with self.assertRaisesRegex(drive.StorageBlocked, "DRIVE_DOWNLOAD_CHECKSUM_MISMATCH"):
+            drive.download_verified("safeDriveFile123", folder_id=FOLDER,
+                    job_id="germany-001", kind="video", workspace=self.work,
+                    expected_sha256=self.sha, opener=transport, env=ENV)
+        self.assertFalse((self.work / "germany-001_video.mp4").exists())
+        self.assertFalse((self.work / "germany-001_video.mp4.part").exists())
+    def test_requires_expected_hash_before_network(self):
+        with self.assertRaisesRegex(drive.StorageBlocked,"DRIVE_EXPECTED_SHA256_INVALID"):
+            drive.download_verified("safeDriveFile123", folder_id=FOLDER,
+                    job_id="germany-001", kind="video", workspace=self.work,
+                    expected_sha256="not-a-hash", opener=lambda *_a,**_k: 1, env=ENV)
