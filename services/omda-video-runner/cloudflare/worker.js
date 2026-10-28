@@ -16,7 +16,7 @@ function json(data, status=200, extra={}) {
 function validId(s) {return /^[a-z0-9_-]{6,128}$/i.test(s||'');}
 function sameSite(request) {
   const o = request.headers.get('origin');
-  return !o || o === new URL(request.url).origin;
+  return o === new URL(request.url).origin;
 }
 async function owner(ctx) {
   // Cloudflare Access validates identity before the Worker; independently require
@@ -146,7 +146,8 @@ export default {
       }
       if(url.pathname==='/api/jobs'&&method==='POST'){
         if(Number(request.headers.get('content-length')||0)>30000)return json({error:'PAYLOAD_TOO_LARGE'},413);
-        const obj=await request.json();return json(await createJob(env,obj),202);
+        if (!(request.headers.get('content-type')||'').startsWith('application/json'))return json({error:'JSON_CONTENT_TYPE_REQUIRED'},415);
+        const body=await request.text();if(body.length>30000)return json({error:'PAYLOAD_TOO_LARGE'},413);const obj=JSON.parse(body);return json(await createJob(env,obj),202);
       }
       if(url.pathname==='/api/staging/import-smoke'&&method==='POST'){
         const id='staging-smoke-10s';const created=now();
@@ -162,13 +163,14 @@ export default {
         const row=await env.DB.prepare('SELECT status,artifact_sha256 FROM staging_jobs WHERE id=?').bind(m[1]).first();
         if(!row||row.status!=='VIDEO_READY_FOR_REVIEW'||!row.artifact_sha256)return json({error:'VIDEO_NOT_READY_FOR_REVIEW'},409);
         const state=obj.decision==='approved'?'APPROVED':'REJECTED';
-        await env.DB.prepare('UPDATE staging_jobs SET status=?,updated_at=? WHERE id=? AND status=?').bind(state,now(),m[1],'VIDEO_READY_FOR_REVIEW').run();
+        const changed=await env.DB.prepare('UPDATE staging_jobs SET status=?,updated_at=? WHERE id=? AND status=?').bind(state,now(),m[1],'VIDEO_READY_FOR_REVIEW').run();
+        if(!changed.meta?.changes)return json({error:'REVIEW_ALREADY_CHANGED'},409);
         return json({state,artifact_sha256:row.artifact_sha256,published:false});
       }
       m=url.pathname.match(/^\/api\/assets\/([a-zA-Z0-9_-]+)\/(video|captions|manifest)$/);
       if(m&&method==='GET'&&validId(m[1]))return getAsset(env,m[1],m[2]);
       return json({error:'NOT_FOUND'},404);
-    } catch(e) {const message=String(e?.message||'UNKNOWN').slice(0,100);return json({error:message},message==='INVALID_JSON'||message.startsWith('INVALID_')?400:503)}
+    } catch(e) {const message=String(e?.message||'UNKNOWN').slice(0,100);return json({error:message},['TITLE_LENGTH','INVALID_JSON','INVALID_CHANNEL','INVALID_SCENES','STAGING_ONLY_10_SECONDS'].includes(message)||message.startsWith('INVALID_')?400:503)}
   },
   async scheduled(event,env,ctx) {
     ctx.waitUntil((async()=>{
