@@ -70,8 +70,9 @@ def validate(project: dict, root: Path) -> dict:
         fail("TITLE_INVALID")
     if project.get("language") != "ar":
         fail("ARABIC_NARRATION_REQUIRED")
+    # Two-second minimum supports isolated no-spend CI smoke proofs; 120s is the pilot cap.
     duration=project.get("duration_seconds")
-    if type(duration) not in (int,float) or not 5<=duration<=120:
+    if type(duration) not in (int,float) or not 2<=duration<=120:
         fail("PILOT_DURATION_OUT_OF_RANGE")
     scenes=project.get("scenes")
     if not isinstance(scenes,list) or not MIN_SCENES<=len(scenes)<=MAX_SCENES:
