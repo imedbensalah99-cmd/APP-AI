@@ -53,4 +53,38 @@ export default {async fetch(request,env){
     }
     return result({error:'NOT_FOUND'},404);
   }catch(_){return result({error:'INTERNAL_ERROR'},500);}
-}};
+
+}, async scheduled(_event, env) {
+  // Bounded staging probe: one synthetic narrated job per request key.
+  // It is not a recurring media schedule, spends zero credits and never publishes.
+  if (!env.DB || !env.OMDA_RUNNER_TOKEN) return;
+  const key='omda-bridge-staging-smoke-20261028-01';
+  const original={channel:'SARDERA',duration_seconds:10,title:'الطابق الثالث عشر',
+    scenes:['في منتصف الليل','توقف المصعد','ظهر طابق غريب','انفتح الباب','سمعت همسة','لا تلتفت'].map(text=>({text})),
+    provider:'NO_SPEND_SYNTHETIC',idempotency_key:key,require_narration:true};
+  const existing=await env.DB.prepare('SELECT id,render_job_id,status FROM staging_jobs WHERE request_key=?').bind(key).first();
+  if(existing && ['COMPLETE','FAILED','BLOCKED','DEMO_ONLY','RENDER_REJECTED','RENDER_UNREACHABLE'].includes(existing.status))return;
+  if(existing && existing.render_job_id){
+    let r;try{r=await renderFetch('/v1/jobs/'+existing.render_job_id,env);}catch(_){return;}
+    if(!r.ok)return;
+    const v=await r.json();
+    await env.DB.prepare('UPDATE staging_jobs SET status=?,artifact_sha256=?,error_code=?,updated_at=? WHERE id=?')
+      .bind(v.state||'UNKNOWN',v.result?.sha256||null,v.error_code||null,new Date().toISOString(),existing.id).run();
+    return;
+  }
+  const id=existing?.id||crypto.randomUUID();
+  if(!existing){
+    const fingerprint=await digest(JSON.stringify({channel:original.channel,title:original.title,duration_seconds:original.duration_seconds,scenes:original.scenes,provider:original.provider,require_narration:true}));
+    await env.DB.prepare('INSERT OR IGNORE INTO staging_jobs (id,render_job_id,request_key,channel,title,status,created_at,updated_at,fingerprint) VALUES (?,NULL,?,?,?,?,?,?,?)')
+      .bind(id,key,original.channel,original.title,'QUEUED',new Date().toISOString(),new Date().toISOString(),fingerprint).run();
+  }
+  let r;try{r=await renderFetch('/v1/render',env,{method:'POST',headers:{'content-type':'application/json'},body:JSON.stringify(original)});}catch(_){
+    await env.DB.prepare("UPDATE staging_jobs SET status='RENDER_UNREACHABLE',updated_at=? WHERE request_key=?").bind(new Date().toISOString(),key).run();return;}
+  const v=await r.json().catch(()=>({}));
+  if(!r.ok||!v.job_id){
+    await env.DB.prepare("UPDATE staging_jobs SET status='RENDER_REJECTED',error_code=?,updated_at=? WHERE request_key=?")
+      .bind('RENDER_'+r.status,new Date().toISOString(),key).run();return;}
+  await env.DB.prepare('UPDATE staging_jobs SET render_job_id=?,status=?,updated_at=? WHERE request_key=?')
+    .bind(v.job_id,v.state||'QUEUED',new Date().toISOString(),key).run();
+}
+};
