@@ -40,5 +40,28 @@ jobs:
           bad = VeoVideo()
           assert allowed_tool(good)[0]
           assert not allowed_tool(bad)[0]
-          print('PROVED: free stock allowed; paid video blocked')
+          from tools.tool_registry import ToolRegistry
+          registry = ToolRegistry()
+          registry.register(good)
+          registry.register(bad)
+          assert registry.get('pexels_video') is not None
+          assert registry.get('veo_video') is None
+          outcome = bad.execute({})
+          assert not outcome.success
+          assert outcome.error.startswith('OMDA_FREE_ONLY_BLOCKED:')
+          assert outcome.cost_usd == 0
+          print('PROVED: stock allowed; paid video hidden + execution blocked')
           PY
+
+      - name: Package full patched OpenMontage source (AGPLv3 included)
+        run: |
+          cd /tmp/omda-openmontage
+          zip -q -r /tmp/omda-openmontage-free-source.zip . -x ".git/*" -x "__pycache__/*" -x "*.pyc"
+          unzip -l /tmp/omda-openmontage-free-source.zip | grep -E '(OMDA_FREE_ONLY_POLICY.md|tools/omda_free_guard.py|LICENSE)'
+      - name: Upload downloadable sandbox source archive
+        uses: actions/upload-artifact@v4
+        with:
+          name: omda-openmontage-free-source
+          path: /tmp/omda-openmontage-free-source.zip
+          retention-days: 30
+          if-no-files-found: error
