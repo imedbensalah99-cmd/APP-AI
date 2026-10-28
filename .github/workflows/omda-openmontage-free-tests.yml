@@ -1,0 +1,44 @@
+name: OMDA OpenMontage free-only policy verification
+
+on:
+  push:
+    branches:
+      - omda-openmontage-free-v1
+    paths:
+      - "integrations/openmontage-free/**"
+      - ".github/workflows/omda-openmontage-free-tests.yml"
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  check-free-only:
+    runs-on: ubuntu-latest
+    timeout-minutes: 12
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+      - name: Run zero-dependency policy tests
+        run: python -m unittest discover -s integrations/openmontage-free/tests -v
+      - name: Clone and guard pinned OpenMontage (NO API KEYS)
+        run: python integrations/openmontage-free/install.py --destination /tmp/omda-openmontage
+      - name: Check patched source compiles (NO MEDIA GENERATION)
+        run: |
+          python -m py_compile /tmp/omda-openmontage/tools/base_tool.py
+          python -m py_compile /tmp/omda-openmontage/tools/tool_registry.py
+          python -m py_compile /tmp/omda-openmontage/tools/omda_free_guard.py
+      - name: Ensure paid and publish providers are blocked in real upstream classes
+        run: |
+          PYTHONPATH=/tmp/omda-openmontage python - <<'PY'
+          from tools.omda_free_guard import allowed_tool
+          from tools.video.pexels_video import PexelsVideo
+          from tools.video.veo_video import VeoVideo
+          good = PexelsVideo()
+          bad = VeoVideo()
+          assert allowed_tool(good)[0]
+          assert not allowed_tool(bad)[0]
+          print('PROVED: free stock allowed; paid video blocked')
+          PY
