@@ -174,12 +174,19 @@ export default {
   },
   async scheduled(event,env,ctx) {
     ctx.waitUntil((async()=>{
-      const rows=await env.DB.prepare(`SELECT id,render_job_id,status,request_json FROM staging_jobs
-        WHERE status IN ('QUEUED','RUNNING','SYNC_BLOCKED','REMOTE_UNAVAILABLE','DISPATCH_BLOCKED') ORDER BY created_at ASC LIMIT 4`).all();
-      for(const row of rows.results||[]) {
-        if(!row.render_job_id && row.request_json){const p=JSON.parse(row.request_json);await dispatch(env,row.id,p)}
-        else if(row.render_job_id) await reconcile(env,row.id);
-      }
+      let count=0;let result='OK';let detail='';
+      try {
+        const rows=await env.DB.prepare(`SELECT id,render_job_id,status,request_json FROM staging_jobs
+          WHERE status IN ('QUEUED','RUNNING','SYNC_BLOCKED','REMOTE_UNAVAILABLE','DISPATCH_BLOCKED') ORDER BY created_at ASC LIMIT 4`).all();
+        count=(rows.results||[]).length;
+        for(const row of rows.results||[]) {
+          if(!row.render_job_id && row.request_json){const p=JSON.parse(row.request_json);await dispatch(env,row.id,p)}
+          else if(row.render_job_id) await reconcile(env,row.id);
+        }
+      }catch(e){ result='ERROR';detail=String(e?.message||'unknown').slice(0,100); }
+      // Internal audit only. No secret values or request bodies are stored.
+      try{ await env.DB.prepare('INSERT INTO staging_events (id,at,event,detail) VALUES (?,?,?,?)')
+        .bind(crypto.randomUUID(),now(),result,JSON.stringify({jobs_checked:count,error_code:detail})).run();}catch{}
     })());
   }
 };
