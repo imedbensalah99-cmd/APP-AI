@@ -11,6 +11,7 @@ import hmac
 import json
 import os
 import re
+import shutil
 import subprocess
 import sys
 import threading
@@ -175,7 +176,7 @@ def run_job(job_id: str, data: dict):
 @app.get("/health")
 def health():
     return {"status":"AVAILABLE" if shutil.which("ffmpeg") and shutil.which("ffprobe") else "FFMPEG_UNAVAILABLE",
-            "mode":"DOCUMENTARY_STAGING","storage":"DRIVE_OAUTH_REQUIRED",
+            "mode":"DOCUMENTARY_STAGING","storage":"DRIVE_OAUTH_CONFIGURED" if all(os.getenv(k) for k in ("OMDA_DRIVE_CLIENT_ID","OMDA_DRIVE_CLIENT_SECRET","OMDA_DRIVE_REFRESH_TOKEN")) else "DRIVE_OAUTH_REQUIRED",
             "ephemeral_queue":True,"youtube_publishing":False,"paid_generation":False,
             "piper_model_configured":bool(os.getenv("OMDA_PIPER_MODEL") and Path(os.getenv("OMDA_PIPER_MODEL")).is_file())}
 
