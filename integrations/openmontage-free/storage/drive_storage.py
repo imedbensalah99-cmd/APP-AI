@@ -13,6 +13,7 @@ from pathlib import Path
 from typing import Callable
 from urllib.parse import urlencode, urlparse
 from urllib.request import Request, urlopen
+from urllib.error import HTTPError
 
 UPLOAD_ROOT = "https://www.googleapis.com/upload/drive/v3/files"
 FILE_ROOT = "https://www.googleapis.com/drive/v3/files"
@@ -62,6 +63,11 @@ def _read_json(response) -> dict:
 def _request(opener: Callable, req: Request, timeout=45):
     try:
         return opener(req, timeout=timeout)
+    except HTTPError as exc:
+        # HTTP 308 is the expected 'resume incomplete' acknowledgement.
+        if exc.code == 308:
+            return exc
+        raise StorageBlocked("DRIVE_HTTP_" + str(exc.code)) from None
     except Exception as exc:
         # Never include an HTTP exception body or URL: they may contain secrets.
         code = getattr(exc, "code", "NETWORK")
@@ -154,7 +160,7 @@ def upload_verified(path: str | Path, *, folder_id: str, job_id: str, kind: str,
     return {"file_id": remote_id, "name": file.name, "kind": kind,
             "folder_id": folder_id, "bytes": proof["bytes"],
             "sha256": proof["sha256"], "drive_md5": proof["md5"],
-            "verified": True, "published": False, "cost_usd": 0,
+            "verified": True, "published": False,
             "view_url": "https://drive.google.com/file/d/" + remote_id + "/view"}
 
 
