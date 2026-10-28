@@ -20,5 +20,10 @@
 - New resources created: one Render Free web service, one Cloudflare free Worker, one separate staging D1 and one staging Access app.
 - Production Worker and production D1 untouched.
 
+## Additional staging findings
+- After rotating the shared Render runner credential, an older client continued polling a stale Render job and received 401 responses. The obsolete credential was **not** restored.
+- New Cloudflare staging cron schedule is registered, but as of the last read-only D1 query, no `staging_events` were recorded and `staging_assets` contains zero objects. This is **NOT VERIFIED**; Cron propagation and the absence of a verified authenticated owner session prevent an end-to-end guarantee.
+- A browser JavaScript newline-escaping defect was found, fixed, and retested (inline script parse PASS).
+
 ## Next single priority
 Validate the staging cron import into D1 and review via the owner's authenticated staging dashboard. If it fails, inspect job error codes and rendering logs; never claim completion without persisted video bytes and checksum match.
