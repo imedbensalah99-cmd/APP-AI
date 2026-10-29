@@ -174,3 +174,69 @@ test('Cloudflare Worker context never trusts arbitrary identity or wrong owner',
  assert.equal(r.status,401);
  assert.match(await r.text(),/Verify your secure session/);
 });
+
+
+test('private Drive preflight reports missing server OAuth without writing files',async()=>{
+ let calls=0;
+ mock((url,opts)=>{
+   calls++;assert.match(String(url),/\/v1\/storage\/preflight$/);
+   assert.equal(opts.method,'GET');
+   return ok({storage_ready:false,drive_oauth_configured:false,
+    folder_verified:false,can_write:false,reason:'DRIVE_OAUTH_REQUIRED',
+    files_created:0,publishing:false},200);
+ });
+ const response=await bridge.fetch(req('/api/storage/preflight'),env,{});
+ assert.equal(response.status,200);
+ const d=await response.json();
+ assert.equal(d.storage_ready,false);assert.equal(d.reason,'DRIVE_OAUTH_REQUIRED');
+ assert.equal(d.files_created,0);assert.equal(calls,1);
+ const denied=await bridge.fetch(req('/api/storage/preflight','GET',undefined,{anonymous:true}),env,{});
+ assert.equal(denied.status,403);
+ assert.equal(calls,1);
+});
+test('Drive smoke must be explicitly requested by owner and pass preflight',async()=>{
+ let calls=0;
+ mock((url,opts)=>{
+   calls++;
+   if(String(url).endsWith('/v1/storage/preflight'))
+    return ok({storage_ready:false,reason:'DRIVE_OAUTH_REQUIRED'});
+   throw Error('upload cannot happen before OAuth');
+ });
+ const first=await bridge.fetch(req('/api/storage/smoke','POST',{}),env,{});
+ assert.equal(first.status,403);
+ assert.equal(calls,0);
+ const original=req('/api/storage/smoke','POST',{});
+ const headers=new Headers(original.headers);
+ headers.set('x-omda-operation','explicit-storage-smoke');
+ const response=await bridge.fetch(new Request(original,{headers}),env,{});
+ assert.equal(response.status,409);
+ assert.equal((await response.json()).error,'DRIVE_PREFLIGHT_REQUIRED');
+ assert.equal(calls,1);
+});
+test('Drive smoke returns only safe receipt after successful remote byte proof',async()=>{
+ let calls=0;
+ mock((url,opts)=>{
+   calls++;
+   assert.equal(opts.headers.authorization,'Bearer '+env.OMDA_DOC_RUNNER_TOKEN);
+   if(String(url).endsWith('/v1/storage/preflight'))
+    return ok({storage_ready:true,folder_verified:true,can_write:true});
+   if(String(url).endsWith('/v1/storage/smoke')){
+    assert.equal(opts.method,'POST');
+    return ok({verified:true,file_id:'safeDriveAsset123',sha256:'c'.repeat(64),
+     bytes:256,published:false,paid_generation:false,
+     internal_secret:'never-send-to-browser'});
+   }
+   throw Error('unexpected URL');
+ });
+ const orig=req('/api/storage/smoke','POST',{});
+ const headers=new Headers(orig.headers);
+ headers.set('x-omda-operation','explicit-storage-smoke');
+ const response=await bridge.fetch(new Request(orig,{headers}),env,{});
+ assert.equal(response.status,200);
+ const d=await response.json();
+ assert.equal(d.verified,true);
+ assert.equal(d.published,false);
+ assert.equal(d.sha256,'c'.repeat(64));
+ assert.equal('internal_secret' in d,false);
+ assert.equal(calls,2);
+});
