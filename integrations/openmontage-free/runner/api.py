@@ -234,6 +234,10 @@ def run_job(job_id: str, data: dict):
 def health():
     return {"status":"AVAILABLE" if shutil.which("ffmpeg") and shutil.which("ffprobe") else "FFMPEG_UNAVAILABLE",
             "mode":"DOCUMENTARY_STAGING","storage":"DRIVE_OAUTH_CONFIGURED" if all(os.getenv(k) for k in ("OMDA_DRIVE_CLIENT_ID","OMDA_DRIVE_CLIENT_SECRET","OMDA_DRIVE_REFRESH_TOKEN")) else "DRIVE_OAUTH_REQUIRED",
+            "auth_mode":"CLOUDFLARE_ACCESS_JWT_ENABLED" if (
+                os.getenv("OMDA_ACCESS_ISS","").startswith("https://") and
+                re.fullmatch(r"[a-f0-9]{64}",os.getenv("OMDA_ACCESS_AUD","")) and
+                bool(os.getenv("OMDA_OWNER_EMAIL",""))) else "AUTH_CONFIG_REQUIRED",
             "ephemeral_queue":True,"youtube_publishing":False,"paid_generation":False,
             "piper_model_configured":bool(os.getenv("OMDA_PIPER_MODEL") and Path(os.getenv("OMDA_PIPER_MODEL")).is_file())}
 
