@@ -179,6 +179,35 @@ export default {
   }
   const credential=accessBearer(request,env);
   if(!credential)return json({error:'CLOUDFLARE_ACCESS_TOKEN_REQUIRED'},503);
+  if(url.pathname==='/api/storage/preflight'&&request.method==='GET'){
+    const r=await upstream(env,'/v1/storage/preflight','GET',null,credential);
+    if(!r.ok)return json({storage_ready:false,error:'STORAGE_PREFLIGHT_UNAVAILABLE'},503);
+    const v=r.data;
+    return json({storage_ready:v.storage_ready===true,
+      drive_oauth_configured:v.drive_oauth_configured===true,
+      folder_verified:v.folder_verified===true,
+      can_write:v.can_write===true,
+      reason:typeof v.reason==='string'?v.reason.slice(0,65):'UNKNOWN',
+      files_created:0,publishing:false,paid_generation:false});
+  }
+  if(url.pathname==='/api/storage/smoke'&&request.method==='POST'){
+    if(request.headers.get('origin')!==url.origin ||
+       request.headers.get('x-omda-operation')!=='explicit-storage-smoke')
+       return json({error:'EXPLICIT_OWNER_SMOKE_REQUIRED'},403);
+    const pre=await upstream(env,'/v1/storage/preflight','GET',null,credential);
+    if(!pre.ok||pre.data?.storage_ready!==true)
+       return json({error:'DRIVE_PREFLIGHT_REQUIRED'},409);
+    const r=await upstream(env,'/v1/storage/smoke','POST',{},credential);
+    if(!r.ok)return json({error:'DRIVE_SMOKE_FAILED'},r.status===409?409:502);
+    const v=r.data;
+    if(v.verified!==true||v.published!==false||v.paid_generation!==false)
+       return json({error:'DRIVE_PROOF_UNTRUSTED'},502);
+    return json({verified:true,
+      file_id:typeof v.file_id==='string'?v.file_id.slice(0,150):null,
+      sha256:typeof v.sha256==='string'?v.sha256.slice(0,64):null,
+      bytes:Number.isInteger(v.bytes)?v.bytes:null,
+      published:false,paid_generation:false});
+  }
   if(url.pathname==='/api/status'&&request.method==='GET'){
     // Safe read-only handshake: Render verifies Cloudflare signature independently.
     const r=await upstream(env,'/v1/auth/check','GET',null,credential);
