@@ -20,8 +20,11 @@ jobs:
       - name: Node runtime
         run: node --version
       - name: Offline bridge security tests
-        run: node --test integrations/openmontage-free/bridge/worker.test.mjs
+        run: node --test integrations/openmontage-free/bridge/worker.test.mjs integrations/openmontage-free/bridge/access.test.mjs integrations/openmontage-free/bridge/queue.test.mjs
       - name: Syntax check
-        run: node --check integrations/openmontage-free/bridge/worker.mjs
+        run: |
+          node --check integrations/openmontage-free/bridge/worker.mjs
+          node --check integrations/openmontage-free/bridge/access.mjs
+          node --check integrations/openmontage-free/bridge/queue.mjs
       - name: Live no-spend anonymous endpoint smoke tests
         run: node --test integrations/openmontage-free/bridge/live-smoke.test.mjs
