@@ -93,7 +93,11 @@ export async function verifyOwnerAccess(request, env, ctx){
     env.OMDA_OWNER_EMAIL.trim().toLowerCase():'';
   if(!expected)return false;
   if(ctx?.access){
-    if(typeof ctx.access.getIdentity!=='function')return false;
+    // The Access application itself is the trust boundary. Require its
+    // configured audience and an exact owner email before granting access.
+    if(typeof ctx.access.getIdentity!=='function' ||
+       typeof env.OMDA_ACCESS_AUD!=='string' ||
+       ctx.access.aud!==env.OMDA_ACCESS_AUD)return false;
     try{
       const identity=await ctx.access.getIdentity();
       return typeof identity?.email==='string' &&
