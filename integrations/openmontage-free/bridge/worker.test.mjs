@@ -53,10 +53,10 @@ test('unsigned, wrong-email, absent owner config all denied before Render',async
  r=await bridge.fetch(req('/api/status'),{...env,OMDA_OWNER_EMAIL:''},{});
  assert.equal(r.status,403);
 });
-test('missing Render secret fails closed after valid Access JWT',async()=>{
+test('unreachable Render fails closed even with signed owner JWT',async()=>{
  mock(absent);
  const r=await bridge.fetch(req('/api/status'),{...env,OMDA_DOC_RUNNER_TOKEN:undefined},{});
- assert.equal(r.status,503);
+ assert.equal(r.status,502);
 });
 test('paid, publish, bad rights and foreign origin denied',async()=>{
  mock(absent);
@@ -82,10 +82,10 @@ test('read-only health gives safe response',async()=>{
 });
 test('authenticated probe uses private bearer but creates no job',async()=>{
  mock((url,opts)=>{
-  assert.match(String(url),/\/v1\/documentaries\/omdabridgeprobe0001$/);
+  assert.match(String(url),/\/v1\/auth\/check$/);
   assert.equal(opts.method,'GET');
   assert.equal(opts.headers.authorization,'Bearer '+env.OMDA_DOC_RUNNER_TOKEN);
-  return ok({detail:'JOB_NOT_FOUND'},404);
+  return ok({authenticated:true,method:'LEGACY_SHARED_SECRET',created_job:false,publishing:false},200);
  });
  const d=await json(await bridge.fetch(req('/api/status'),env,{}));
  assert.equal(d.render_authenticated,true);
@@ -130,11 +130,13 @@ test('private dashboard renders real D1 UI, without active publish control',asyn
  assert.match(await js.text(),/\/api\/queue/);
 });
 
-test('readiness identifies missing D1 or Render credential without falsely claiming readiness',async()=>{
+test('readiness identifies D1 and Drive blockers even after authenticated Render handshake',async()=>{
  mock((url,opts)=>{
-  assert.equal(String(url),'https://omda-documentary-runner-staging.onrender.com/health');
   assert.equal(opts.redirect,'manual');
-  return ok({status:'AVAILABLE',storage:'DRIVE_OAUTH_REQUIRED'},200);
+  if(String(url).endsWith('/health'))return ok({status:'AVAILABLE',storage:'DRIVE_OAUTH_REQUIRED'},200);
+  if(String(url).endsWith('/v1/auth/check'))
+    return ok({authenticated:true,method:'LEGACY_SHARED_SECRET',created_job:false},200);
+  throw Error('Unexpected endpoint');
  });
  const result=await bridge.fetch(req('/api/readiness'),env,{});
  assert.equal(result.status,200);
@@ -143,7 +145,7 @@ test('readiness identifies missing D1 or Render credential without falsely claim
  assert.equal(status.d1_connected,false);
  assert.equal(status.render_online,true);
  assert.equal(status.render_shared_token_configured,true);
- assert.equal(status.authenticated_handshake_verified,false);
+ assert.equal(status.authenticated_handshake_verified,true);
  assert.equal(status.job_submission_ready,false);
  assert.equal(status.paid_generation_enabled,false);
  assert.equal(status.publishing_enabled,false);
