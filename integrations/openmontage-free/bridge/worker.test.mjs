@@ -112,7 +112,12 @@ test('no publish or billing routes exist',async()=>{
 test('private dashboard renders real D1 UI, without active publish control',async()=>{
  mock(absent);
  let r=await bridge.fetch(req('/','GET',undefined,{anonymous:true}),env,{});
- assert.equal(r.status,403);
+ assert.equal(r.status,401);
+ assert.match(r.headers.get('content-type'),/text\/html/);
+ const signIn=await r.text();
+ assert.match(signIn,/Sign in to OMDA/);
+ assert.match(signIn,/cdn-cgi\/access\/login/);
+ assert.doesNotMatch(signIn,/OMDA_DOC_RUNNER_TOKEN/);
  r=await bridge.fetch(req('/'),env,{});
  assert.equal(r.status,200);
  const html=await r.text();
