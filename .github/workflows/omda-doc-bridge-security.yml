@@ -20,7 +20,7 @@ jobs:
       - name: Node runtime
         run: node --version
       - name: Offline bridge security tests
-        run: node --test integrations/openmontage-free/bridge/worker.test.mjs integrations/openmontage-free/bridge/access.test.mjs integrations/openmontage-free/bridge/queue.test.mjs
+        run: node --test integrations/openmontage-free/bridge/worker.test.mjs integrations/openmontage-free/bridge/access.test.mjs integrations/openmontage-free/bridge/queue.test.mjs integrations/openmontage-free/bridge/bridge.integration.test.mjs
       - name: Syntax check
         run: |
           node --check integrations/openmontage-free/bridge/worker.mjs
