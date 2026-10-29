@@ -27,6 +27,7 @@ ROOT = Path(__file__).resolve().parents[1]
 sys.path.insert(0,str(ROOT / "storage"))
 sys.path.insert(0,str(ROOT / "renderer"))
 from drive_storage import StorageBlocked, download_verified, upload_verified, KINDS
+from drive_preflight import storage_preflight
 from documentary_render import DocumentaryBlocked, compose, ALLOWED_LICENSES, safe_id, https_url
 
 app = FastAPI(title="OMDA Documentary Runner — Private Staging",
@@ -273,3 +274,10 @@ def get_documentary(job_id: str,authorization: str | None=Header(default=None)):
         x=JOBS.get(job_id)
         if not x:raise HTTPException(404,detail="JOB_NOT_FOUND")
         return {"job_id":job_id,**{k:v for k,v in x.items() if k!="fingerprint"}}
+
+@app.get("/v1/storage/preflight")
+def get_storage_preflight(authorization: str | None = Header(default=None)):
+    """Read-only folder permission check; no media or Drive files are generated."""
+    ensure_auth(authorization)
+    return {**storage_preflight(), "publishing": False,
+            "paid_generation": False, "files_created": 0}
