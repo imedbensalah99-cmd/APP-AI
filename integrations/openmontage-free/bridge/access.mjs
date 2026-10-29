@@ -44,7 +44,21 @@ export async function verifyAccessRequest(request,env){
   const expectedAudience=env.OMDA_ACCESS_AUD.trim();
   const issuer=originIssuer(env);
   if(!issuer||!expectedEmail||!/^[a-f0-9]{64}$/.test(expectedAudience))return false;
-  const token=request.headers.get('Cf-Access-Jwt-Assertion');
+  // Cloudflare Access may deliver a signed session JWT via CF_Authorization
+  // cookie (not an assertion header) in Chrome Custom Tabs/mobile sessions.
+  // Never trust cookie claims directly; both paths require identical RS256,
+  // issuer, audience, expiry and owner-email verification below.
+  const assertion=request.headers.get('Cf-Access-Jwt-Assertion');
+  let token=assertion;
+  if(!token){
+    const rawCookies=request.headers.get('Cookie')||'';
+    if(rawCookies.length>16000)return false;
+    const found=rawCookies.split(';').map(part=>part.trim())
+      .filter(part=>part.startsWith('CF_Authorization='));
+    if(found.length!==1)return false;
+    const encoded=found[0].slice('CF_Authorization='.length);
+    try{token=decodeURIComponent(encoded)}catch{return false}
+  }
   if(!token||token.length>MAX_JWT_BYTES||token.split('.').length!==3)return false;
   try{
     const [a,b,c]=token.split('.');
