@@ -79,18 +79,23 @@ test('invalid assertion does not silently fall back to a cookie',async()=>{
 
 
 test('Cloudflare authenticated Worker ctx.access accepts exact owner email',async()=>{
- const ctx={access:{getIdentity:async()=>({email:'Owner@Example.com'})}};
+ const ctx={access:{aud:env.OMDA_ACCESS_AUD,getIdentity:async()=>({email:'Owner@Example.com'})}};
  assert.equal(await verifyOwnerAccess(new Request('https://preview.example.test/'),env,ctx),true);
 });
 test('Cloudflare ctx.access rejects outsiders, missing identity and forged headers',async()=>{
  const raw=new Request('https://preview.example.test/',{headers:{'X-User-Email':'owner@example.com'}});
- const bad={access:{getIdentity:async()=>({email:'outsider@example.com'})}};
- const none={access:{getIdentity:async()=>null}};
+ const bad={access:{aud:env.OMDA_ACCESS_AUD,getIdentity:async()=>({email:'outsider@example.com'})}};
+ const none={access:{aud:env.OMDA_ACCESS_AUD,getIdentity:async()=>null}};
  assert.equal(await verifyOwnerAccess(raw,env,bad),false);
  assert.equal(await verifyOwnerAccess(raw,env,none),false);
  assert.equal(await verifyOwnerAccess(raw,env,{}),false);
 });
 test('Cloudflare runtime context errors must fail closed even when a cookie exists',async()=>{
- const ctx={access:{getIdentity:async()=>{throw Error('identity unavailable')}}};
+ const ctx={access:{aud:env.OMDA_ACCESS_AUD,getIdentity:async()=>{throw Error('identity unavailable')}}};
  assert.equal(await verifyOwnerAccess(cookieRequest(token()),env,ctx),false);
+});
+
+test('Cloudflare runtime audience mismatch rejected even if email is correct',async()=>{
+ const ctx={access:{aud:'z'.repeat(64),getIdentity:async()=>({email:'owner@example.com'})}};
+ assert.equal(await verifyOwnerAccess(new Request('https://preview.example.test/'),env,ctx),false);
 });
