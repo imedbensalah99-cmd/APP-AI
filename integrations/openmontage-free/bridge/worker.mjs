@@ -1,5 +1,5 @@
 import {verifyAccessRequest} from './access.mjs';
-import {dashboardResponse,staticResponse} from './ui.mjs';
+import {dashboardResponse,staticResponse,accessLoginResponse} from './ui.mjs';
 import {claimJob,findJob,listJobs,normalizeState,updateJob} from './queue.mjs';
 /**
  * OMDA Documentary Bridge (staging only).
@@ -114,7 +114,10 @@ export default {
         paid_generation:false,publishing:false,write_access:'OWNER_ACCESS_REQUIRED'});
     }catch{return json({bridge:'OMDA_DOCUMENTARY_STAGING',upstream_online:false,paid_generation:false,publishing:false},503)}
   }
-  if(!await verifyAccessRequest(request,env))return json({error:'CLOUDFLARE_ACCESS_OWNER_REQUIRED'},403);
+  if(!await verifyAccessRequest(request,env)){
+    if(request.method==='GET'&&url.pathname==='/')return accessLoginResponse(request);
+    return json({error:'CLOUDFLARE_ACCESS_OWNER_REQUIRED'},403);
+  }
   if(url.pathname==='/'&&request.method==='GET')return dashboardResponse();
   if((url.pathname==='/static/ui.css'||url.pathname==='/static/ui.js')&&request.method==='GET')return staticResponse(url.pathname);
   if(url.pathname==='/api/readiness'&&request.method==='GET'){
