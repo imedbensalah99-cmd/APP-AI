@@ -1,4 +1,4 @@
-import {verifyAccessRequest} from './access.mjs';
+import {verifyOwnerAccess} from './access.mjs';
 import {dashboardResponse,staticResponse,accessLoginResponse} from './ui.mjs';
 import {claimJob,findJob,listJobs,normalizeState,updateJob} from './queue.mjs';
 /**
@@ -114,7 +114,7 @@ export default {
         paid_generation:false,publishing:false,write_access:'OWNER_ACCESS_REQUIRED'});
     }catch{return json({bridge:'OMDA_DOCUMENTARY_STAGING',upstream_online:false,paid_generation:false,publishing:false},503)}
   }
-  if(!await verifyAccessRequest(request,env)){
+  if(!await verifyOwnerAccess(request,env,ctx)){
     if(request.method==='GET'&&url.pathname==='/')return accessLoginResponse(request);
     return json({error:'CLOUDFLARE_ACCESS_OWNER_REQUIRED'},403);
   }
