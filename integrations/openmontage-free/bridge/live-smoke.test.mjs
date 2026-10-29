@@ -13,6 +13,8 @@ test('Render is live, no paid generation and no publishing', {timeout:115000}, a
   assert.equal(data.mode,'DOCUMENTARY_STAGING');
   assert.equal(data.paid_generation,false);
   assert.equal(data.youtube_publishing,false);
+  assert.equal(data.auth_mode,'CLOUDFLARE_ACCESS_JWT_ENABLED',
+    'staging Render must have verified nonsecret issuer/audience/owner configuration');
   assert.ok(['AVAILABLE','FFMPEG_UNAVAILABLE'].includes(data.status));
   console.log('Render safe health:',data.status,'storage:',data.storage);
 });
