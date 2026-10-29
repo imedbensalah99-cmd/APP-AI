@@ -7,7 +7,7 @@ if(!globalThis.crypto)globalThis.crypto=webcrypto;
 class FakeD1{
   constructor(){this.rows=new Map()}
   prepare(sql){
-    return {bind:(...v)=>({
+    return {all:async()=>this.all(sql,[]),bind:(...v)=>({
       first:async()=>this.first(sql,v),
       all:async()=>this.all(sql,v),
       run:async()=>this.run(sql,v)
