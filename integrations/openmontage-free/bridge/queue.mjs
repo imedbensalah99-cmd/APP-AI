@@ -36,14 +36,14 @@ export async function claimJob(db,data){
  const existingId=await findJob(db,data.job_id);
  if(existingId)throw Error('JOB_ID_CONFLICT');
  const at=new Date().toISOString();
- await db.prepare('INSERT OR IGNORE INTO documentary_jobs (job_id,request_key,fingerprint,title,country,duration_seconds,state,created_at,updated_at) VALUES (?,?,?,?,?,?,?,?,?)')
+ const inserted=await db.prepare('INSERT OR IGNORE INTO documentary_jobs (job_id,request_key,fingerprint,title,country,duration_seconds,state,created_at,updated_at) VALUES (?,?,?,?,?,?,?,?,?)')
    .bind(data.job_id,data.idempotency_key,hash,data.title,data.country,data.duration_seconds,
      'DISPATCH_PENDING',at,at).run();
  const row=await byKey(db,data.idempotency_key);
  if(!row)throw Error('D1_INSERT_FAILED');
  if(row.fingerprint!==hash)throw Error('IDEMPOTENCY_CONFLICT');
  if(row.job_id!==data.job_id)throw Error('JOB_ID_CONFLICT');
- return {new:row.created_at===at,job:row};
+ return {new:inserted.meta?.changes===1,job:row};
 }
 export async function updateJob(db,id,state,remoteId=null,errorCode=null){
  if(!VALID_STATE.has(state))throw Error('STATE_INVALID');
