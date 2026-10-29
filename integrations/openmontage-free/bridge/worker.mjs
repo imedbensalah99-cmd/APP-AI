@@ -1,3 +1,5 @@
+import {verifyAccessRequest} from './access.mjs';
+import {claimJob,findJob,listJobs,normalizeState,updateJob} from './queue.mjs';
 /**
  * OMDA Documentary Bridge (staging only).
  * Strictly no paid API access, no publish operation, no browser-visible secrets.
@@ -18,16 +20,6 @@ function json(obj, status=200) {
     'referrer-policy':'no-referrer','x-frame-options':'DENY',
     'content-security-policy':"default-src 'none'; frame-ancestors 'none'"
   }});
-}
-function authorizedIdentity(ctx, env) {
-  return (async()=>{
-    if (!env.OMDA_OWNER_EMAIL || !ctx?.access || typeof ctx.access.getIdentity!=='function') return false;
-    try {
-      const identity=await ctx.access.getIdentity();
-      return typeof identity?.email==='string' &&
-        identity.email.trim().toLowerCase()===env.OMDA_OWNER_EMAIL.trim().toLowerCase();
-    } catch {return false;}
-  })();
 }
 function isHttps(u) {
   try { const x=new URL(u);return x.protocol==='https:'&&x.hostname&& !x.username&&!x.password;}catch{return false;}
@@ -121,7 +113,11 @@ export default {
         paid_generation:false,publishing:false,write_access:'OWNER_ACCESS_REQUIRED'});
     }catch{return json({bridge:'OMDA_DOCUMENTARY_STAGING',upstream_online:false,paid_generation:false,publishing:false},503)}
   }
-  if(!await authorizedIdentity(ctx,env))return json({error:'CLOUDFLARE_ACCESS_OWNER_REQUIRED'},403);
+  if(!await verifyAccessRequest(request,env))return json({error:'CLOUDFLARE_ACCESS_OWNER_REQUIRED'},403);
+  if(url.pathname==='/api/queue'&&request.method==='GET'){
+    try{return json({jobs:await listJobs(env.OMDA_DOC_DB),storage:'D1_PERSISTENT',publishing:false});}
+    catch{return json({error:'D1_UNAVAILABLE'},503)}
+  }
   if(!env.OMDA_DOC_RUNNER_TOKEN||env.OMDA_DOC_RUNNER_TOKEN.length<32)
     return json({error:'BRIDGE_SECRET_NOT_CONFIGURED'},503);
   if(url.pathname==='/api/status'&&request.method==='GET'){
@@ -141,10 +137,41 @@ export default {
     if(raw.length>MAX_BODY)return json({error:'PAYLOAD_TOO_LARGE'},413);
     let data;
     try{data=assertJob(JSON.parse(raw))}catch(e){return json({error:String(e?.message||'INVALID_PAYLOAD').slice(0,70)},400)}
-    return safeResult(await upstream(env,'/v1/documentaries','POST',data));
+    let claimed;
+    try{claimed=await claimJob(env.OMDA_DOC_DB,data);}
+    catch(e){const code=String(e?.message||'D1_UNAVAILABLE');
+      return json({error:code==='IDEMPOTENCY_CONFLICT'||code==='JOB_ID_CONFLICT'?code:'D1_UNAVAILABLE'},
+        code.endsWith('CONFLICT')?409:503)}
+    if(!claimed.new)return json({job_id:claimed.job.job_id,state:claimed.job.state,existing:true,published:false},200);
+    const result=await upstream(env,'/v1/documentaries','POST',data);
+    if(!result.ok||result.data?.job_id!==data.job_id){
+      try{await updateJob(env.OMDA_DOC_DB,data.job_id,'DISPATCH_BLOCKED',null,
+        /^RENDER_HTTP_[0-9]{3}$/.test(result.data?.error||'')?result.data.error:'DISPATCH_FAILED')}catch{}
+      return safeResult(result.ok?{status:502,data:{error:'UPSTREAM_JOB_ID_MISMATCH'}}:result);
+    }
+    try{await updateJob(env.OMDA_DOC_DB,data.job_id,normalizeState(result.data?.state),data.job_id)}
+    catch{return json({error:'D1_WRITE_FAILED_AFTER_DISPATCH'},503)}
+    return safeResult(result);
   }
   const match=url.pathname.match(/^\/api\/jobs\/([A-Za-z0-9_-]{6,100})$/);
-  if(match&&request.method==='GET')return safeResult(await upstream(env,'/v1/documentaries/'+match[1]));
+  if(match&&request.method==='GET'){
+    let row;try{row=await findJob(env.OMDA_DOC_DB,match[1]);}catch{return json({error:'D1_UNAVAILABLE'},503)}
+    if(!row)return json({error:'JOB_NOT_FOUND'},404);
+    if(!row.remote_job_id||!env.OMDA_DOC_RUNNER_TOKEN){
+      return json({job_id:row.job_id,state:row.state,error_code:row.error_code,published:false});
+    }
+    if(['FAILED','BLOCKED','READY_FOR_OWNER_REVIEW'].includes(row.state))
+      return json({job_id:row.job_id,state:row.state,error_code:row.error_code,published:false});
+    const result=await upstream(env,'/v1/documentaries/'+encodeURIComponent(row.remote_job_id));
+    if(!result.ok)return json({job_id:row.job_id,state:row.state,
+      remote_status:'UNAVAILABLE',published:false,error:'UPSTREAM_CHECK_FAILED'},200);
+    const state=normalizeState(result.data?.state);
+    try{await updateJob(env.OMDA_DOC_DB,row.job_id,state,row.remote_job_id,
+       typeof result.data?.error_code==='string'?result.data.error_code:null)}
+    catch{return json({error:'D1_STATUS_UPDATE_FAILED'},503)}
+    return json({job_id:row.job_id,state,published:false,
+      ...(typeof result.data?.error_code==='string'?{error_code:result.data.error_code.slice(0,70)}:{})});
+  }
   return json({error:'NOT_FOUND'},404);
  }
 };
