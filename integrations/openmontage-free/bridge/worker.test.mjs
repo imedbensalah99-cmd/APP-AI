@@ -124,3 +124,24 @@ test('private dashboard renders real D1 UI, without active publish control',asyn
  assert.equal(js.status,200);
  assert.match(await js.text(),/\/api\/queue/);
 });
+
+test('readiness identifies missing D1 or Render credential without falsely claiming readiness',async()=>{
+ mock((url,opts)=>{
+  assert.equal(String(url),'https://omda-documentary-runner-staging.onrender.com/health');
+  assert.equal(opts.redirect,'manual');
+  return ok({status:'AVAILABLE',storage:'DRIVE_OAUTH_REQUIRED'},200);
+ });
+ const result=await bridge.fetch(req('/api/readiness'),env,{});
+ assert.equal(result.status,200);
+ const status=await result.json();
+ assert.equal(status.mode,'STAGING');
+ assert.equal(status.d1_connected,false);
+ assert.equal(status.render_online,true);
+ assert.equal(status.render_shared_token_configured,true);
+ assert.equal(status.authenticated_handshake_verified,false);
+ assert.equal(status.job_submission_ready,false);
+ assert.equal(status.paid_generation_enabled,false);
+ assert.equal(status.publishing_enabled,false);
+ const noAuth=await bridge.fetch(req('/api/readiness','GET',undefined,{anonymous:true}),env,{});
+ assert.equal(noAuth.status,403);
+});
