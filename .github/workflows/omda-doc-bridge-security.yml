@@ -23,3 +23,5 @@ jobs:
         run: node --test integrations/openmontage-free/bridge/worker.test.mjs
       - name: Syntax check
         run: node --check integrations/openmontage-free/bridge/worker.mjs
+      - name: Live no-spend anonymous endpoint smoke tests
+        run: node --test integrations/openmontage-free/bridge/live-smoke.test.mjs
