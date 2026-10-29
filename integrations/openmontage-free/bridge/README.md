@@ -70,3 +70,16 @@ The owner must complete secret provisioning through authorized secure configurat
 6. Do not deploy this staging bridge over `omda-studio-private`, change production secrets, publish media, spend credits or claim full automation until end-to-end verification.
 
 **Important:** Unit/live negative-access testing is not a successful authenticated production handoff. Distinguish these carefully in all reports.
+
+
+## 29 Oct 2026 update — separate D1 journal and JWT-verified dashboard
+
+The bridge now has three additional isolated modules: `access.mjs`, `queue.mjs`, and `ui.mjs`. Every private route validates an **RS256 Cloudflare Access JWT** against the public Access JWKS, exact issuer, app AUD, expiry/issued time, and owner email. It no longer relies on the unverified `ctx.access.getIdentity()` runtime helper. Unit tests sign real RSA test tokens and check tampering and wrong claims. Cloudflare Access itself also remains enabled.
+
+The staging Worker has a **separate** free-tier D1 database `omda-documentary-bridge-staging-db` with a documented migration at `migrations/0001_jobs.sql`. The D1 connection is `OMDA_DOC_DB`. The `documentary_jobs` table stores only metadata (job ID, idempotency key, request fingerprint, title, country, duration, state, remote ID, error code and timestamps)—**not** footage, narration text, OAuth tokens, account credentials or complete prompts. `GET /api/queue` lists up to 30 real stored jobs, and `GET /` is a private read-only dashboard. Creation requires the separate Render runner credential and owner Access login; the button is disabled because that credential is **not configured**.
+
+**Verified deployment:** Cloudflare staging Worker modified 2026-10-29T04:53:30Z, with four bindings `OMDA_DOC_DB`, `OMDA_OWNER_EMAIL`, `OMDA_ACCESS_ISS`, `OMDA_ACCESS_AUD`. Cloudflare D1 `documentary_jobs` table exists and had **0 jobs** at verification; no media jobs were sent. Original OMDA production workers, existing original D1 databases and old Render video service were not changed.
+
+**CI:** GitHub Actions run [40820200279](https://github.com/imedbensalah99-cmd/APP-AI/actions/runs/40820200279) passed the updated authentication, journal and dashboard tests plus read-only live safety tests. It does not establish an authenticated Cloudflare → Render job handshake or actual Google Drive storage.
+
+**Still blocked:** matching `OMDA_DOC_RUNNER_TOKEN` has not been installed in the new Worker and Render service. An attempted direct cross-service credential operation was blocked by the platform. Do not work around account approval, place secrets in GitHub, weaken JWT authentication, or claim the bridge is fully operational. A properly authorized owner-side secret configuration or approved alternative cryptographic credential flow is still needed. Render's Drive OAuth remains unconfigured. Paid AI and YouTube publication remain disabled.
