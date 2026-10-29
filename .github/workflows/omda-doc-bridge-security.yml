@@ -26,5 +26,6 @@ jobs:
           node --check integrations/openmontage-free/bridge/worker.mjs
           node --check integrations/openmontage-free/bridge/access.mjs
           node --check integrations/openmontage-free/bridge/queue.mjs
+          node --check integrations/openmontage-free/bridge/ui.mjs
       - name: Live no-spend anonymous endpoint smoke tests
         run: node --test integrations/openmontage-free/bridge/live-smoke.test.mjs
