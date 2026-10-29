@@ -47,3 +47,32 @@ test('missing identity/config fails closed',async()=>{
 test('no request to attacker cert host even if poisoned config',async()=>{
  assert.equal(await verifyAccessRequest(request(token()),{...env,OMDA_ACCESS_ISS:'https://attacker.example'}),false);
 });
+
+
+function cookieRequest(value){
+ return new Request('https://preview.example.test/api/queue',{headers:{
+  Cookie:'theme=dark; CF_Authorization='+encodeURIComponent(value)+'; other=1'
+ }});
+}
+test('valid signed CF_Authorization browser cookie accepted without assertion header',async()=>{
+ assert.equal(await verifyAccessRequest(cookieRequest(token()),env),true);
+});
+test('cookie signature or owner mismatch denied',async()=>{
+ const t=token(),pieces=t.split('.');
+ pieces[1]=b64({...JSON.parse(Buffer.from(pieces[1],'base64url').toString('utf8')),email:'outsider@example.com'});
+ assert.equal(await verifyAccessRequest(cookieRequest(pieces.join('.')),env),false);
+ assert.equal(await verifyAccessRequest(cookieRequest(token({email:'outsider@example.com'})),env),false);
+});
+test('duplicate session cookies and oversized cookies are rejected',async()=>{
+ const t=token();
+ const dup=new Request('https://preview.example.test/',{headers:{Cookie:'CF_Authorization='+t+'; CF_Authorization='+t}});
+ assert.equal(await verifyAccessRequest(dup,env),false);
+ const huge=new Request('https://preview.example.test/',{headers:{Cookie:'CF_Authorization='+t+'; padding='+ 'x'.repeat(20000)}});
+ assert.equal(await verifyAccessRequest(huge,env),false);
+});
+test('invalid assertion does not silently fall back to a cookie',async()=>{
+ const r=new Request('https://preview.example.test/',{headers:{
+  'Cf-Access-Jwt-Assertion':'invalid',Cookie:'CF_Authorization='+token()
+ }});
+ assert.equal(await verifyAccessRequest(r,env),false);
+});
