@@ -28,6 +28,7 @@ sys.path.insert(0,str(ROOT / "storage"))
 sys.path.insert(0,str(ROOT / "renderer"))
 from drive_storage import StorageBlocked, download_verified, upload_verified, KINDS
 from drive_preflight import storage_preflight
+from drive_smoke import storage_smoke
 from documentary_render import DocumentaryBlocked, compose, ALLOWED_LICENSES, safe_id, https_url
 
 app = FastAPI(title="OMDA Documentary Runner — Private Staging",
@@ -281,3 +282,14 @@ def get_storage_preflight(authorization: str | None = Header(default=None)):
     ensure_auth(authorization)
     return {**storage_preflight(), "publishing": False,
             "paid_generation": False, "files_created": 0}
+
+@app.post("/v1/storage/smoke")
+def run_storage_smoke(authorization: str | None = Header(default=None)):
+    """Owner-triggered harmless Drive manifest; no video, upload or publishing."""
+    ensure_auth(authorization)
+    try:
+        return storage_smoke()
+    except StorageBlocked as exc:
+        error = str(exc)
+        code = error if re.fullmatch(r"[A-Z0-9_]{5,90}", error) else "DRIVE_SMOKE_BLOCKED"
+        raise HTTPException(409, detail=code) from None
