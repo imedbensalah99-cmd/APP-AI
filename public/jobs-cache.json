@@ -1,7 +1,26 @@
 {
-  "generatedAt": "2026-10-28T11:27:33.822Z",
+  "generatedAt": "2026-10-29T11:37:47.614Z",
   "source": "Himalayas public API",
   "jobs": [
+    {
+      "id": "himalayas:https://himalayas.app/companies/evb/jobs/hr-people-operations-expert",
+      "company": "EVB",
+      "role": "HR & People Operations Expert",
+      "location": "Remote · worldwide listing",
+      "sourceUrl": "https://himalayas.app/companies/evb/jobs/hr-people-operations-expert?utm_source=api",
+      "description": " \n \n Role Title:  HR &amp; People Operations Expert \n \n Role Type:  Contractor \n \n Location:  Remote, global \n  Opportunity Snapshot  \n \n Pay:  Up to $90/hour equivalent \n \n Time per task:  ~10 hours per task \n \n Location:  Fully remote — no geographic restrictions. Strong English required (B2 minimum, C1 preferred) \n \n Next step:  Complete the role-specific AI interview — it’s how your expertise gets in front of the client \n \n Your tasks:  Design realistic, multi-step HR and people operations tasks with objective criteria for grading the output \n  Engaging experienced HR and people operations practitioners to design the tasks that measure what AI systems can actually do. Your domain knowledge is what matters here — no prior AI experience required.  The work is to turn real HR workflows into benchmark tasks: realistic, difficult, and gradable against objective criteria. If you’ve written a policy, built a payroll checklist, or trained someone to handle employee cases against a standard, that’s the instinct this needs.  Scope of Work  \n Design multi-step tasks drawn from real HR work — payroll operations, workforce planning, policy application, employee lifecycle processes — with realistic reference files and clear instructions. \n Define objective grading criteria so two qualified reviewers would reach the same verdict on the same output. \n Build tasks that require judgment rather than lookup: ones where the right answer depends on reading the materials correctly. \n Create or source the supporting materials each task needs: policy documents, payroll reports, headcount data, employment agreements. \n Flag tasks that turn out to be ambiguous or ungradable instead of submitting them anyway. \n Deliver approved tasks on schedule and at the required quality level. \n  Preferred Qualifications  \n 5+ years of hands-on responsibility in payroll, workforce planning, HR policy, or employee lifecycle operations — direct ownership of the work, not supervisory-only or adjacent exposure. \n Experience creating or applying structured standards: HR policies, payroll checklists, process documentation, compliance frameworks, or training assessments. \n Comfortable working across spreadsheets, reports, and policy documents at the same time. \n HR certification (SHRM, CIPD, PHR or equivalent) is a plus, but not required. \n Strong English, written and spoken — B2 minimum, C1 preferred. \n AI or LLM evaluation experience is a plus, but not required. \n  How the selection process works  \n Apply and complete the screening questions \n Complete the AI interview for this role — even if you’ve interviewed with us before, a role-specific interview is how we showcase your domain expertise to the client, and it gives you the strongest shot at being selected \n Profile review \n Onboarding — our Talent Ops team will get you set up \n  A very attractive and competitive package is offered.  Originally posted on  Himalayas  ",
+      "source": "Himalayas",
+      "published": "2026-10-29",
+      "remote": true,
+      "sourceChecked": true,
+      "applicationChannel": {
+        "kind": "website_only",
+        "sourceUrl": "https://himalayas.app/companies/evb/jobs/hr-people-operations-expert?utm_source=api",
+        "verified": false,
+        "evidence": "job_ad"
+      },
+      "eligibility": "Country filter only; verify employer requirements before applying."
+    },
     {
       "id": "himalayas:https://himalayas.app/companies/safetywing/jobs/ai-support-operations-specialist",
       "company": "SafetyWing",
@@ -16,25 +35,6 @@
       "applicationChannel": {
         "kind": "website_only",
         "sourceUrl": "https://himalayas.app/companies/safetywing/jobs/ai-support-operations-specialist?utm_source=api",
-        "verified": false,
-        "evidence": "job_ad"
-      },
-      "eligibility": "Country filter only; verify employer requirements before applying."
-    },
-    {
-      "id": "himalayas:https://himalayas.app/companies/xperteez-technology/jobs/retail-trade-operations-expert-remote-contract",
-      "company": "Xperteez Technology",
-      "role": "🌎Retail Trade & Operations Expert, Remote- Contract",
-      "location": "Remote · worldwide listing",
-      "sourceUrl": "https://himalayas.app/companies/xperteez-technology/jobs/retail-trade-operations-expert-remote-contract?utm_source=api",
-      "description": "  Role Title:  Retail Trade &amp; Operations Expert  Role Type: Contractor   Location:  Remote  Required Skills:    Retail    In this role, you'll apply your expertise to help train next-generation AI systems. Your work will shape how models learn, reason, and perform through high-quality, real-world input. No prior experience in AI is required - your domain knowledge is what matters. This opportunity is open to professionals from various subdomains including Pharmacists, First-Line Supervisors of Retail Sales Workers, General and Operations Managers, and Private Detectives and Investigators who bring at least 5 years of hands-on expertise in retail operations.  Scope of Work:  \n  Review, analyze, and provide feedback on simulated retail scenarios and operational workflows to ensure authenticity and accuracy.  \n  Contribute insights on best practices, industry standards, and compliance requirements across retail trade subdomains.  \n  Create, evaluate, and refine written content related to retail operations, sales processes, and customer service interactions.  \n  Assess and validate the logical consistency of retail problem-solving methods and decision-making processes.  \n  Participate in structured discussions to clarify terminology, operational nuances, and context-specific challenges within the retail environment.  \n  Deliver actionable recommendations for improving AI outputs based on real-world retail expertise.  \n  Collaborate remotely using strong written and verbal communication skills to ensure clear, effective knowledge transfer.  \n  Preferred Qualifications:  \n  Minimum of 5+ years of experience in retail trade, operations, or relevant subdomains (e.g., pharmacy operations, retail supervision, general management, private investigation in retail).  \n  Demonstrated ability to articulate complex operational processes and scenarios clearly in both written and verbal formats.  \n  Proven track record of implementing or advising on retail best practices and compliance requirements.  \n  Strong analytical skills with attention to detail in reviewing and validating workflows, procedures, and case studies.  \n  Experience working collaboratively in remote or distributed engagements.  \n  Familiarity with technology-driven solutions or platforms used in retail is a plus.  \n  Proactive approach to problem-solving and a commitment to high-quality, real-world accuracy in all deliverables.  \n  Originally posted on  Himalayas  ",
-      "source": "Himalayas",
-      "published": "2026-10-26",
-      "remote": true,
-      "sourceChecked": true,
-      "applicationChannel": {
-        "kind": "website_only",
-        "sourceUrl": "https://himalayas.app/companies/xperteez-technology/jobs/retail-trade-operations-expert-remote-contract?utm_source=api",
         "verified": false,
         "evidence": "job_ad"
       },
@@ -79,38 +79,38 @@
       "eligibility": "Country filter only; verify employer requirements before applying."
     },
     {
-      "id": "himalayas:https://himalayas.app/companies/zelh/jobs/security-operations-specialist",
-      "company": "Zelh",
-      "role": "Security Operations Specialist",
+      "id": "himalayas:https://himalayas.app/companies/micro1/jobs/structured-finance-attorney",
+      "company": "micro1",
+      "role": "Structured Finance Attorney",
       "location": "Remote · worldwide listing",
-      "sourceUrl": "https://himalayas.app/companies/zelh/jobs/security-operations-specialist?utm_source=api",
-      "description": "  Zelh  is a fast-growing outsourcing company focused on providing reliable, high-quality services and building long-term relationships with customers, employees, and vendors.  The Security Operations Specialist plays a critical role in ensuring the safe and secure transportation of high-value freight. This role involves overseeing and managing security operations, coordinating security escorts, conducting risk assessments, and implementing security protocols to protect valuable goods during transit. You will work closely with internal teams and external security partners to ensure the highest standards of safety and risk management are maintained.  ESSENTIAL FUNCTIONS:  • Responsible to protects the integrity of high value products being shipped by rigorously applying company’s processes  • Liaise with local law enforcement, security contractors, and external partners to address security concerns and enhance the security of transport operations  • Continuously monitor the security of high-value freight during transit using surveillance systems, GPS tracking, and other tools, ensuring timely detection of any irregularities.  • Carries out all necessary data entry and confirmation of key milestones of the Security Operations process. (Departure, arrival, PODs, etc.) while utilizing Mcleod and other systems  • Assures that all paperwork including, but not limited to temperature downloads, pictures, and POD are downloaded to the load documents and the customer to finish the load for billing  • Conduct comprehensive risk assessments for each shipment, identifying potential security threats and vulnerabilities along the transport route  • Handles escalations of suspicious activity regarding customer freight  • Responsible for updating customer portals based on customer requirements  NON-ESSENTIAL FUNCTIONS:  • Attends all required training and staff meetings  • Strives to maintain a safe working environment through the prevention of accidents, the preservation of equipment, and the achievement of safe working practices  • Maintains a positive and professional demeanor towards customers, visitors, and co-workers  • Adheres to all policies and procedures of Vectura Security Group  • Performs other duties as assigned  Requirements  QUALIFICATIONS/SKILLS/EDUCATION REQUIREMENTS:  • Upper-intermediate English level is a MUST  • College degree in supply chain preferred  • Three plus years in security and compliance background and/or customer service  • Three plus years logistics experience  • Knowledge of TSA and GDP practices preferred  • Ability to multitask under pressure  • Advanced knowledge of supply chain industry, including regulations and customer requirements  • Clear and confident communication both verbal and written  • Extreme detail-orientation• Experience with conflict resolution  • Demonstrates emotional intelligence• Working knowledge of Microsoft Office and Teams  • Analytical approach to problem solving  • Personality: Self-confident, self-motivated, extroverted, flexible and able to work independentlyin a team-oriented environment.  • Ability to understand and communicate drivers’ temperature requirements, mileage, and hoursof service during transit   Working  conditions :  \n  Working schedule: Thursday – Monday, 7 am - 4 pm CST  \n  Office mode of work is preferred  \n  10+ business days of paid time off  \n  Team building and corporate events  \n  Equipment provided  \n  A supportive team  \n  Originally posted on  Himalayas  ",
+      "sourceUrl": "https://himalayas.app/companies/micro1/jobs/structured-finance-attorney?utm_source=api",
+      "description": " Role Title: Structured Finance Attorney  Role Type: Contractor  Location: Remote   micro1  is engaging Structured Finance Attorneys to contribute their legal expertise to a customer's dynamic project. In this role, you'll apply your expertise to help train next-generation AI systems. Your work will shape how models learn, reason, and perform through high-quality, real-world input. No prior experience in AI is required — your domain knowledge is what matters.  Scope of Work  \n Review, analyze, and annotate legal contracts and transaction documents related to structured finance products, such as asset-backed securities, mortgage-backed securities, and collateralized debt obligations. \n Draft or evaluate sample documents, clauses, and legal frameworks pertinent to structured finance transactions. \n Provide detailed feedback on hypothetical scenarios or AI-generated content for legal sufficiency, accuracy, and clarity. \n Identify and explain industry-specific terminology, regulatory requirements, and common legal structures within structured finance. \n Contribute to the development of training datasets that reflect current legal standards and best practices in structured finance. \n Collaborate asynchronously with platform coordinators and other subject matter professionals to ensure the project’s legal content meets high standards. \n Deliver insights on evolving market practices, common pitfalls, and recent regulatory developments in the structured finance sector. \n  Preferred Qualifications  \n Juris Doctor (JD) degree or international equivalent, with active admission to practice in at least one jurisdiction. \n Extensive experience (typically 5+ years) advising on structured finance transactions, including drafting and negotiating transaction documents. \n Thorough knowledge of securities law, regulatory compliance frameworks, and relevant market regulations. \n Outstanding written and verbal communication skills, with a strong focus on clarity and precision in legal language. \n Experience reviewing and providing feedback on a range of financial legal documents, including prospectuses, term sheets, and offering memoranda. \n Proven ability to break down complex legal concepts for varied audiences or technology applications. \n Strong attention to detail, analytical mindset, and the ability to work independently in a remote setting. \n  Originally posted on  Himalayas  ",
       "source": "Himalayas",
-      "published": "2026-10-23",
+      "published": "2026-10-22",
       "remote": true,
       "sourceChecked": true,
       "applicationChannel": {
         "kind": "website_only",
-        "sourceUrl": "https://himalayas.app/companies/zelh/jobs/security-operations-specialist?utm_source=api",
+        "sourceUrl": "https://himalayas.app/companies/micro1/jobs/structured-finance-attorney?utm_source=api",
         "verified": false,
         "evidence": "job_ad"
       },
       "eligibility": "Country filter only; verify employer requirements before applying."
     },
     {
-      "id": "himalayas:https://himalayas.app/companies/xperteez-technology/jobs/business-operations-expert-remote-contract",
-      "company": "Xperteez Technology",
-      "role": "🌎Business Operations Expert, Remote- Contract",
+      "id": "himalayas:https://himalayas.app/companies/micro1/jobs/product-safety-regulatory-compliance-attorney",
+      "company": "micro1",
+      "role": "Product Safety & Regulatory Compliance Attorney",
       "location": "Remote · worldwide listing",
-      "sourceUrl": "https://himalayas.app/companies/xperteez-technology/jobs/business-operations-expert-remote-contract?utm_source=api",
-      "description": "  Role Title:  Business Operations Expert   Role Type:  Contract   Location:  Remote, global  Required Skills:  \n  Turning Real Operations Work Into a Defined Task  \n  Objective Grading Criteria  \n  Business Operations  \n  Process Design and Ownership  \n  Operational Reporting and Data Discrepancies  \n  Opportunity Snapshot:  \n  Pay: Up to $90/hour equivalent  \n  Time per task: ~10 hours per task  \n  Location: Fully remote — no geographic restrictions. Strong English required (B2 minimum, C1 preferred)  \n  Next step: Complete the role-specific AI interview — it’s how your expertise gets in front of the client  \n  Your tasks: Design realistic, multi-step business operations tasks with objective criteria for grading the output  \n  Your domain knowledge is what matters here — no prior AI experience required.  The work is to turn real operational workflows into benchmark tasks: realistic, difficult, and gradable against objective criteria. If you’ve written an SOP, built a QA checklist, or trained a team against a standard, that’s the instinct this needs.  Scope of Work:  \n  Design multi-step tasks drawn from real operations work — reporting, process design, workflow management — with realistic reference files and clear instructions.  \n  Define objective grading criteria so two qualified reviewers would reach the same verdict on the same output.  \n  Build tasks that require judgment rather than lookup: ones where the right answer depends on reading the materials correctly.  \n  Create or source the supporting materials each task needs: spreadsheets, system exports, process documentation, operational reports.  \n  Flag tasks that turn out to be ambiguous or ungradable instead of submitting them anyway.  \n  Deliver approved tasks on schedule and at the required quality level.  \n  Preferred Qualifications:  \n  5+ years of hands-on responsibility in business operations, operations reporting, process design, or workflow management — direct ownership of the work, not supervisory-only or adjacent exposure.  \n  Experience creating or applying structured standards: SOPs, QA checklists, process documentation, service level definitions, or training assessments.  \n  Strong Excel capability and comfort reasoning across multiple documents at once.  \n  Strong English, written and spoken — B2 minimum, C1 preferred.  \n  AI or LLM evaluation experience is a plus, but not required.  \n  Originally posted on  Himalayas  ",
+      "sourceUrl": "https://himalayas.app/companies/micro1/jobs/product-safety-regulatory-compliance-attorney?utm_source=api",
+      "description": " Role Title: Product Safety &amp; Regulatory Compliance Attorney  Role Type: Contractor  Location: Remote   micro1  is engaging Product Safety &amp; Regulatory Compliance Attorneys to participate in a unique project supporting a customer’s regulatory initiatives. In this role, you'll apply your expertise to help train next-generation AI systems. Your work will shape how models learn, reason, and perform through high-quality, real-world input. No prior experience in AI is required — your domain knowledge is what matters.  Scope of Work  \n Review and analyze product safety laws, regulations, and standards across multiple jurisdictions. \n Draft, edit, and evaluate a variety of regulatory compliance documentation and legal texts. \n Provide detailed written feedback on product safety case studies, compliance scenarios, and regulatory frameworks. \n Assess product compliance strategies and recommend improvements or mitigation actions based on legal best practices. \n Translate complex regulatory language into clear, practical guidance for AI training purposes. \n Identify potential risks or gaps in compliance materials and explain their legal implications. \n Contribute to the development of structured content for AI model evaluation and training datasets. \n  Preferred Qualifications  \n Juris Doctor (JD) or equivalent legal degree with a focus on product safety, consumer protection, or regulatory compliance. \n Significant experience advising on compliance with federal, state, and international product safety regulations (e.g., CPSC, EU directives, FDA, etc.). \n Demonstrated ability to interpret, distill, and communicate complex legal concepts in both written and verbal formats. \n Strong attention to detail, analytical skills, and critical thinking applied to real-world regulatory issues. \n Proven expertise in drafting and reviewing technical documents, compliance policies, or legal opinions related to product safety. \n Experience working with cross-functional teams and adapting to diverse project needs is a plus. \n Interest in contributing to innovative technology initiatives and a willingness to engage with emerging AI applications. \n  Originally posted on  Himalayas  ",
       "source": "Himalayas",
-      "published": "2026-10-27",
+      "published": "2026-10-22",
       "remote": true,
       "sourceChecked": true,
       "applicationChannel": {
         "kind": "website_only",
-        "sourceUrl": "https://himalayas.app/companies/xperteez-technology/jobs/business-operations-expert-remote-contract?utm_source=api",
+        "sourceUrl": "https://himalayas.app/companies/micro1/jobs/product-safety-regulatory-compliance-attorney?utm_source=api",
         "verified": false,
         "evidence": "job_ad"
       },
@@ -136,6 +136,82 @@
       "eligibility": "Country filter only; verify employer requirements before applying."
     },
     {
+      "id": "himalayas:https://himalayas.app/companies/micro1/jobs/business-operations-expert",
+      "company": "micro1",
+      "role": "Business Operations Expert",
+      "location": "Remote · worldwide listing",
+      "sourceUrl": "https://himalayas.app/companies/micro1/jobs/business-operations-expert?utm_source=api",
+      "description": "  Role Title:  Business Operations Expert   Role Type:  Contractor   Location:  Remote, global   Opportunity Snapshot    Pay:  Up to $90/hour equivalent   Time per task:  ~10 hours per task   Location:  Fully remote — no geographic restrictions. Strong English required (B2 minimum, C1 preferred)   Next step:  Complete the role-specific AI interview — it’s how your expertise gets in front of the client   Your tasks:  Design realistic, multi-step business operations tasks with objective criteria for grading the output   micro1  is engaging experienced operations practitioners to design the tasks that measure what AI systems can actually do. Your domain knowledge is what matters here — no prior AI experience required.  The work is to turn real operational workflows into benchmark tasks: realistic, difficult, and gradable against objective criteria. If you’ve written an SOP, built a QA checklist, or trained a team against a standard, that’s the instinct this needs.  Scope of Work  \n Design multi-step tasks drawn from real operations work — reporting, process design, workflow management — with realistic reference files and clear instructions. \n Define objective grading criteria so two qualified reviewers would reach the same verdict on the same output. \n Build tasks that require judgment rather than lookup: ones where the right answer depends on reading the materials correctly. \n Create or source the supporting materials each task needs: spreadsheets, system exports, process documentation, operational reports. \n Flag tasks that turn out to be ambiguous or ungradable instead of submitting them anyway. \n Deliver approved tasks on schedule and at the required quality level. \n  Preferred Qualifications  \n 5+ years of hands-on responsibility in business operations, operations reporting, process design, or workflow management — direct ownership of the work, not supervisory-only or adjacent exposure. \n Experience creating or applying structured standards: SOPs, QA checklists, process documentation, service level definitions, or training assessments. \n Strong Excel capability and comfort reasoning across multiple documents at once. \n Strong English, written and spoken — B2 minimum, C1 preferred. \n AI or LLM evaluation experience is a plus, but not required. \n  How the selection process works  \n Apply and complete the screening questions \n Complete the AI interview for this role. \n Onboarding — our Talent Ops team will get you set up \n  Originally posted on  Himalayas  ",
+      "source": "Himalayas",
+      "published": "2026-10-25",
+      "remote": true,
+      "sourceChecked": true,
+      "applicationChannel": {
+        "kind": "website_only",
+        "sourceUrl": "https://himalayas.app/companies/micro1/jobs/business-operations-expert?utm_source=api",
+        "verified": false,
+        "evidence": "job_ad"
+      },
+      "eligibility": "Country filter only; verify employer requirements before applying."
+    },
+    {
+      "id": "himalayas:https://himalayas.app/companies/micro1/jobs/defense-analyst",
+      "company": "micro1",
+      "role": "Defense Analyst",
+      "location": "Remote · worldwide listing",
+      "sourceUrl": "https://himalayas.app/companies/micro1/jobs/defense-analyst?utm_source=api",
+      "description": " Role Title: Defense Analyst  Role Type: Contractor  Location: Remote  About the Role   micro1  is seeking experienced civilian defense analysts to contribute to an AI development project focused on military operations, armed conflict, and defense-related decision-making.You'll evaluate AI-generated military scenarios, identify factual or analytical inaccuracies, and provide expert feedback to improve AI reasoning and reliability.  Scope of Work  \n Evaluate AI-generated scenarios involving military operations, armed conflict, and defense planning. \n Assess the accuracy and realism of military capabilities, operational assumptions, and conflict-related analysis. \n Review scenarios involving civilian protection, operational constraints, and the application of international humanitarian law (IHL). \n  Identify factual errors, flawed reasoning, and unrealistic assumptions. \n Provide clear, structured written feedback to improve AI-generated content. \n  Qualifications  \n Professional experience as a defense analyst, military operations analyst, conflict analyst, or national security researcher. \n Background in defense research, military capabilities assessment, conflict analysis, or operational planning. \n Strong understanding of military operations, armed conflict, and defense-related decision-making. \n Ability to evaluate complex scenarios and communicate findings clearly in writing. \n Experience with defense organizations, government agencies, research institutes, think tanks, or international organizations is highly desirable. \n  Familiarity with international humanitarian law (IHL), Rules of Engagement (ROE), or civilian protection is a plus. \n  Originally posted on  Himalayas  ",
+      "source": "Himalayas",
+      "published": "2026-10-29",
+      "remote": true,
+      "sourceChecked": true,
+      "applicationChannel": {
+        "kind": "website_only",
+        "sourceUrl": "https://himalayas.app/companies/micro1/jobs/defense-analyst?utm_source=api",
+        "verified": false,
+        "evidence": "job_ad"
+      },
+      "eligibility": "Country filter only; verify employer requirements before applying."
+    },
+    {
+      "id": "himalayas:https://himalayas.app/companies/micro1/jobs/military-operations-expert",
+      "company": "micro1",
+      "role": "Military Operations Expert",
+      "location": "Remote · worldwide listing",
+      "sourceUrl": "https://himalayas.app/companies/micro1/jobs/military-operations-expert?utm_source=api",
+      "description": " Role Title: Military Operations Expert  Role Type: Contractor  Location: Remote  About the Role   micro1  is seeking current or former military professionals with firsthand operational experience to contribute to an AI development project focused on military operations, tactical decision-making, and international humanitarian law. You'll evaluate AI-generated military scenarios, identify inaccuracies, and provide expert feedback to improve AI reasoning and reliability.  Scope of Work  \n Evaluate AI-generated military scenarios for operational realism, tactical accuracy, and sound decision-making. \n Review military planning, combat operations, targeting, and weapons employment scenarios. \n Assess the application of Rules of Engagement (ROE), Law of Armed Conflict (LOAC), and operational constraints. \n Identify inaccuracies and provide clear, structured written feedback. \n  Qualifications  \n Military operational experience in areas such as infantry, Special Operations Forces, combat aviation, artillery, targeting, air defense, naval operations, or military intelligence. \n Strong understanding of military operations, tactical planning, and operational decision-making. \n Ability to assess complex scenarios and communicate findings clearly in writing. \n Combat deployments, operational command, weapons specialization, or military instructional experience are highly desirable. \n Familiarity with ROE, LOAC, or international humanitarian law is a plus. \n  Originally posted on  Himalayas  ",
+      "source": "Himalayas",
+      "published": "2026-10-27",
+      "remote": true,
+      "sourceChecked": true,
+      "applicationChannel": {
+        "kind": "website_only",
+        "sourceUrl": "https://himalayas.app/companies/micro1/jobs/military-operations-expert?utm_source=api",
+        "verified": false,
+        "evidence": "job_ad"
+      },
+      "eligibility": "Country filter only; verify employer requirements before applying."
+    },
+    {
+      "id": "himalayas:https://himalayas.app/companies/micro1/jobs/army-combat-operations-expert",
+      "company": "micro1",
+      "role": "Army Combat Operations Expert",
+      "location": "Remote · worldwide listing",
+      "sourceUrl": "https://himalayas.app/companies/micro1/jobs/army-combat-operations-expert?utm_source=api",
+      "description": " Role Title: Army Combat Operations Expert  Role Type: Contractor  Location: Remote  About the Role   micro1  is seeking current or former Army professionals with firsthand combat operations experience to contribute to an AI development project focused on military tactics, operational decision-making, and battlefield scenarios. You'll evaluate AI-generated military content, identify operational inaccuracies, and provide expert feedback to improve AI reasoning and reliability.  Scope of Work  \n Evaluate AI-generated scenarios involving ground combat, tactical planning, and military operations. \n Assess operational realism, weapons employment, targeting, and battlefield decision-making. \n Review scenarios for accuracy, sound reasoning, and alignment with Rules of Engagement (ROE) and the Law of Armed Conflict (LOAC). \n Identify operational errors and provide clear, structured written feedback. \n  Qualifications  \n Current or former Army professional with experience in infantry, artillery, armor, combat engineering, Army aviation, or other combat-arms specialties. \n Hands-on experience in tactical operations, mission planning, or weapons employment. \n Strong understanding of Army tactics, operational procedures, and combat decision-making. \n Ability to communicate complex military concepts clearly in writing. \n Combat deployments, Ranger qualifications, weapons specialization, or tactical instructor experience are highly desirable. \n  Originally posted on  Himalayas  ",
+      "source": "Himalayas",
+      "published": "2026-10-27",
+      "remote": true,
+      "sourceChecked": true,
+      "applicationChannel": {
+        "kind": "website_only",
+        "sourceUrl": "https://himalayas.app/companies/micro1/jobs/army-combat-operations-expert?utm_source=api",
+        "verified": false,
+        "evidence": "job_ad"
+      },
+      "eligibility": "Country filter only; verify employer requirements before applying."
+    },
+    {
       "id": "himalayas:https://himalayas.app/companies/micro1/jobs/finance-accounting-expert",
       "company": "micro1",
       "role": "Finance & Accounting Expert",
@@ -149,44 +225,6 @@
       "applicationChannel": {
         "kind": "website_only",
         "sourceUrl": "https://himalayas.app/companies/micro1/jobs/finance-accounting-expert?utm_source=api",
-        "verified": false,
-        "evidence": "job_ad"
-      },
-      "eligibility": "Country filter only; verify employer requirements before applying."
-    },
-    {
-      "id": "himalayas:https://himalayas.app/companies/discovered/jobs/founder-s-associate-operations",
-      "company": "Discovered",
-      "role": "Founder's Associate, Operations",
-      "location": "Remote · worldwide listing",
-      "sourceUrl": "https://himalayas.app/companies/discovered/jobs/founder-s-associate-operations?utm_source=api",
-      "description": " About us   Discovered  Labs is a search and AI visibility agency working with B2B SaaS companies.  The role  You'll run the operational backbone of the company: money in, money out, people in, and every process we haven't automated yet. Your job is to make sure nothing falls through the cracks, and then to make sure it can't.  What you'll do  Money out  \n  Process supplier bills and expenses, and prepare payment runs for founder approval  \n  Prepare monthly contractor payroll across currencies, check it against agreed rates, and send it for approval  \n  Track affiliate and referral partners, calculate commissions and prepare payouts  \n  Money in  \n  Raise client invoices and keep the receivables list current  \n  Chase late payments politely and persistently, and escalate when needed  \n  Keep a simple weekly cash position for the founders  \n  People and onboarding  \n  Run onboarding and offboarding for contractors and clients: contracts, accounts, tool access, checklists  \n  Keep contractor records, agreements and rates up to date  \n  Everything else  \n  Take on any manual process the founders hand you, document it, and automate it where you can  \n  Run founder projects from start to finish and keep a weekly list of open items  \n  Be the main contact for our UK accountant on document requests  \n  You have  \n  1 to 3 years in any role involving operations, admin, finance, customer work or STEM. Strong recent graduates are welcome  \n  Regular, hands-on use of AI tools like Claude, Claude Code or Codex in your daily work. You can show us something you've built or automated with them  \n  Clear written and spoken English: you'll be emailing clients, contractors and partners  \n  You're comfortable talking to clients about money, and you can chase a late payment while keeping the relationship warm  \n  You figure things out: when something's manual, you hack together a fix with Claude, Codex or no-code tools without being asked  \n  Nice to have  \n  Any exposure to invoicing, payroll or bookkeeping  \n  Experience at a startup or agency  \n  Has connected AI tools to other software (MCP, APIs, Zapier, n8n)  \n  Familiar with Stripe, Xero/QuickBooks, Notion or ClickUp  \n  What we offer  \n  Training on every process, then real ownership of it  \n  Direct access to the founders and a clear path to grow into a Chief of Staff role  \n  Fully remote, +-4 hours with CET  \n  How to apply  Send us your CV and a Loom of up to 3 minutes. Share your screen and show us something you've built or automated with AI, such as Claude, Codex or ChatGPT. Explain it as you would to a client who isn't technical: what problem it solves, how it works and how much time it saves.  Shortlisted candidates get a 30-minute take-home task by email. If that goes well, you'll have one call with a founder.  Originally posted on  Himalayas  ",
-      "source": "Himalayas",
-      "published": "2026-10-24",
-      "remote": true,
-      "sourceChecked": true,
-      "applicationChannel": {
-        "kind": "website_only",
-        "sourceUrl": "https://himalayas.app/companies/discovered/jobs/founder-s-associate-operations?utm_source=api",
-        "verified": false,
-        "evidence": "job_ad"
-      },
-      "eligibility": "Country filter only; verify employer requirements before applying."
-    },
-    {
-      "id": "himalayas:https://himalayas.app/companies/micro1/jobs/structured-finance-attorney",
-      "company": "micro1",
-      "role": "Structured Finance Attorney",
-      "location": "Remote · worldwide listing",
-      "sourceUrl": "https://himalayas.app/companies/micro1/jobs/structured-finance-attorney?utm_source=api",
-      "description": " Role Title: Structured Finance Attorney  Role Type: Contractor  Location: Remote   micro1  is engaging Structured Finance Attorneys to contribute their legal expertise to a customer's dynamic project. In this role, you'll apply your expertise to help train next-generation AI systems. Your work will shape how models learn, reason, and perform through high-quality, real-world input. No prior experience in AI is required — your domain knowledge is what matters.  Scope of Work  \n Review, analyze, and annotate legal contracts and transaction documents related to structured finance products, such as asset-backed securities, mortgage-backed securities, and collateralized debt obligations. \n Draft or evaluate sample documents, clauses, and legal frameworks pertinent to structured finance transactions. \n Provide detailed feedback on hypothetical scenarios or AI-generated content for legal sufficiency, accuracy, and clarity. \n Identify and explain industry-specific terminology, regulatory requirements, and common legal structures within structured finance. \n Contribute to the development of training datasets that reflect current legal standards and best practices in structured finance. \n Collaborate asynchronously with platform coordinators and other subject matter professionals to ensure the project’s legal content meets high standards. \n Deliver insights on evolving market practices, common pitfalls, and recent regulatory developments in the structured finance sector. \n  Preferred Qualifications  \n Juris Doctor (JD) degree or international equivalent, with active admission to practice in at least one jurisdiction. \n Extensive experience (typically 5+ years) advising on structured finance transactions, including drafting and negotiating transaction documents. \n Thorough knowledge of securities law, regulatory compliance frameworks, and relevant market regulations. \n Outstanding written and verbal communication skills, with a strong focus on clarity and precision in legal language. \n Experience reviewing and providing feedback on a range of financial legal documents, including prospectuses, term sheets, and offering memoranda. \n Proven ability to break down complex legal concepts for varied audiences or technology applications. \n Strong attention to detail, analytical mindset, and the ability to work independently in a remote setting. \n  Originally posted on  Himalayas  ",
-      "source": "Himalayas",
-      "published": "2026-10-22",
-      "remote": true,
-      "sourceChecked": true,
-      "applicationChannel": {
-        "kind": "website_only",
-        "sourceUrl": "https://himalayas.app/companies/micro1/jobs/structured-finance-attorney?utm_source=api",
         "verified": false,
         "evidence": "job_ad"
       },
@@ -212,19 +250,19 @@
       "eligibility": "Country filter only; verify employer requirements before applying."
     },
     {
-      "id": "himalayas:https://himalayas.app/companies/zelh/jobs/customer-operations-representative",
-      "company": "Zelh",
-      "role": "Customer Operations Representative",
+      "id": "himalayas:https://himalayas.app/companies/cority/jobs/financial-analyst-fp-a",
+      "company": "Cority",
+      "role": "Financial Analyst, FP&A",
       "location": "Remote · worldwide listing",
-      "sourceUrl": "https://himalayas.app/companies/zelh/jobs/customer-operations-representative?utm_source=api",
-      "description": "   Zelh  is a fast-growing, passionate outsourcing company.   Our mission is to be the most reliable company by offering and maintaining high-quality services consistently.  We achieve the mission by fostering long-term relationships with customers, employees, and vendors. Personal attention, timely communication, and respect for all people are the basis of our business philosophy!  We are looking for a highly organized and detail-oriented  Customer Operations Representative  to support daily shipment coordination, customer communication, and operational execution across domestic and international freight movements.  This role sits at the center of customer operations. You will be responsible for ensuring shipments are accurately built in the TMS, proactively monitored, clearly communicated, and fully updated from pickup through final delivery.  Success in this role comes from consistency, urgency, communication discipline, and operational ownership.  This is not a passive support role. The right person proactively follows up, identifies risks before escalation, communicates clearly with customers and brokers, and keeps freight moving without gaps in visibility.  Role in one line  A logistics operations professional responsible for shipment building, tracking coordination, proactive customer updates, and operational communication across domestic and international freight movements.  What you will do:  Load Building &amp; Shipment Setup  \n  Review incoming Delivery Orders (DOs) and identify shipment requirements  \n  Build and enter shipments accurately into the TMS  \n \n Confirm shipment setup completion via email: \n \n  Reply “received, thank you”  \n  Add PO#, BKG#, or MBOL# into the email subject line as required  \n  CC tracking teams and operational stakeholders appropriately  \n \n \n  Ensure shipment data accuracy before operational execution begins  \n  Load Coverage &amp; Shipment Monitoring  \n  Confirm all shipments are fully covered prior to scheduled pickup times  \n  Escalate uncovered shipments to brokers at least 2 hours before pickup time  \n  Monitor shipment progress and communicate operational delays proactively  \n \n Coordinate with internal teams regarding: \n \n  Recovery trucks  \n  Carrier replacement  \n  Service interruptions  \n  Late pickups or deliveries  \n \n \n  Customer Communication &amp; Updates  Provide proactive shipment visibility and operational updates throughout the shipment lifecycle.  Daily Customer Updates  \n  Send daily ETA updates to customers for pickup and delivery appointments  \n \n Include truck location details when shipments are already loaded \n  \n Example: \n   “Truck is currently in Houston, TX with ETA to delivery at 09:00 AM”   \n  \n \n  Pickup &amp; Delivery Notifications  \n \n Notify customers immediately upon: \n \n  Driver arrival at shipper  \n  Driver arrival at receiver  \n  Driver departure from shipper  \n  Driver departure from receiver  \n \n \n  Include exact arrival and departure times in updates  \n  Detention &amp; Delay Communication  \n  Notify customers when detention begins for OTR shipments (after 2 hours onsite)  \n \n Alert brokers immediately regarding: \n \n  Late pickups  \n  Late deliveries  \n  Missed appointments  \n  Service risks  \n \n \n \n Assist with determining next operational steps: \n \n  Customer communication  \n  Carrier replacement  \n  Recovery truck coordination  \n \n \n  Import &amp; Export Shipment Coordination  \n  Maintain and update shipment tracking charts for import and export freight  \n \n Update customer tracking sheets with: \n \n  Appointments  \n  Container pull status  \n  Container numbers  \n  Holds or customs-related issues  \n  Delivery updates  \n \n \n \n Monitor and communicate: \n \n  Container loading schedules  \n  Delivery schedules  \n  Port or terminal delays  \n  Operational exceptions  \n \n \n  Send final delivery documentation, charges, and PODs upon shipment completion  \n  Requirements  \n  Previous logistics, freight operations, customer operations, dispatch, or transportation coordination experience preferred  \n  Strong attention to detail and ability to manage multiple shipments simultaneously  \n  Excellent organizational and follow-up skills  \n  Strong written and verbal English communication skills  \n  Ability to provide clear, professional customer updates throughout the day  \n  Comfortable working in fast-paced transportation and logistics environments  \n  Ability to identify operational issues proactively and escalate appropriately  \n  Experience working with TMS systems and shipment tracking tools preferred  \n  Strong sense of urgency and accountability  \n  Ability to work independently in a remote environment  \n  The strongest Customer Operations Representatives:  \n  Stay ahead of problems before customers ask questions  \n  Communicate proactively rather than reactively  \n  Maintain extremely high attention to shipment details  \n  Keep customers consistently informed without being prompted  \n  Escalate issues early and clearly  \n  Remain ca",
+      "sourceUrl": "https://himalayas.app/companies/cority/jobs/financial-analyst-fp-a?utm_source=api",
+      "description": " About  Cority   Cority  helps customers see and prevent risks across their operations in real time. Our EHS+ platform converges people, data, and AI agents to provide a clear view of information people can trust, automate workflows that make people more impactful, and deliver personalized insights and expertise to improve decision-making. While most solutions respond to risks one at a time,  Cority  helps prevent them across environmental management, employee health, safety, quality, and sustainability. For 40 years,  Cority  has been the market leader in EHS+, recognized by top analysts and trusted by more than 1,500 of the most complex organizations worldwide.  Cority  has received many awards for its strong employee culture and outstanding business performance. To learn more, visit www.cority.com.  About the role:  We're looking for a Financial Analyst to join our FP&amp;A team. Reporting to the Manager, FP&amp;A, you'll own forecasting and reporting for partner departments, build key inputs to our monthly board pack, and act as the day-to-day finance partner to department heads. This is a hands-on, driver-based modelling role suited to someone who wants exposure to SaaS/recurring-revenue metrics (ARR, NRR, GRR) and cross-functional finance work. What You'll Do  \n Support the annual budgeting and department forecast processes — gather business-partner inputs, update models, and flag variances above threshold \n Support Professional Services reporting — track utilization, backlog, and POC revenue, and assist with the PS forecast and capacity plan \n Prepare board pack components, including variance tables and KPI charts \n Provide accrual inputs to accounting and support post-close flux analysis \n Reconcile actuals to forecast each month-end \n Act as finance partner to a department head, including attending the monthly BVA (budget-vs-actual) analysis meeting \n Assist with scenario and sensitivity analysis under the Manager's direction \n  What We're Looking For  \n Comfort building and maintaining driver-based financial models \n Ability to write clear variance commentary, not just build the variance table \n Strong operating discipline — reporting calendars, version control, and attention to detail \n SaaS or recurring-revenue background preferred; familiarity with ARR, NRR, GRR, and ARR-to-billings-to-GAAP-revenue bridges is a plus \n Familiarity with the Professional Services function at a SaaS company is a plus \n Bachelor's degree in Finance, Accounting, Economics, or a related field \n 1–3 years of experience in FP&amp;A, corporate finance, or a related analytical role \n Advanced Excel skills; experience with a budgeting/forecasting platform (e.g., Pigment, Drivetrain, Vena) is a plus \n  WHAT’S IN IT FOR YOU?  \n An opportunity to work in a values-driven, performance oriented, dynamic and growth focused culture \n We support a remote working environment with a one-time home office allowance and subsidized monthly internet allowance \n Competitive health benefits, dental plans, and retirement savings plan (RRSP, 401K plan etc.) \n Annual fitness allowance \n Mental health support provided through access to Calm Premium meditation app and access to Talkspace \n Access to learning tools &amp; platforms, internal training programs, annual training allowance and certifications (if applicable), and High Talent Programs \n   Cority  is committed to a diverse and inclusive work environment.  Cority  is an equal opportunity employer and does not discriminate based on race, nationality, gender, gender identity, sexual orientation, protected veteran status, age, disability or any other legally protected status. For applicants who would like to request for accommodation please send an email to .  Originally posted on  Himalayas  ",
       "source": "Himalayas",
-      "published": "2026-10-24",
+      "published": "2026-10-12",
       "remote": true,
       "sourceChecked": true,
       "applicationChannel": {
         "kind": "website_only",
-        "sourceUrl": "https://himalayas.app/companies/zelh/jobs/customer-operations-representative?utm_source=api",
+        "sourceUrl": "https://himalayas.app/companies/cority/jobs/financial-analyst-fp-a?utm_source=api",
         "verified": false,
         "evidence": "job_ad"
       },
