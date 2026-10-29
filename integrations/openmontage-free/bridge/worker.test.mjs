@@ -108,3 +108,19 @@ test('no publish or billing routes exist',async()=>{
   assert.equal(r.status,404);
  }
 });
+
+test('private dashboard renders real D1 UI, without active publish control',async()=>{
+ mock(absent);
+ let r=await bridge.fetch(req('/','GET',undefined,{anonymous:true}),env,{});
+ assert.equal(r.status,403);
+ r=await bridge.fetch(req('/'),env,{});
+ assert.equal(r.status,200);
+ const html=await r.text();
+ assert.match(html,/OMDA/);
+ assert.match(html,/Start new documentary — locked/);
+ assert.match(html,/button disabled/);
+ assert.doesNotMatch(html,/OMDA_DOC_RUNNER_TOKEN/);
+ const js=await bridge.fetch(req('/static/ui.js'),env,{});
+ assert.equal(js.status,200);
+ assert.match(await js.text(),/\/api\/queue/);
+});
