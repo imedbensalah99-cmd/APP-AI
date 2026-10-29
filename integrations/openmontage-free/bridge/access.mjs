@@ -80,3 +80,25 @@ export async function verifyAccessRequest(request,env){
       new TextEncoder().encode(a+'.'+b));
   }catch{return fail()}
 }
+
+
+/**
+ * Prefer Cloudflare's runtime-authenticated Worker context when present.
+ * Cloudflare populates ctx.access only for an Access-authorized invocation.
+ * Fall back to cryptographically verified app JWT when context isn't supplied.
+ * Never accept user-supplied email headers or an unsigned browser cookie.
+ */
+export async function verifyOwnerAccess(request, env, ctx){
+  const expected=typeof env.OMDA_OWNER_EMAIL==='string'?
+    env.OMDA_OWNER_EMAIL.trim().toLowerCase():'';
+  if(!expected)return false;
+  if(ctx?.access){
+    if(typeof ctx.access.getIdentity!=='function')return false;
+    try{
+      const identity=await ctx.access.getIdentity();
+      return typeof identity?.email==='string' &&
+        identity.email.trim().toLowerCase()===expected;
+    }catch{return false}
+  }
+  return verifyAccessRequest(request,env);
+}
