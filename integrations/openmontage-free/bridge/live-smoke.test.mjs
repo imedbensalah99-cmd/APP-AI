@@ -44,3 +44,20 @@ test('Render read-only authentication handshake rejects anonymous calls', {timeo
   assert.equal(data.detail,'UNAUTHORIZED');
   console.log('Render auth handshake anonymous correctly denied:',r.status);
 });
+
+test('Render Drive preflight denies unsigned requests', {timeout:115000}, async()=>{
+  const response=await get(render+'/v1/storage/preflight');
+  assert.equal(response.status,401);
+  console.log('Render storage preflight anonymous correctly denied:',response.status);
+});
+test('Cloudflare Drive preflight stays Access-protected', {timeout:40000}, async()=>{
+  const response=await get(cloudflare+'/api/storage/preflight',30000);
+  assert.ok([302,303,307,401,403].includes(response.status));
+  console.log('Cloudflare storage preflight anonymous protected:',response.status);
+});
+test('Render Drive smoke cannot run without an authenticated owner', {timeout:115000},async()=>{
+  const response=await fetch(render+'/v1/storage/smoke',{
+    method:'POST',redirect:'manual',signal:AbortSignal.timeout(85000)});
+  assert.equal(response.status,401);
+  console.log('Render storage smoke anonymous correctly denied:',response.status);
+});
