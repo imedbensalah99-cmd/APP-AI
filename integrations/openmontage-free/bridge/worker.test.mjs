@@ -142,6 +142,8 @@ test('readiness identifies D1 and Drive blockers even after authenticated Render
   if(String(url).endsWith('/health'))return ok({status:'AVAILABLE',storage:'DRIVE_OAUTH_REQUIRED'},200);
   if(String(url).endsWith('/v1/auth/check'))
     return ok({authenticated:true,method:'LEGACY_SHARED_SECRET',created_job:false},200);
+  if(String(url).endsWith('/v1/storage/preflight'))
+    return ok({storage_ready:false,reason:'DRIVE_OAUTH_REQUIRED'},200);
   throw Error('Unexpected endpoint');
  });
  const result=await bridge.fetch(req('/api/readiness'),env,{});
@@ -152,6 +154,8 @@ test('readiness identifies D1 and Drive blockers even after authenticated Render
  assert.equal(status.render_online,true);
  assert.equal(status.render_shared_token_configured,true);
  assert.equal(status.authenticated_handshake_verified,true);
+ assert.equal(status.drive_folder_verified,false);
+ assert.equal(status.storage_roundtrip_verified,false);
  assert.equal(status.job_submission_ready,false);
  assert.equal(status.paid_generation_enabled,false);
  assert.equal(status.publishing_enabled,false);
