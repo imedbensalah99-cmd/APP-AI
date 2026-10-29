@@ -115,8 +115,8 @@ test('private dashboard renders real D1 UI, without active publish control',asyn
  assert.equal(r.status,401);
  assert.match(r.headers.get('content-type'),/text\/html/);
  const signIn=await r.text();
- assert.match(signIn,/Sign in to OMDA/);
- assert.match(signIn,/cdn-cgi\/access\/login/);
+ assert.match(signIn,/Verify your secure session/);
+ assert.doesNotMatch(signIn,/cdn-cgi\/access\/login/);
  assert.doesNotMatch(signIn,/OMDA_DOC_RUNNER_TOKEN/);
  r=await bridge.fetch(req('/'),env,{});
  assert.equal(r.status,200);
@@ -164,5 +164,5 @@ test('Cloudflare Worker context never trusts arbitrary identity or wrong owner',
  const ctx={access:{aud:env.OMDA_ACCESS_AUD,getIdentity:async()=>({email:'outsider@example.com'})}};
  const r=await bridge.fetch(req('/','GET',undefined,{anonymous:true}),env,ctx);
  assert.equal(r.status,401);
- assert.match(await r.text(),/Sign in to OMDA/);
+ assert.match(await r.text(),/Verify your secure session/);
 });
