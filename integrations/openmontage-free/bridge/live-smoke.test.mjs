@@ -34,3 +34,11 @@ test('Cloudflare Access covers the health route too (no authentication bypass)',
     'Access app must protect all paths until a reviewed public diagnostic route is configured: got '+r.status);
   console.log('Cloudflare Access health protection:',r.status);
 });
+
+test('Render read-only authentication handshake rejects anonymous calls', {timeout:115000},async()=>{
+  const r=await get(render+'/v1/auth/check');
+  assert.equal(r.status,401,'read-only handshake must reject unsigned requests');
+  const data=await r.json();
+  assert.equal(data.detail,'UNAUTHORIZED');
+  console.log('Render auth handshake anonymous correctly denied:',r.status);
+});
