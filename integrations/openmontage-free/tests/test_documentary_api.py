@@ -84,3 +84,82 @@ class ApiTests(unittest.TestCase):
         self.assertNotIn("api.openai.com",source)
 
 if __name__=="__main__":unittest.main()
+
+
+class CloudflareJwtTests(unittest.TestCase):
+    """Deterministic no-network RSA signature tests for server-side auth."""
+    def setUp(self):
+        import jwt
+        from cryptography.hazmat.primitives.asymmetric import rsa
+        self.jwt = jwt
+        self.private = rsa.generate_private_key(public_exponent=65537, key_size=2048)
+        self.public = self.private.public_key()
+        self.config = {
+            "OMDA_ACCESS_ISS": "https://testteam.cloudflareaccess.com",
+            "OMDA_ACCESS_AUD": "a" * 64,
+            "OMDA_OWNER_EMAIL": "owner@example.com"
+        }
+    def signed(self, **claims):
+        import time
+        now = int(time.time())
+        payload = {"iss": self.config["OMDA_ACCESS_ISS"],
+                   "aud": [self.config["OMDA_ACCESS_AUD"]],
+                   "email": "owner@example.com", "iat": now - 5,
+                   "exp": now + 600}
+        payload.update(claims)
+        return self.jwt.encode(payload, self.private, algorithm="RS256",
+                               headers={"kid": "test-rsa-key"})
+    def verify(self, token, config=None):
+        key = type("Key", (), {"key": self.public})()
+        client = type("JWK", (), {"get_signing_key_from_jwt": lambda _s, _t: key})()
+        with patch.dict(os.environ, config or self.config, clear=True):
+            with patch.object(api, "_cloudflare_jwk_client", return_value=client):
+                return api.ensure_auth("Bearer " + token)
+    def test_signed_owner_can_read_only_probe(self):
+        token = self.signed()
+        key = type("Key", (), {"key": self.public})()
+        client = type("JWK", (), {"get_signing_key_from_jwt": lambda _s, _t: key})()
+        with patch.dict(os.environ, self.config, clear=True):
+            with patch.object(api, "_cloudflare_jwk_client", return_value=client):
+                response = api.auth_check(authorization="Bearer " + token)
+        self.assertEqual(response["method"], "CLOUDFLARE_ACCESS_JWT")
+        self.assertTrue(response["authenticated"])
+        self.assertFalse(response["created_job"])
+        self.assertFalse(response["paid_generation"])
+        self.assertFalse(response["publishing"])
+    def test_wrong_owner_email_rejected(self):
+        with self.assertRaises(HTTPException) as ctx:
+            self.verify(self.signed(email="attacker@example.com"))
+        self.assertEqual(ctx.exception.status_code, 401)
+    def test_wrong_app_audience_rejected(self):
+        with self.assertRaises(HTTPException):
+            self.verify(self.signed(aud=["b" * 64]))
+    def test_wrong_issuer_rejected(self):
+        with self.assertRaises(HTTPException):
+            self.verify(self.signed(iss="https://attacker.cloudflareaccess.com"))
+    def test_expired_and_future_token_rejected(self):
+        import time
+        now = int(time.time())
+        for token in [self.signed(iat=now-1000, exp=now-500),
+                      self.signed(iat=now+500, exp=now+1000)]:
+            with self.assertRaises(HTTPException):
+                self.verify(token)
+    def test_signature_tampering_rejected(self):
+        import jwt
+        from cryptography.hazmat.primitives.asymmetric import rsa
+        attacker = rsa.generate_private_key(public_exponent=65537,key_size=2048)
+        bad = jwt.encode({"iss":self.config["OMDA_ACCESS_ISS"],
+                         "aud":[self.config["OMDA_ACCESS_AUD"]],
+                         "email":"owner@example.com",
+                         "iat":int(__import__('time').time()),
+                         "exp":int(__import__('time').time())+100},
+                          attacker, algorithm="RS256", headers={"kid":"test-rsa-key"})
+        with self.assertRaises(HTTPException):
+            self.verify(bad)
+    def test_no_owner_configuration_rejected(self):
+        config={k:v for k,v in self.config.items() if k!="OMDA_OWNER_EMAIL"}
+        with self.assertRaises(HTTPException):
+            self.verify(self.signed(),config)
+    def test_legacy_secret_still_works_for_existing_clients(self):
+        with patch.dict(os.environ, {"OMDA_DOC_RUNNER_TOKEN":"X"*40},clear=True):
+            self.assertEqual(api.ensure_auth("Bearer "+"X"*40),"LEGACY_SHARED_SECRET")
