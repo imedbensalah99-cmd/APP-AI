@@ -67,14 +67,33 @@ function assertJob(obj) {
     scenes:obj.scenes.map(s=>Object.fromEntries(SCENE_FIELDS.map(k=>[k,s[k]])))
   };
 }
-async function upstream(env,path,method='GET',payload) {
-  if(typeof env.OMDA_DOC_RUNNER_TOKEN!=='string'||env.OMDA_DOC_RUNNER_TOKEN.length<32)
-    return {ok:false,status:503,data:{error:'BRIDGE_SECRET_NOT_CONFIGURED'}};
+// Access JWT is signed by Cloudflare and validated independently by Render.
+// Never send user cookies to Render, only the application-scoped signed token.
+function accessBearer(request,env){
+  if(typeof env.OMDA_DOC_RUNNER_TOKEN==='string' && env.OMDA_DOC_RUNNER_TOKEN.length>=32)
+    return env.OMDA_DOC_RUNNER_TOKEN;
+  let token=request.headers.get('Cf-Access-Jwt-Assertion');
+  if(!token){
+    const cookies=request.headers.get('Cookie')||'';
+    if(cookies.length>16000)return null;
+    const parts=cookies.split(';').map(x=>x.trim())
+      .filter(x=>x.startsWith('CF_Authorization='));
+    if(parts.length!==1)return null;
+    try{token=decodeURIComponent(parts[0].slice('CF_Authorization='.length))}
+    catch{return null}
+  }
+  if(typeof token!=='string'||token.length>8192||
+      !/^[A-Za-z0-9_\-]+\.[A-Za-z0-9_\-]+\.[A-Za-z0-9_\-]+$/.test(token))
+    return null;
+  return token;
+}
+async function upstream(env,path,method='GET',payload,credential=null) {
+  if(!credential)return {ok:false,status:503,data:{error:'CLOUDFLARE_ACCESS_TOKEN_REQUIRED'}};
   const ctrl=new AbortController(); const timer=setTimeout(()=>ctrl.abort(),method==='POST'?65000:12000);
   try{
     const r=await fetch(UPSTREAM+path,{
       method,redirect:'manual',signal:ctrl.signal,
-      headers:{authorization:'Bearer '+env.OMDA_DOC_RUNNER_TOKEN,
+      headers:{authorization:'Bearer '+credential,
         ...(method==='POST'?{'content-type':'application/json'}:{})},
       ...(payload?{body:JSON.stringify(payload)}:{})
     });
@@ -138,27 +157,35 @@ export default {
           'DRIVE_OAUTH_CONFIGURED':'DRIVE_OAUTH_REQUIRED';
       }
     }catch{}
+    const credential=accessBearer(request,env);
+    const proof=credential?await upstream(env,'/v1/auth/check','GET',null,credential):null;
+    const verified=proof?.ok===true && proof.data?.authenticated===true &&
+      ['CLOUDFLARE_ACCESS_JWT','LEGACY_SHARED_SECRET'].includes(proof.data?.method);
     const sharedCredential=typeof env.OMDA_DOC_RUNNER_TOKEN==='string' &&
       env.OMDA_DOC_RUNNER_TOKEN.length>=32;
     return json({mode:'STAGING',d1_connected:d1Connected,
       stored_job_count:storedJobCount,render_online:renderOnline,
       render_health:renderHealth,drive_oauth_state:driveStorage,
       render_shared_token_configured:sharedCredential,
-      authenticated_handshake_verified:false,
-      job_submission_ready:false,publishing_enabled:false,
+      access_token_available:!!credential,
+      authenticated_handshake_verified:verified,
+      job_submission_ready:verified && d1Connected && driveStorage==='DRIVE_OAUTH_CONFIGURED',
+      publishing_enabled:false,
       paid_generation_enabled:false});
   }
   if(url.pathname==='/api/queue'&&request.method==='GET'){
     try{return json({jobs:await listJobs(env.OMDA_DOC_DB),storage:'D1_PERSISTENT',publishing:false});}
     catch{return json({error:'D1_UNAVAILABLE'},503)}
   }
-  if(!env.OMDA_DOC_RUNNER_TOKEN||env.OMDA_DOC_RUNNER_TOKEN.length<32)
-    return json({error:'BRIDGE_SECRET_NOT_CONFIGURED'},503);
+  const credential=accessBearer(request,env);
+  if(!credential)return json({error:'CLOUDFLARE_ACCESS_TOKEN_REQUIRED'},503);
   if(url.pathname==='/api/status'&&request.method==='GET'){
-    // The exact probe ID is syntactically valid but never submitted.
-    const r=await upstream(env,'/v1/documentaries/omdabridgeprobe0001');
-    return json({bridge:'STAGING',render_authenticated:r.status===404,
-      render_api_status:r.status===404?'AUTHENTICATED':r.data.error||'UNAVAILABLE',
+    // Safe read-only handshake: Render verifies Cloudflare signature independently.
+    const r=await upstream(env,'/v1/auth/check','GET',null,credential);
+    const verified=r.ok&&r.data?.authenticated===true&&
+      ['CLOUDFLARE_ACCESS_JWT','LEGACY_SHARED_SECRET'].includes(r.data?.method);
+    return json({bridge:'STAGING',render_authenticated:verified,
+      render_api_status:verified?'AUTHENTICATED':r.data?.error||'UNAVAILABLE',
       paid_generation:false,publishing:false});
   }
   if(url.pathname==='/api/jobs'&&request.method==='POST'){
@@ -177,7 +204,7 @@ export default {
       return json({error:code==='IDEMPOTENCY_CONFLICT'||code==='JOB_ID_CONFLICT'?code:'D1_UNAVAILABLE'},
         code.endsWith('CONFLICT')?409:503)}
     if(!claimed.new)return json({job_id:claimed.job.job_id,state:claimed.job.state,existing:true,published:false},200);
-    const result=await upstream(env,'/v1/documentaries','POST',data);
+    const result=await upstream(env,'/v1/documentaries','POST',data,credential);
     if(!result.ok||result.data?.job_id!==data.job_id){
       try{await updateJob(env.OMDA_DOC_DB,data.job_id,'DISPATCH_BLOCKED',null,
         /^RENDER_HTTP_[0-9]{3}$/.test(result.data?.error||'')?result.data.error:'DISPATCH_FAILED')}catch{}
@@ -191,12 +218,12 @@ export default {
   if(match&&request.method==='GET'){
     let row;try{row=await findJob(env.OMDA_DOC_DB,match[1]);}catch{return json({error:'D1_UNAVAILABLE'},503)}
     if(!row)return json({error:'JOB_NOT_FOUND'},404);
-    if(!row.remote_job_id||!env.OMDA_DOC_RUNNER_TOKEN){
+    if(!row.remote_job_id||!credential){
       return json({job_id:row.job_id,state:row.state,error_code:row.error_code,published:false});
     }
     if(['FAILED','BLOCKED','READY_FOR_OWNER_REVIEW'].includes(row.state))
       return json({job_id:row.job_id,state:row.state,error_code:row.error_code,published:false});
-    const result=await upstream(env,'/v1/documentaries/'+encodeURIComponent(row.remote_job_id));
+    const result=await upstream(env,'/v1/documentaries/'+encodeURIComponent(row.remote_job_id),'GET',null,credential);
     if(!result.ok)return json({job_id:row.job_id,state:row.state,
       remote_status:'UNAVAILABLE',published:false,error:'UPSTREAM_CHECK_FAILED'},200);
     const state=normalizeState(result.data?.state);
