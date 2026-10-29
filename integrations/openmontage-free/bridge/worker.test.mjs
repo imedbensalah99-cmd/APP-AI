@@ -53,10 +53,11 @@ test('unsigned, wrong-email, absent owner config all denied before Render',async
  r=await bridge.fetch(req('/api/status'),{...env,OMDA_OWNER_EMAIL:''},{});
  assert.equal(r.status,403);
 });
-test('unreachable Render fails closed even with signed owner JWT',async()=>{
+test('signed Cloudflare JWT authenticates the Render bridge with no shared secret',async()=>{
  mock(absent);
  const r=await bridge.fetch(req('/api/status'),{...env,OMDA_DOC_RUNNER_TOKEN:undefined},{});
- assert.equal(r.status,502);
+ assert.equal(r.status,200);
+ assert.equal((await json(r)).render_authenticated,true);
 });
 test('paid, publish, bad rights and foreign origin denied',async()=>{
  mock(absent);
