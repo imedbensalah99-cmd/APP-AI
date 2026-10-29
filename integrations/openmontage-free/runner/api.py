@@ -39,11 +39,68 @@ JOBS: dict[str,dict] = {}
 KEYS: dict[str,str] = {}
 POOL = ThreadPoolExecutor(max_workers=1,thread_name_prefix="documentary")
 
+_JWK_CLIENT = None
+_JWK_ISSUER = None
+
+def _cloudflare_jwk_client(issuer: str):
+    """Fetch public Cloudflare Access signing keys with bounded cache/timeout."""
+    global _JWK_CLIENT, _JWK_ISSUER
+    from jwt import PyJWKClient
+    if _JWK_CLIENT is None or _JWK_ISSUER != issuer:
+        _JWK_CLIENT = PyJWKClient(issuer + "/cdn-cgi/access/certs",
+                                  cache_jwk_set=True, lifespan=300, timeout=5)
+        _JWK_ISSUER = issuer
+    return _JWK_CLIENT
+
 def ensure_auth(header: str | None):
-    secret=os.getenv("OMDA_DOC_RUNNER_TOKEN","")
-    if len(secret)<32: raise HTTPException(503,detail="RUNNER_TOKEN_NOT_CONFIGURED")
-    if not header or not hmac.compare_digest(header, "Bearer "+secret):
-        raise HTTPException(401,detail="UNAUTHORIZED")
+    """Authenticate private backend with either legacy secret or signed Access JWT.
+
+    The Access path needs no shared secret. The signature, issuer, exact app
+    audience, expiry and owner email are verified on Render independently.
+    """
+    from jwt import decode as jwt_decode, InvalidTokenError
+    secret = os.getenv("OMDA_DOC_RUNNER_TOKEN", "")
+    if not header or not header.startswith("Bearer "):
+        raise HTTPException(401, detail="UNAUTHORIZED")
+    credential = header[7:]
+    if len(secret) >= 32 and hmac.compare_digest(credential, secret):
+        return "LEGACY_SHARED_SECRET"
+    issuer = os.getenv("OMDA_ACCESS_ISS", "").rstrip("/")
+    audience = os.getenv("OMDA_ACCESS_AUD", "")
+    owner = os.getenv("OMDA_OWNER_EMAIL", "").strip().lower()
+    if (not issuer.startswith("https://") or
+        not issuer.endswith(".cloudflareaccess.com") or
+        not re.fullmatch(r"[a-f0-9]{64}", audience) or
+        not owner or len(credential) > 8192 or credential.count(".") != 2):
+        raise HTTPException(401, detail="UNAUTHORIZED")
+    try:
+        jwk = _cloudflare_jwk_client(issuer).get_signing_key_from_jwt(credential)
+        claims = jwt_decode(
+            credential, jwk.key, algorithms=["RS256"], audience=audience,
+            issuer=issuer, leeway=30,
+            options={"require": ["exp", "iat", "iss", "aud", "email"]})
+        now = int(time.time())
+        if (not isinstance(claims.get("email"), str) or
+            claims["email"].strip().lower() != owner or
+            not isinstance(claims.get("exp"), (float,int)) or
+            claims["exp"] > now + 86400 or
+            not isinstance(claims.get("iat"), (float,int)) or
+            claims["iat"] > now + 60):
+            raise HTTPException(401, detail="UNAUTHORIZED")
+        return "CLOUDFLARE_ACCESS_JWT"
+    except HTTPException:
+        raise
+    except Exception:
+        # This includes stale keys, JWT errors and temporary network outages.
+        # Never expose token or key retrieval details to callers.
+        raise HTTPException(401, detail="UNAUTHORIZED") from None
+
+@app.get("/v1/auth/check")
+def auth_check(authorization: str | None = Header(default=None)):
+    method = ensure_auth(authorization)
+    return {"authenticated": True, "method": method,
+            "publishing": False, "paid_generation": False,
+            "created_job": False}
 
 def media_ref(ref: dict) -> dict:
     if not isinstance(ref,dict):raise DocumentaryBlocked("DRIVE_ASSET_REFERENCE_MISSING")
