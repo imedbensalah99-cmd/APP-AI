@@ -117,6 +117,34 @@ export default {
   if(!await verifyAccessRequest(request,env))return json({error:'CLOUDFLARE_ACCESS_OWNER_REQUIRED'},403);
   if(url.pathname==='/'&&request.method==='GET')return dashboardResponse();
   if((url.pathname==='/static/ui.css'||url.pathname==='/static/ui.js')&&request.method==='GET')return staticResponse(url.pathname);
+  if(url.pathname==='/api/readiness'&&request.method==='GET'){
+    let d1Connected=false, storedJobCount=null, renderOnline=false;
+    let renderHealth='UNVERIFIED', driveStorage='NOT_CONFIGURED';
+    try{
+      const row=await env.OMDA_DOC_DB.prepare('SELECT COUNT(*) AS total FROM documentary_jobs').first();
+      if(Number.isInteger(row?.total)&&row.total>=0){d1Connected=true;storedJobCount=row.total}
+    }catch{}
+    try{
+      const rr=await fetch(UPSTREAM+'/health',{redirect:'manual',
+        signal:AbortSignal.timeout(9000)});
+      if(rr.ok&&(rr.headers.get('content-type')||'').includes('application/json')){
+        const info=await rr.json();
+        renderOnline=info?.status==='AVAILABLE';
+        renderHealth=typeof info?.status==='string'?info.status.slice(0,40):'UNKNOWN';
+        driveStorage=info?.storage==='DRIVE_OAUTH_CONFIGURED'?
+          'DRIVE_OAUTH_CONFIGURED':'DRIVE_OAUTH_REQUIRED';
+      }
+    }catch{}
+    const sharedCredential=typeof env.OMDA_DOC_RUNNER_TOKEN==='string' &&
+      env.OMDA_DOC_RUNNER_TOKEN.length>=32;
+    return json({mode:'STAGING',d1_connected:d1Connected,
+      stored_job_count:storedJobCount,render_online:renderOnline,
+      render_health:renderHealth,drive_oauth_state:driveStorage,
+      render_shared_token_configured:sharedCredential,
+      authenticated_handshake_verified:false,
+      job_submission_ready:false,publishing_enabled:false,
+      paid_generation_enabled:false});
+  }
   if(url.pathname==='/api/queue'&&request.method==='GET'){
     try{return json({jobs:await listJobs(env.OMDA_DOC_DB),storage:'D1_PERSISTENT',publishing:false});}
     catch{return json({error:'D1_UNAVAILABLE'},503)}
