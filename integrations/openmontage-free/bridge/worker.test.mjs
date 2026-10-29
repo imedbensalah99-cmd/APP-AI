@@ -1,131 +1,110 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
+import {generateKeyPairSync,sign,webcrypto} from 'node:crypto';
 import bridge from './worker.mjs';
-
-const env={OMDA_OWNER_EMAIL:'owner@example.com',OMDA_DOC_RUNNER_TOKEN:'T'.repeat(48)};
-const goodCtx={access:{getIdentity:async()=>({email:'owner@example.com'})}};
-const noCtx={};
-const endpoint='https://omda-documentary-bridge-staging.example.workers.dev';
-const req=(path,method='GET',data,origin=endpoint)=>new Request(endpoint+path,{
- method,headers:{...(method==='POST'?{'content-type':'application/json',origin}:{} )},
- ...(data!==undefined?{body:JSON.stringify(data)}:{})
-});
-const ref={drive_file_id:'file123456789',drive_sha256:'b'.repeat(64)};
-function sample(){
- const scene={...ref,duration_seconds:1,place_name:'Germany test place',
-  source_url:'https://example.com/original',license:'CC0-1.0',
-  license_evidence_url:'https://example.com/license',
-  location_verification_url:'https://example.com/location',
-  narration_text:'فيديو تجريبي موثق للاختبار فقط'};
- return {job_id:'germanypilot0001',idempotency_key:'germanypilot2026',
-  folder_id:'11GaLY8grDizEbpsHBxwieOobg5KDRvZ2',title:'Germany documentary',
-  country:'Germany',language:'ar',provider_policy:'FREE_ONLY',publish_intent:false,
-  duration_seconds:2,narration:ref,scenes:[{...scene},{...scene}]};
+if(!globalThis.crypto)globalThis.crypto=webcrypto;
+const {privateKey,publicKey}=generateKeyPairSync('rsa',{modulusLength:2048});
+const key=publicKey.export({format:'jwk'});
+const issuer='https://testorg.cloudflareaccess.com', audience='a'.repeat(64);
+const env={OMDA_OWNER_EMAIL:'owner@example.com',OMDA_ACCESS_ISS:issuer,
+ OMDA_ACCESS_AUD:audience,OMDA_DOC_RUNNER_TOKEN:'T'.repeat(48)};
+const uri='https://omda-documentary-bridge-staging.example.workers.dev';
+function enc(s){return Buffer.from(typeof s==='string'?s:JSON.stringify(s)).toString('base64url')}
+function jwt(overrides={}){
+ const now=Math.floor(Date.now()/1000);
+ const h=enc({alg:'RS256',kid:'test-1'}),p=enc({iss:issuer,aud:[audience],iat:now-5,exp:now+300,
+  email:'owner@example.com',...overrides});
+ return h+'.'+p+'.'+sign('RSA-SHA256',Buffer.from(h+'.'+p),privateKey).toString('base64url');
 }
-const json=async r=>JSON.parse(await r.text());
-const okResponse=(data,status=200)=>new Response(JSON.stringify(data),{status,headers:{'content-type':'application/json'}});
-
-test('anonymous and wrong Access identity denied before any fetch',async()=>{
- const old=globalThis.fetch;let count=0;globalThis.fetch=async()=>{count++;throw Error('network should not happen')};
- try{
-  let r=await bridge.fetch(req('/api/status'),env,noCtx);
-  assert.equal(r.status,403);
-  r=await bridge.fetch(req('/api/status'),env,{access:{getIdentity:async()=>({email:'outsider@example.com'})}});
-  assert.equal(r.status,403);
-  r=await bridge.fetch(req('/api/status'),{...env,OMDA_OWNER_EMAIL:''},goodCtx);
-  assert.equal(r.status,403);
-  assert.equal(count,0);
- }finally{globalThis.fetch=old}
+const ref={drive_file_id:'file123456789',drive_sha256:'a'.repeat(64)};
+function sample(){
+ const s={...ref,duration_seconds:1,place_name:'Germany pilot location',
+  source_url:'https://example.org/source',license:'CC0-1.0',
+  license_evidence_url:'https://example.org/licence',
+  location_verification_url:'https://example.org/place',
+  narration_text:'هذه جملة اختبارية للأفلام'};
+ return {job_id:'germanypilot001',idempotency_key:'germanypilotkey01',
+  folder_id:'11GaLY8grDizEbpsHBxwieOobg5KDRvZ2',country:'Germany',
+  title:'German Alps pilot',language:'ar',duration_seconds:2,
+  provider_policy:'FREE_ONLY',publish_intent:false,narration:ref,scenes:[s,s]};
+}
+const json=async r=>r.json();
+function req(path,method='GET',payload,options={}){
+ const headers={...(!options.anonymous?{'Cf-Access-Jwt-Assertion':jwt(options.claims)}:{}),
+  ...(method==='POST'?{origin:options.origin||uri,'content-type':'application/json'}:{})};
+ return new Request(uri+path,{method,headers,...(payload===undefined?{}:{body:JSON.stringify(payload)})});
+}
+function mock(handler){
+ globalThis.fetch=async(url,opts)=>{
+  if(String(url)===issuer+'/cdn-cgi/access/certs')
+   return new Response(JSON.stringify({keys:[{...key,kid:'test-1',use:'sig',alg:'RS256'}]}),
+    {status:200,headers:{'content-type':'application/json'}});
+  return handler(url,opts);
+ };
+}
+const ok=(obj,status=200)=>new Response(JSON.stringify(obj),{status,headers:{'content-type':'application/json'}});
+const absent=()=>{throw Error('Unexpected Render fetch')};
+test('unsigned, wrong-email, absent owner config all denied before Render',async()=>{
+ mock(absent);
+ let r=await bridge.fetch(req('/api/status','GET',undefined,{anonymous:true}),env,{});
+ assert.equal(r.status,403);
+ r=await bridge.fetch(req('/api/status','GET',undefined,{claims:{email:'attacker@example.com'}}),env,{});
+ assert.equal(r.status,403);
+ r=await bridge.fetch(req('/api/status'),{...env,OMDA_OWNER_EMAIL:''},{});
+ assert.equal(r.status,403);
 });
-test('runner secret missing fails closed',async()=>{
- const r=await bridge.fetch(req('/api/status'),{OMDA_OWNER_EMAIL:env.OMDA_OWNER_EMAIL},goodCtx);
+test('missing Render secret fails closed after valid Access JWT',async()=>{
+ mock(absent);
+ const r=await bridge.fetch(req('/api/status'),{...env,OMDA_DOC_RUNNER_TOKEN:undefined},{});
  assert.equal(r.status,503);
- assert.equal((await json(r)).error,'BRIDGE_SECRET_NOT_CONFIGURED');
 });
-test('denies cross-origin POST, paid requests and missing rights before network',async()=>{
- const old=globalThis.fetch;let count=0;globalThis.fetch=async()=>{count++;throw Error('unexpected network')};
- try{
-  let r=await bridge.fetch(req('/api/jobs','POST',sample(),'https://evil.example'),env,goodCtx);
-  assert.equal(r.status,403);
-  const paid=sample();paid.provider_policy='GOOGLE_FLOW';
-  r=await bridge.fetch(req('/api/jobs','POST',paid),env,goodCtx);
+test('paid, publish, bad rights and foreign origin denied',async()=>{
+ mock(absent);
+ const cases=[(p)=>{p.provider_policy='FLOW'},
+  p=>{p.publish_intent=true},p=>{p.scenes[0]={...p.scenes[0],license_evidence_url:''}},
+  p=>{p.unexpected_secret='secret'}];
+ for(const mutate of cases){
+  const p=sample();mutate(p);
+  const r=await bridge.fetch(req('/api/jobs','POST',p),env,{});
   assert.equal(r.status,400);
-  const publish=sample();publish.publish_intent=true;
-  r=await bridge.fetch(req('/api/jobs','POST',publish),env,goodCtx);
-  assert.equal(r.status,400);
-  const bad=sample();delete bad.scenes[0].license_evidence_url;
-  r=await bridge.fetch(req('/api/jobs','POST',bad),env,goodCtx);
-  assert.equal(r.status,400);
-  const unknown=sample();unknown.provider_key='secret';
-  r=await bridge.fetch(req('/api/jobs','POST',unknown),env,goodCtx);
-  assert.equal(r.status,400);
-  assert.equal(count,0);
- }finally{globalThis.fetch=old}
+ }
+ const r=await bridge.fetch(req('/api/jobs','POST',sample(),{origin:'https://evil.example'}),env,{});
+ assert.equal(r.status,403);
 });
-test('health is public, sanitized and read-only',async()=>{
- const old=globalThis.fetch;let called=0;globalThis.fetch=async (url,options)=>{
-  called++;assert.equal(String(url),'https://omda-documentary-runner-staging.onrender.com/health');
-  assert.equal(options.redirect,'manual');
-  return okResponse({status:'AVAILABLE',storage:'DRIVE_OAUTH_REQUIRED',private_token:'never-forward'});
- };
- try{
-  const r=await bridge.fetch(req('/health'),env,noCtx);
-  const d=await json(r);
-  assert.equal(r.status,200);assert.equal(d.upstream_online,true);assert.equal(d.render_status,'AVAILABLE');
-  assert.equal(d.publishing,false);assert.equal(d.paid_generation,false);
-  assert.equal('private_token' in d,false);
-  assert.equal(called,1);
- }finally{globalThis.fetch=old}
+test('read-only health gives safe response',async()=>{
+ mock((url,opts)=>{
+  assert.equal(String(url),'https://omda-documentary-runner-staging.onrender.com/health');
+  return ok({status:'AVAILABLE',token:'private'});
+ });
+ const d=await json(await bridge.fetch(req('/health','GET',undefined,{anonymous:true}),env,{}));
+ assert.equal(d.render_status,'AVAILABLE');assert.equal(d.publishing,false);
+ assert.equal('token' in d,false);
 });
-test('authenticated Render probe uses server bearer and no job mutation',async()=>{
- const old=globalThis.fetch;let count=0;globalThis.fetch=async (url,opts)=>{
-  count++;assert.match(String(url),/\/v1\/documentaries\/omdabridgeprobe0001$/);
-  assert.equal(opts.headers.authorization,'Bearer '+env.OMDA_DOC_RUNNER_TOKEN);
+test('authenticated probe uses private bearer but creates no job',async()=>{
+ mock((url,opts)=>{
+  assert.match(String(url),/\/v1\/documentaries\/omdabridgeprobe0001$/);
   assert.equal(opts.method,'GET');
-  return okResponse({detail:'JOB_NOT_FOUND'},404);
- };
- try{
-  const r=await bridge.fetch(req('/api/status'),env,goodCtx);
-  const d=await json(r);
-  assert.equal(d.render_authenticated,true);
-  assert.equal(d.render_api_status,'AUTHENTICATED');
-  assert.equal(count,1);
- }finally{globalThis.fetch=old}
-});
-test('job POST forwards only free validated payload and no owner token',async()=>{
- const old=globalThis.fetch;let count=0;globalThis.fetch=async(url,opts)=>{
-  count++;assert.equal(String(url),'https://omda-documentary-runner-staging.onrender.com/v1/documentaries');
-  assert.equal(opts.method,'POST');
   assert.equal(opts.headers.authorization,'Bearer '+env.OMDA_DOC_RUNNER_TOKEN);
-  const forwarded=JSON.parse(opts.body);
-  assert.equal(forwarded.provider_policy,'FREE_ONLY');assert.equal(forwarded.publish_intent,false);
-  assert.equal(forwarded.scenes.length,2);
-  assert.equal(forwarded.country,'Germany');
-  assert.equal('OMDA_DOC_RUNNER_TOKEN' in forwarded,false);
-  return okResponse({job_id:forwarded.job_id,state:'QUEUED',published:false},202);
- };
- try{
-  const r=await bridge.fetch(req('/api/jobs','POST',sample()),env,goodCtx);
-  assert.equal(r.status,202);
-  const d=await json(r);assert.equal(d.job_id,'germanypilot0001');
-  assert.equal(d.published,false);assert.equal(count,1);
- }finally{globalThis.fetch=old}
+  return ok({detail:'JOB_NOT_FOUND'},404);
+ });
+ const d=await json(await bridge.fetch(req('/api/status'),env,{}));
+ assert.equal(d.render_authenticated,true);
 });
-test('status GET and upstream auth errors redacted',async()=>{
- const old=globalThis.fetch;let count=0;globalThis.fetch=async(url,opts)=>{
-  count++;
-  assert.match(String(url),/\/v1\/documentaries\/germanypilot0001$/);
-  return okResponse({detail:'wrong secret',token:'sensitive'},401);
- };
- try{
-  const r=await bridge.fetch(req('/api/jobs/germanypilot0001'),env,goodCtx);
-  assert.equal(r.status,502);assert.deepEqual(await json(r),{error:'RENDER_AUTH_REJECTED'});
-  assert.equal(count,1);
- }finally{globalThis.fetch=old}
+test('D1 queue path fails closed when storage binding is absent',async()=>{
+ mock(absent);
+ const r=await bridge.fetch(req('/api/queue'),env,{});
+ assert.equal(r.status,503);
+ assert.equal((await json(r)).error,'D1_UNAVAILABLE');
 });
-test('malformed and publish routes are absent',async()=>{
- for(const path of ['/api/publish','/api/billing','/api/jobs/../../publish']){
-  let r=await bridge.fetch(req(path),env,goodCtx);
+test('valid job cannot dispatch if D1 is not bound',async()=>{
+ mock(absent);
+ const r=await bridge.fetch(req('/api/jobs','POST',sample()),env,{});
+ assert.equal(r.status,503);
+});
+test('no publish or billing routes exist',async()=>{
+ mock(absent);
+ for(const path of ['/api/publish','/api/billing','/api/youtube/upload']){
+  const r=await bridge.fetch(req(path),env,{});
   assert.equal(r.status,404);
  }
 });
