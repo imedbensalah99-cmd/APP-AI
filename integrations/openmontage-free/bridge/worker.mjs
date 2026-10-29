@@ -161,15 +161,24 @@ export default {
     const proof=credential?await upstream(env,'/v1/auth/check','GET',null,credential):null;
     const verified=proof?.ok===true && proof.data?.authenticated===true &&
       ['CLOUDFLARE_ACCESS_JWT','LEGACY_SHARED_SECRET'].includes(proof.data?.method);
+    const storageCheck=verified?
+      await upstream(env,'/v1/storage/preflight','GET',null,credential):null;
+    const storageReady=storageCheck?.ok===true &&
+      storageCheck.data?.storage_ready===true;
+    const actualDriveState=storageReady?'QA_FOLDER_AUTHORIZED':
+      (typeof storageCheck?.data?.reason==='string'?
+       storageCheck.data.reason.slice(0,65):driveStorage);
     const sharedCredential=typeof env.OMDA_DOC_RUNNER_TOKEN==='string' &&
       env.OMDA_DOC_RUNNER_TOKEN.length>=32;
     return json({mode:'STAGING',d1_connected:d1Connected,
       stored_job_count:storedJobCount,render_online:renderOnline,
-      render_health:renderHealth,drive_oauth_state:driveStorage,
+      render_health:renderHealth,drive_oauth_state:actualDriveState,
       render_shared_token_configured:sharedCredential,
       access_token_available:!!credential,
       authenticated_handshake_verified:verified,
-      job_submission_ready:verified && d1Connected && driveStorage==='DRIVE_OAUTH_CONFIGURED',
+      drive_folder_verified:storageReady,
+      storage_roundtrip_verified:false,
+      job_submission_ready:false,
       publishing_enabled:false,
       paid_generation_enabled:false});
   }
