@@ -1,0 +1,25 @@
+name: OMDA Documentary Bridge security tests
+on:
+  push:
+    branches: [omda-doc-bridge-staging-v1]
+    paths:
+      - 'integrations/openmontage-free/bridge/**'
+      - '.github/workflows/omda-doc-bridge-security.yml'
+  workflow_dispatch:
+permissions:
+  contents: read
+concurrency:
+  group: omda-doc-bridge-${{ github.ref }}
+  cancel-in-progress: true
+jobs:
+  security:
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    steps:
+      - uses: actions/checkout@v4
+      - name: Node runtime
+        run: node --version
+      - name: Offline bridge security tests
+        run: node --test integrations/openmontage-free/bridge/worker.test.mjs
+      - name: Syntax check
+        run: node --check integrations/openmontage-free/bridge/worker.mjs
