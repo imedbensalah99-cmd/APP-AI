@@ -5,24 +5,25 @@ export function staticResponse(path){return new Response(path==='/static/ui.css'
 
 
 export function accessLoginResponse(request){
-  const url=new URL(request.url);
-  const login=url.origin+'/cdn-cgi/access/login?redirect_url='+encodeURIComponent(url.origin+'/');
-  const logout=url.origin+'/cdn-cgi/access/logout';
-  const escape=s=>String(s).replace(/&/g,'&amp;').replace(/"/g,'&quot;').replace(/</g,'&lt;');
+  const origin=new URL(request.url).origin;
+  // Never invent /cdn-cgi/access/login on a workers.dev origin: it can return 404.
+  // Cloudflare Access owns the real login challenge when the protected
+  // application is opened; this page only offers safe navigation guidance.
+  const start=origin+'/';
+  const teamPortal='https://super-mode-8f54.cloudflareaccess.com/';
   const html='<!doctype html><html lang="en"><head><meta charset="utf-8">'+
-   '<meta name="viewport" content="width=device-width,initial-scale=1">'+
-   '<meta name="robots" content="noindex,nofollow"><title>OMDA — Secure sign-in</title></head>'+
-   '<body><main><h1>OMDA Documentary Studio</h1>'+
-   '<h2>Secure sign-in required</h2>'+
-   '<p>Your Cloudflare Access session is missing or cannot be verified. This is not a system outage.</p>'+
-   '<p>Sign in using the account authorized for OMDA. If you are already signed in with another account, sign out first.</p>'+
-   '<p><a href="'+escape(login)+'">Sign in to OMDA</a></p>'+
-   '<p><a href="'+escape(logout)+'">Sign out of Cloudflare Access</a></p>'+
-   '<p>If the page still returns here, open the site in your regular Chrome browser instead of an in-app tab.</p>'+
-   '<p>Production, uploads and paid generation remain disabled.</p></main></body></html>';
+    '<meta name="viewport" content="width=device-width,initial-scale=1">'+
+    '<meta name="robots" content="noindex,nofollow"><title>OMDA · Secure access</title>'+
+    '<style>:root{color-scheme:dark}*{box-sizing:border-box}body{font-family:system-ui,sans-serif;background:#080f1b;color:#eaf4ff;min-height:100vh;display:grid;place-items:center;padding:24px;margin:0}main{max-width:500px;background:#14253a;border:1px solid #37516b;border-radius:22px;padding:27px}h1{font-size:29px;margin:22px 0 12px}p{line-height:1.65;color:#b8cbdc}a{display:block;text-align:center;padding:13px;border-radius:11px;text-decoration:none;margin-top:14px;color:#eaf4ff;border:1px solid #43667e}.primary{background:#74d6dc;color:#071925;border:0;font-weight:700}.small{font-size:12px}</style></head><body>'+
+    '<main><strong>OMDA ◈ DOCUMENTARY STUDIO</strong><h1>Verify your secure session</h1>'+
+    '<p>Cloudflare approved your sign-in, but this browser session was not recognized by the application. Try opening OMDA in your full Chrome browser rather than the ChatGPT in-app browser.</p>'+
+    '<a class="primary" href="'+start+'">Retry OMDA dashboard</a>'+
+    '<a href="'+teamPortal+'">Open Cloudflare Access portal</a>'+
+    '<p class="small">Never share a one-time sign-in code. Job generation and publishing remain locked.</p>'+
+    '</main></body></html>';
   return new Response(html,{status:401,headers:{
     'content-type':'text/html; charset=utf-8','cache-control':'private,no-store',
-    'content-security-policy':"default-src 'none'; frame-ancestors 'none'; base-uri 'none'",
+    'content-security-policy':"default-src 'none'; style-src 'unsafe-inline'; frame-ancestors 'none'; base-uri 'none'; form-action 'none'",
     'referrer-policy':'no-referrer','x-content-type-options':'nosniff','x-frame-options':'DENY'
   }});
 }
