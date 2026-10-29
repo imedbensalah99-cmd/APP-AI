@@ -54,7 +54,12 @@ test('unsigned, wrong-email, absent owner config all denied before Render',async
  assert.equal(r.status,403);
 });
 test('signed Cloudflare JWT authenticates the Render bridge with no shared secret',async()=>{
- mock(absent);
+ mock((url,opts)=>{
+  assert.equal(String(url),'https://omda-documentary-runner-staging.onrender.com/v1/auth/check');
+  const token=opts.headers.authorization.slice(7);
+  assert.equal(token.split('.').length,3);
+  return ok({authenticated:true,method:'CLOUDFLARE_ACCESS_JWT',created_job:false});
+ });
  const r=await bridge.fetch(req('/api/status'),{...env,OMDA_DOC_RUNNER_TOKEN:undefined},{});
  assert.equal(r.status,200);
  assert.equal((await json(r)).render_authenticated,true);
