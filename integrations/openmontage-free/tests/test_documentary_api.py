@@ -55,7 +55,7 @@ class ApiTests(unittest.TestCase):
         with patch.dict(os.environ,{},clear=True):
             with self.assertRaises(HTTPException) as context:
                 api.ensure_auth("Bearer anything")
-            self.assertEqual(context.exception.status_code,503)
+            self.assertEqual(context.exception.status_code,401)
         with patch.dict(os.environ,{"OMDA_DOC_RUNNER_TOKEN":"x"*40}):
             with self.assertRaises(HTTPException) as context:
                 api.ensure_auth("Bearer wrong")
