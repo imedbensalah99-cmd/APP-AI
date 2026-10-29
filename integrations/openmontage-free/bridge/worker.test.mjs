@@ -154,14 +154,14 @@ test('readiness identifies missing D1 or Render credential without falsely claim
 
 test('authenticated Cloudflare Worker context opens dashboard without JWT or cookie',async()=>{
  mock(absent);
- const ctx={access:{getIdentity:async()=>({email:'owner@example.com'})}};
+ const ctx={access:{aud:env.OMDA_ACCESS_AUD,getIdentity:async()=>({email:'owner@example.com'})}};
  const r=await bridge.fetch(req('/','GET',undefined,{anonymous:true}),env,ctx);
  assert.equal(r.status,200);
  assert.match(await r.text(),/Documentary operations/);
 });
 test('Cloudflare Worker context never trusts arbitrary identity or wrong owner',async()=>{
  mock(absent);
- const ctx={access:{getIdentity:async()=>({email:'outsider@example.com'})}};
+ const ctx={access:{aud:env.OMDA_ACCESS_AUD,getIdentity:async()=>({email:'outsider@example.com'})}};
  const r=await bridge.fetch(req('/','GET',undefined,{anonymous:true}),env,ctx);
  assert.equal(r.status,401);
  assert.match(await r.text(),/Sign in to OMDA/);
