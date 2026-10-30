@@ -69,7 +69,39 @@ jobs:
             -r requirements.txt \
             'setuptools>=82.0.1' 'wheel>=0.46.2'
 
-      - name: Prepare 60s Arabic pilot with original media and offline voice
+      - name: Download and verify MIT-licensed Arabic Piper female voice
+        shell: bash
+        run: |
+          set -euo pipefail
+          python -m pip install --no-cache-dir 'piper-tts>=1.2,<2'
+          python - <<'PY'
+          import hashlib
+          import os
+          from pathlib import Path
+          from urllib.request import urlopen
+          base = "https://huggingface.co/vadimbelsky/arabic-emirati-female-piper/resolve/cfe173969620e40be65b5dd8ed4d97d55a864325/"
+          dst = Path(os.environ["RUNNER_TEMP"]) / "omda-piper"
+          dst.mkdir(parents=True, exist_ok=True)
+          names = ["arabic-emirati-female-model.onnx", "arabic-emirati-female-model.onnx.json"]
+          for name in names:
+              tmp = dst / (name + ".part")
+              size = 0
+              with urlopen(base + name + "?download=true", timeout=180) as response, tmp.open("wb") as fd:
+                  while data := response.read(1024*1024):
+                      size += len(data)
+                      if size > 75 * 1024 * 1024:
+                          raise RuntimeError("Piper voice asset exceeds bound")
+                      fd.write(data)
+              tmp.rename(dst / name)
+          model = dst / names[0]
+          digest = hashlib.sha256(model.read_bytes()).hexdigest()
+          if digest != "1578a9b27d01a0626227225b148179628b770607dd61bdbbc41865bd399106b1":
+              raise RuntimeError("Piper model SHA256 verification failed")
+          print("Pinned MIT-licensed Arabic voice checksum verified.")
+          PY
+          echo "OMDA_PIPER_MODEL=$RUNNER_TEMP/omda-piper/arabic-emirati-female-model.onnx" >> "$GITHUB_ENV"
+
+      - name: Prepare 60s Arabic pilot with original media and verified free Piper voice
         shell: bash
         run: |
           set -euo pipefail
@@ -109,7 +141,7 @@ jobs:
         if: success()
         uses: actions/upload-artifact@v4
         with:
-          name: omda-moneyprinter60-owner-review
+          name: omda-moneyprinter60-piper-owner-review
           path: |
             ${{ runner.temp }}/omda-mpt-pilot/verification.json
             ${{ runner.temp }}/omda-mpt-pilot/omda-moneyprinter60-review.mp4
