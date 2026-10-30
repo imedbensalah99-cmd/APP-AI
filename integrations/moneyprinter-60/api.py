@@ -10,9 +10,9 @@ import uuid
 from pathlib import Path
 from urllib.parse import urljoin, urlsplit
 import httpx
-from fastapi import FastAPI, Header, HTTPException
+from fastapi import FastAPI, Header, HTTPException, Request
 from fastapi.responses import FileResponse
-from pydantic import BaseModel, Field
+from pydantic import BaseModel, Field, ValidationError
 
 app = FastAPI(title="OMDA MoneyPrinter 60 — staging", docs_url=None,
               redoc_url=None, openapi_url=None)
@@ -176,8 +176,15 @@ def auth_check(authorization: str | None = Header(default=None)):
     return {"authenticated": True, "publishing": False}
 
 @app.post("/v1/mpt/jobs", status_code=202)
-def submit(body: JobRequest, authorization: str | None = Header(default=None)):
-    auth(authorization)
+async def submit(request: Request, authorization: str | None = Header(default=None)):
+    auth(authorization)  # Authenticate before loading or parsing an untrusted body.
+    raw = await request.body()
+    if len(raw) > 8192:
+        raise HTTPException(413, detail="JOB_TOO_LARGE")
+    try:
+        body = JobRequest.model_validate_json(raw)
+    except ValidationError:
+        raise HTTPException(422, detail="INVALID_JOB_BODY") from None
     payload = make_payload(body)
     if not active():
         raise HTTPException(503, detail="GENERATION_DISABLED")
