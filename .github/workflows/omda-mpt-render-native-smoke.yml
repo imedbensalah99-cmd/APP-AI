@@ -1,0 +1,55 @@
+name: OMDA — direct MoneyPrinterTurbo on Render (safe startup smoke)
+on:
+  push:
+    branches: [omda-mpt-render-engine-staging-v1]
+    paths: [.github/workflows/omda-mpt-render-native-smoke.yml]
+  workflow_dispatch:
+permissions:
+  contents: read
+concurrency:
+  group: omda-mpt-render-native-smoke
+  cancel-in-progress: false
+jobs:
+  verify-native-engine:
+    runs-on: ubuntu-latest
+    timeout-minutes: 12
+    steps:
+      - name: Check the running Render app and fail-closed public surface
+        shell: bash
+        env:
+          OMDA_HEALTH: https://omda-moneyprinter-real-staging.onrender.com/health
+          OMDA_JOBS: https://omda-moneyprinter-real-staging.onrender.com/v1/jobs
+        run: |
+          python - <<'PY'
+          import json, os, time
+          from urllib.request import Request, urlopen
+          from urllib.error import HTTPError
+          ready = False
+          for attempt in range(32):
+              try:
+                  with urlopen(Request(os.environ["OMDA_HEALTH"], headers={"User-Agent":"OMDA-Staging-Smoke/1.0"}),timeout=25) as response:
+                      body=json.load(response)
+                  assert body.get("mode")=="DIRECT_MONEYPRINTERTURBO_ON_RENDER", body
+                  assert body.get("engine_installed") is True, body
+                  assert body.get("publishing_enabled") is False, body
+                  assert body.get("drive_connected") is False, body
+                  assert body.get("generation_enabled") is False, body
+                  print("PASS: real installed engine on Render; generation and publishing locked")
+                  ready=True
+                  break
+              except Exception as exc:
+                  print("Waiting for Render startup:", type(exc).__name__, str(exc)[:140])
+                  time.sleep(12)
+          if not ready:
+              raise SystemExit("FAIL: direct engine Render health never reached ready")
+          # No Authorization header: must fail before parsing body, never create a job.
+          req=Request(os.environ["OMDA_JOBS"],data=b'{broken-json',method="POST",
+                      headers={"Content-Type":"application/json","User-Agent":"OMDA-Staging-Smoke/1.0"})
+          try:
+              urlopen(req,timeout=25)
+              raise SystemExit("FAIL: anonymous video job unexpectedly accepted")
+          except HTTPError as exc:
+              if exc.code not in (401,503):
+                  raise SystemExit(f"FAIL: expected auth denial, got HTTP {exc.code}")
+              print(f"PASS: anonymous video submission denied with HTTP {exc.code}")
+          PY
