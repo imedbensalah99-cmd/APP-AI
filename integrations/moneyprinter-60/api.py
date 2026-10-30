@@ -62,9 +62,13 @@ def make_payload(body):
     if (body.duration_seconds != 60 or body.language != "ar" or
             body.publish_intent or body.provider_policy != "FREE_ONLY"):
         raise HTTPException(400, detail="POLICY_DENIED")
-    if (re.fullmatch(r"[A-Za-z0-9_.-]{12,100}", body.idempotency_key) is None or
-            any(not 2 <= len(t.strip()) <= 80 for t in body.terms)):
+    if re.fullmatch(r"[A-Za-z0-9_.-]{12,100}", body.idempotency_key) is None:
         raise HTTPException(400, detail="INPUT_INVALID")
+    # Pexels indexes footage using English search phrases. Fail explicitly rather
+    # than silently returning unrelated or empty visuals for Arabic-only terms.
+    if any(not re.fullmatch(r"[A-Za-z0-9][A-Za-z0-9 -]{1,79}", t.strip())
+           for t in body.terms):
+        raise HTTPException(400, detail="ENGLISH_STOCK_TERMS_REQUIRED")
     return {
         "video_subject": body.title,
         "video_script": body.script,
@@ -73,13 +77,16 @@ def make_payload(body):
         "video_aspect": "9:16",
         "video_count": 1,
         "video_clip_duration": 5,
+        "video_fit_mode": "cover",
+        "video_concat_mode": "sequential",
         "n_threads": 1,
-        "voice_name": "ar-SA-HamedNeural",
+        "voice_name": "ar-SA-HamedNeural-Male",
+        "voice_rate": 1.0,
         "video_language": "ar",
         "subtitle_enabled": True,
         "bgm_type": "none",
         "bgm_volume": 0,
-        "match_materials_to_script": False,
+        "match_materials_to_script": True,
     }
 
 def client(key):
@@ -113,6 +120,48 @@ def safe_file_url(file_url, base):
             not p.path.startswith("/tasks/") or p.fragment or p.username or p.password):
         raise ValueError("Unsafe output URL")
     return url
+
+
+def verify_visual_activity(path):
+    """Reject static/near-identical upper-screen frames, not semantic quality.
+
+    At most twelve tiny 32x32 frame samples are held in memory. Cropping the top
+    of the frame avoids false positives from subtitles moving near the bottom.
+    This is a necessary, NOT sufficient, check for real, relevant footage.
+    """
+    try:
+        proc = subprocess.run(
+            ["ffmpeg", "-hide_banner", "-loglevel", "error", "-nostdin",
+             "-i", str(path),
+             "-vf", "fps=1/5,crop=iw:trunc(ih*0.65/2)*2:0:0,"
+                    "scale=32:32,format=gray",
+             "-frames:v", "12", "-f", "rawvideo", "-"],
+            capture_output=True, timeout=35, check=True)
+    except (OSError, subprocess.SubprocessError):
+        return False
+    size = 32 * 32
+    frames = [proc.stdout[i:i+size]
+              for i in range(0, len(proc.stdout), size)]
+    if len(frames) < 9 or any(len(frame) != size for frame in frames):
+        return False
+    return sum(
+        sum(abs(a-b) for a, b in zip(left, right)) / size >= 3.0
+        for left, right in zip(frames, frames[1:])
+    ) >= 3
+
+
+def verify_audible_audio(path):
+    """An audio track is insufficient if the narrator is silent."""
+    try:
+        proc = subprocess.run(
+            ["ffmpeg", "-hide_banner", "-nostdin", "-i", str(path),
+             "-vn", "-af", "volumedetect", "-f", "null", "-"],
+            capture_output=True, text=True, timeout=25, check=True)
+        measured = re.search(r"max_volume:\\s*(-?\\d+(?:\\.\\d+)?) dB",
+                             proc.stderr)
+        return bool(measured and float(measured.group(1)) > -32.0)
+    except (OSError, subprocess.SubprocessError, ValueError):
+        return False
 
 def verify_output(job_id, url):
     base, key = upstream()
@@ -148,6 +197,10 @@ def verify_output(job_id, url):
         good_audio = any(s.get("codec_type") == "audio" for s in streams)
         if not (58.5 <= seconds <= 60.5 and good_video and good_audio):
             raise ValueError("Invalid duration, format or audio stream")
+        if not verify_visual_activity(temp):
+            raise ValueError("Static or insufficiently varied video")
+        if not verify_audible_audio(temp):
+            raise ValueError("Silent audio; narrator not verified")
         digest_state = hashlib.sha256()
         with temp.open("rb") as source:
             for block in iter(lambda: source.read(1024 * 1024), b""):
@@ -155,7 +208,9 @@ def verify_output(job_id, url):
         digest = digest_state.hexdigest()
         temp.replace(dest)
         return {"duration_seconds": seconds, "sha256": digest,
-                "bytes": length, "published": False, "review_only": True}
+                "bytes": length, "published": False, "review_only": True,
+                "visual_activity_gate": "PASS", "audible_audio_gate": "PASS",
+                "human_quality_review_required": True}
     except (OSError, ValueError, KeyError, subprocess.SubprocessError, httpx.HTTPError):
         raise HTTPException(422, detail="OUTPUT_VERIFICATION_FAILED") from None
     finally:
