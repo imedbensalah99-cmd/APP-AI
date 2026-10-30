@@ -1,0 +1,76 @@
+name: OMDA MoneyPrinter — Cloudflare/Render live-safe contract smoke
+on:
+  push:
+    branches:
+      - omda-moneyprinter-60-staging-v1
+    paths:
+      - .github/workflows/omda-mpt60-bridge-smoke.yml
+  workflow_dispatch:
+permissions:
+  contents: read
+concurrency:
+  group: omda-moneyprinter-bridge-smoke
+  cancel-in-progress: true
+jobs:
+  read-only-remote-verification:
+    runs-on: ubuntu-latest
+    timeout-minutes: 6
+    steps:
+      - name: Confirm Render is live, no generation permission
+        shell: bash
+        run: |
+          set -euo pipefail
+          curl --fail --show-error --silent --retry 2 --max-time 120 \
+            https://omda-moneyprinter-60-staging.onrender.com/health > render.json
+          python - <<'PY'
+          import json
+          o=json.load(open("render.json"))
+          assert o["status"]=="AVAILABLE",o
+          assert o["target_seconds"]==60,o
+          assert o["generation_enabled"] is False,o
+          assert o["publishing"] is False,o
+          assert o["paid_generation"] is False,o
+          print("RENDER_HEALTH_OK; GENERATION_AND_PUBLISHING_DISABLED")
+          PY
+
+      - name: Confirm anonymous Render API cannot submit a job
+        shell: bash
+        run: |
+          set -euo pipefail
+          for route in /v1/mpt/auth/check /v1/mpt/jobs; do
+            if [[ "$route" == "/v1/mpt/jobs" ]]; then
+              status=$(curl --silent --show-error --max-time 60 --output /dev/null \
+                --write-out "%{http_code}" -X POST \
+                -H "Content-Type: application/json" -d '{}' \
+                "https://omda-moneyprinter-60-staging.onrender.com$route")
+            else
+              status=$(curl --silent --show-error --max-time 60 --output /dev/null \
+                --write-out "%{http_code}" \
+                "https://omda-moneyprinter-60-staging.onrender.com$route")
+            fi
+            test "$status" = "401" || { echo "EXPECTED_401_RECEIVED_$status"; exit 1; }
+            echo "RENDER_AUTH_BLOCKED $route"
+          done
+
+      - name: Cloudflare proof endpoint reports genuine GitHub run status
+        shell: bash
+        run: |
+          set -euo pipefail
+          host=https://omda-moneyprinter-60-readonly.imedbensalah9988.workers.dev
+          curl --fail --show-error --silent --retry 2 --max-time 90 \
+            "$host/v1/proof" > cloudflare.json
+          python - <<'PY'
+          import json
+          data=json.load(open("cloudflare.json"))
+          assert data["status"] in ("queued","in_progress","completed"),data
+          assert data["duration_target_seconds"]==60,data
+          assert data["publishing"] is False,data
+          assert data["paid_generation"] is False,data
+          assert data["safe_readonly"] is True,data
+          assert data["run_url"].startswith("https://github.com/imedbensalah99-cmd/APP-AI/actions/runs/"),data
+          print("CLOUDFLARE_REAL_GITHUB_PROOF_OK; run_id:",data["run_id"],"state:",data["status"])
+          PY
+          status=$(curl -sS --max-time 60 -o /dev/null -w '%{http_code}' \
+            -X POST "$host/v1/proof")
+          test "$status" = "404" || { echo "POST_NOT_BLOCKED_$status"; exit 1; }
+          echo "CLOUDFLARE_WRITE_DENIED"
