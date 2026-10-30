@@ -93,7 +93,7 @@ body = VideoRequest(
             "لذلك، فإن حماية المياه من التلوث، وترشيد استخدامها، مسؤولية "
             "مشتركة بين الجميع."),
     terms=["ocean waves", "waterfall", "forest rain"],
-    idempotency_key="omda-ar60-20261030-test02",
+    idempotency_key="omda-ar60-20261030-test03",
     video_source="pixabay", duration_seconds=60, language="ar",
     provider_policy="FREE_ONLY", publish_intent=False)
 manifest_data = manifest(body)
@@ -160,7 +160,7 @@ for index in range(3):
     segments.append(segment)
     emit("SEGMENT_OK",index+1)
 concat_file=job_dir/"segments.txt"
-concat_file.write_text("".join("file '"+str(p)+"'\\n" for p in segments),encoding="utf-8")
+concat_file.write_text("".join("file '"+str(p)+"'\n" for p in segments),encoding="utf-8")
 visual=job_dir/"visual.mp4"
 try:
     subprocess.run(["ffmpeg","-nostdin","-hide_banner","-loglevel","error","-y",
