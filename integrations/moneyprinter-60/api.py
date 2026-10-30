@@ -286,7 +286,9 @@ def get_job(job_id: str, authorization: str | None = Header(default=None)):
             with LOCK:
                 JOBS[job_id]["state"] = "FAILED"
         elif task_state == 1:
-            options = upstream_task.get("combined_videos") or upstream_task.get("videos") or []
+            # Only the final narrated/subtitled MPT product is reviewable.
+            # combined_videos are intermediate picture tracks and may have no TTS.
+            options = upstream_task.get("videos") or []
             try:
                 if not isinstance(options, list) or not options:
                     raise ValueError("No video")
