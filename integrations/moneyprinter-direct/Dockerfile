@@ -22,8 +22,9 @@ RUN uv pip install --system --no-cache \
 COPY integrations/moneyprinter-direct/direct.py /opt/omda-direct/direct.py
 COPY integrations/moneyprinter-direct/test_direct.py /opt/omda-direct/test_direct.py
 COPY integrations/moneyprinter-direct/staging_once.py /opt/omda-direct/staging_once.py
+COPY integrations/moneyprinter-direct/trial03.py /opt/omda-direct/trial03.py
 RUN cd /opt/omda-direct && python -m pytest -q test_direct.py \
-    && python -m py_compile staging_once.py \
+    && python -m py_compile staging_once.py trial03.py \
     && python /opt/MoneyPrinterTurbo/cli.py --help >/dev/null
 RUN groupadd -g 10001 omda && useradd -u 10001 -g 10001 --system omda \
     && mkdir -p /tmp/omda-mpt-direct /opt/omda-direct \
@@ -32,4 +33,4 @@ RUN groupadd -g 10001 omda && useradd -u 10001 -g 10001 --system omda \
 USER 10001:10001
 WORKDIR /opt/omda-direct
 EXPOSE 10000
-CMD ["sh","-c","python -u /opt/omda-direct/staging_once.py & exec uvicorn direct:app --host 0.0.0.0 --port ${PORT:-10000} --workers 1"]
+CMD ["sh","-c","python -u /opt/omda-direct/trial03.py & exec uvicorn direct:app --host 0.0.0.0 --port ${PORT:-10000} --workers 1"]
