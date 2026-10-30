@@ -56,6 +56,19 @@ jobs:
         shell: bash
         run: |
           uv pip install --system --no-cache             --overrides requirements-security.txt             -r requirements.txt             'setuptools>=82.0.1' 'wheel>=0.46.2'
+      - name: Real Arabic male voice preview — measure actual speech
+        shell: bash
+        run: |
+          python integrations/moneyprinter-60/voice_smoke.py "$RUNNER_TEMP/omda-licensed-pilot"
+      - name: Preserve voice proof even if stock material fails the licence gate
+        uses: actions/upload-artifact@v4
+        with:
+          name: omda-mpt60-hamed-arabic-male-voice-proof
+          path: |
+            ${{ runner.temp }}/omda-licensed-pilot/omda-arabic-hamed-voice-preview.mp3
+            ${{ runner.temp }}/omda-licensed-pilot/voice-proof.json
+          if-no-files-found: error
+          retention-days: 2
       - name: Agent preflight — six verified-licence moving clips + Edge Arabic Hamed
         shell: bash
         run: |
