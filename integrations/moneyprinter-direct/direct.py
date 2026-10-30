@@ -262,13 +262,13 @@ def available_sources():
                 "provider": name, "rank": item["rank"],
                 "configured": bool(source_key(name)),
                 "verified": bool(checks.get(name, {}).get("ok") and
-                                 time.time() - checks[name]["time"] < SOURCE_TTL),
+                                 checks[name].get("key_fingerprint") == hashlib.sha256(source_key(name).encode()).hexdigest() and time.time() - checks[name]["time"] < SOURCE_TTL),
                 "license": "commercial_allowed_with_conditions",
                 "attribution": item["attribution"],
                 "docs": item["docs"],
                 "render_generation_eligible": bool(source_key(name)) and
                     bool(checks.get(name, {}).get("ok") and
-                         time.time() - checks[name]["time"] < SOURCE_TTL)
+                         checks[name].get("key_fingerprint") == hashlib.sha256(source_key(name).encode()).hexdigest() and time.time() - checks[name]["time"] < SOURCE_TTL)
                     and (name != "coverr" or
                          (os.getenv("OMDA_COVERR_ATTRIBUTION_READY") == "1" and
                           os.getenv("OMDA_COVERR_MPT_COMPAT_VERIFIED") == "1"))
@@ -328,16 +328,18 @@ def verify_stock_provider(provider: str, authorization: str | None = Header(defa
     # Pixabay API asks for 24h caching; no repeated query from this endpoint.
     with SOURCE_LOCK:
         cached = SOURCE_CHECKS.get(provider)
-        if cached and time.time() - cached["time"] < SOURCE_TTL:
+        if cached and cached.get("key_fingerprint") == hashlib.sha256(source_key(provider).encode()).hexdigest() and time.time() - cached["time"] < SOURCE_TTL:
             return {"provider": provider, "state": cached["state"],
                     "cached": True, "ready_for_generation": bool(cached["ok"])}
         # Reserve the query before the network call to avoid bursts.
         SOURCE_CHECKS[provider] = {"state": "CHECK_IN_PROGRESS",
-                                   "ok": False, "time": time.time()}
+                                   "ok": False, "time": time.time(),
+                                   "key_fingerprint": hashlib.sha256(source_key(provider).encode()).hexdigest()}
     result = _probe_provider(provider)
     ok = result == "API_AUTH_OK"
     with SOURCE_LOCK:
-        SOURCE_CHECKS[provider] = {"state": result, "ok": ok, "time": time.time()}
+        SOURCE_CHECKS[provider] = {"state": result, "ok": ok, "time": time.time(),
+                                   "key_fingerprint": hashlib.sha256(source_key(provider).encode()).hexdigest()}
     return {"provider": provider, "state": result, "cached": False,
             "ready_for_generation": ok and
                 (provider != "coverr" or
@@ -370,7 +372,7 @@ async def create_job(request: Request, authorization: str | None = Header(defaul
         raise HTTPException(503, detail="COVERR_INTEGRATION_PENDING")
     with SOURCE_LOCK:
         checked = SOURCE_CHECKS.get(body.video_source)
-        verified = bool(checked and checked.get("ok") and
+        verified = bool(checked and checked.get("key_fingerprint") == hashlib.sha256(source_key(body.video_source).encode()).hexdigest() and checked.get("ok") and
                         time.time() - checked["time"] < SOURCE_TTL)
     if not verified:
         raise HTTPException(503, detail="FREE_STOCK_API_PREFLIGHT_REQUIRED")
