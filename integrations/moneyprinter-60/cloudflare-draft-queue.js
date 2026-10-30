@@ -2,7 +2,7 @@
 // Never dispatches generation, never publishes; DB is independent of production.
 const ISSUER = "https://super-mode-8f54.cloudflareaccess.com";
 const AUD = "8702c89851c132f8f441358083aae78d706777c646c658e6371281fbd00fbf20";
-const OWNER = "imedbensalah9988@gmail.com";
+// Owner identity is bound securely from Cloudflare secret OMDA_OWNER_EMAIL.
 const HOST = "omda-moneyprinter60-queue.imedbensalah9988.workers.dev";
 const PROOF = "https://omda-moneyprinter-60-readonly.imedbensalah9988.workers.dev/v1/proof";
 const security = {"Cache-Control":"no-store","X-Content-Type-Options":"nosniff",
@@ -27,7 +27,7 @@ async function jwks(){
   certificatesExpires=Date.now()+300000;
   return certificates;
 }
-async function authorize(request){
+async function authorize(request,env){
   const token=request.headers.get("Cf-Access-Jwt-Assertion")||"";
   if(token.length>8192||token.length<100)throw Error("not_authorized");
   const parts=token.split(".");
@@ -37,7 +37,7 @@ async function authorize(request){
   const now=Math.floor(Date.now()/1000);
   const validAudience=payload.aud===AUD||(Array.isArray(payload.aud)&&payload.aud.includes(AUD));
   if(header.alg!=="RS256"||typeof header.kid!=="string"||
-     payload.iss!==ISSUER||!validAudience||String(payload.email||"").toLowerCase()!==OWNER||
+     payload.iss!==ISSUER||!validAudience||String(payload.email||"").toLowerCase()!==String(env.OMDA_OWNER_EMAIL||"").toLowerCase()||
      typeof payload.exp!=="number"||payload.exp<=now||payload.exp>now+14*3600||
      typeof payload.iat!=="number"||payload.iat>now+60||
      (typeof payload.nbf==="number"&&payload.nbf>now+60))throw Error("not_authorized");
@@ -49,7 +49,7 @@ async function authorize(request){
   const ok=await crypto.subtle.verify("RSASSA-PKCS1-v1_5",imported,
     b64url(parts[2]),new TextEncoder().encode(parts[0]+"."+parts[1]));
   if(!ok)throw Error("not_authorized");
-  return OWNER;
+  return true;
 }
 function checkWrite(request,action){
   if(request.headers.get("Origin")!=="https://"+HOST||
@@ -122,7 +122,7 @@ async function app(request,env){
   const url=new URL(request.url);
   if(url.hostname!==HOST)return json({error:"INVALID_HOST"},400);
   if(!env.JOBS)return json({error:"STORAGE_UNCONFIGURED"},503);
-  try{await authorize(request);}catch{return json({error:"UNAUTHORIZED"},401);}
+  try{await authorize(request,env);}catch{return json({error:"UNAUTHORIZED"},401);}
   if(request.method==="GET"&&url.pathname==="/"){
     return new Response(PAGE,{headers:{...security,"Content-Type":"text/html; charset=utf-8",
       "Content-Security-Policy":"default-src 'none'; script-src 'unsafe-inline'; style-src 'unsafe-inline'; connect-src 'self'; img-src 'self'; base-uri 'none'; form-action 'self'; frame-ancestors 'none'"}});
