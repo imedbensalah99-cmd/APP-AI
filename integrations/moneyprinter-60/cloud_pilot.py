@@ -152,7 +152,8 @@ def verify(base: Path, mpt_root: Path):
     target = base/"omda-moneyprinter60-review.mp4"
     # Adapt codec frame timing to exact 60 seconds and add original timed captions.
     call(["ffmpeg", "-hide_banner", "-loglevel", "error", "-nostdin", "-y",
-          "-i", str(src), "-vf",
+          "-i", str(src), "-i", str(base/"arabic_60.wav"),
+          "-map", "0:v:0", "-map", "1:a:0", "-vf",
           f"tpad=stop_mode=clone:stop_duration=3,scale=1080:1920,fps=24,"
           f"subtitles={base/'captions.srt'}:force_style='FontName=Noto Sans Arabic,FontSize=18,"
           "Outline=2,Alignment=2,MarginV=100'",
