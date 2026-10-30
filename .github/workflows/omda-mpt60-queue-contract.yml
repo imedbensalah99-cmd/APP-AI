@@ -46,6 +46,7 @@ jobs:
           assert insert in src, "Worker SQL insert and tested schema diverge"
           conn.execute(insert,("example-id","example-key-00001","Example Arabic","ه"*140,100,100))
           assert conn.execute("SELECT COUNT(*) FROM video_jobs").fetchone()[0]==1
+          conn.commit()  # Preserve fixture row across intentional CHECK failures.
           for statement in [
               "UPDATE video_jobs SET duration_seconds=45",
               "UPDATE video_jobs SET publish_intent=1",
