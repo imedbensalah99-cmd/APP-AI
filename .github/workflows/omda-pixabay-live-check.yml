@@ -1,0 +1,40 @@
+name: OMDA Pixabay live health check
+on:
+  push:
+    branches: [omda-mpt-render-engine-staging-v1]
+    paths: [.github/workflows/omda-pixabay-live-check.yml]
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  verify:
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    steps:
+      - name: Check live Render Pixabay configuration without secrets
+        env:
+          HEALTH_URL: https://omda-moneyprinter-real-staging.onrender.com/health?audit=20261030-1323
+        run: |
+          python - <<'PY'
+          import json, os, time
+          from urllib.request import urlopen, Request
+          for attempt in range(4):
+              try:
+                  with urlopen(Request(os.environ["HEALTH_URL"],headers={"Cache-Control":"no-cache","User-Agent":"OMDA-ReadOnly-Pixabay-Audit/1"}), timeout=40) as resp:
+                      data=json.load(resp)
+                  print("service_mode:",data.get("mode"))
+                  print("engine_installed:",data.get("engine_installed"))
+                  print("pixabay_key_configured:",data.get("free_stock",{}).get("pixabay"))
+                  print("generation_enabled:",data.get("generation_enabled"))
+                  print("publishing_enabled:",data.get("publishing_enabled"))
+                  assert data.get("mode")=="DIRECT_MONEYPRINTERTURBO_ON_RENDER"
+                  assert data.get("engine_installed") is True
+                  assert data.get("publishing_enabled") is False
+                  assert data.get("free_stock",{}).get("pixabay") is True, "Pixabay key not visible to running process"
+                  print("PASS: live Render process sees a nonempty PIXABAY_API_KEY; validity with Pixabay API is not yet verified")
+                  break
+              except Exception as exc:
+                  print("attempt",attempt+1,"error",type(exc).__name__,str(exc)[:130])
+                  if attempt==3:raise
+                  time.sleep(10)
+          PY
