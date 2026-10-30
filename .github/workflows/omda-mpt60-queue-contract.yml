@@ -1,0 +1,63 @@
+name: OMDA MoneyPrinter60 — cloud queue code and policy tests
+on:
+  push:
+    branches:
+      - omda-moneyprinter-60-staging-v1
+    paths:
+      - .github/workflows/omda-mpt60-queue-contract.yml
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  verify-isolated-queue-contract:
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          persist-credentials: false
+      - name: Verify the Cloudflare Worker parses as an ES module
+        shell: bash
+        run: |
+          node --input-type=module --check < integrations/moneyprinter-60/cloudflare-draft-queue.js
+          echo "CLOUDFLARE_QUEUE_JAVASCRIPT_SYNTAX_OK"
+      - name: Validate schema and prohibited actions
+        shell: bash
+        run: |
+          python - <<'PY'
+          import sqlite3
+          from pathlib import Path
+          src=Path("integrations/moneyprinter-60/cloudflare-draft-queue.js").read_text()
+          sql=Path("integrations/moneyprinter-60/queue-schema.sql").read_text()
+          assert "String(env.OMDA_OWNER_EMAIL||" in src
+          assert 'const OWNER = "imedbensalah9988@gmail.com"' not in src
+          assert 'String(payload.email||"").toLowerCase()' in src
+          assert 'crypto.subtle.verify' in src
+          assert 'env.JOBS.prepare' in src
+          assert 'generation_enabled:false' in src
+          assert 'publishing:false' in src
+          assert 'provider_policy!=="FREE_ONLY"' in src
+          assert 'd.duration_seconds!==60' in src
+          assert "approve-render" in src and "reject-draft" in src
+          assert "/api/runner/claim" not in src
+          conn=sqlite3.connect(":memory:")
+          conn.executescript(sql)
+          insert="INSERT INTO video_jobs(id,idem_key,title,script,language,duration_seconds,state,provider_policy,publish_intent,paid_generation,created_at,updated_at) VALUES(?,?,?,?,'ar',60,'DRAFT','FREE_ONLY',0,0,?,?)"
+          assert insert in src, "Worker SQL insert and tested schema diverge"
+          conn.execute(insert,("example-id","example-key-00001","Example Arabic","ه"*140,100,100))
+          assert conn.execute("SELECT COUNT(*) FROM video_jobs").fetchone()[0]==1
+          for statement in [
+              "UPDATE video_jobs SET duration_seconds=45",
+              "UPDATE video_jobs SET publish_intent=1",
+              "UPDATE video_jobs SET provider_policy='PAID'",
+              "UPDATE video_jobs SET language='en'"
+          ]:
+              try:
+                  conn.execute(statement)
+                  raise AssertionError("Expected DB CHECK failure for "+statement)
+              except sqlite3.IntegrityError:
+                  conn.rollback()
+          conn.execute("UPDATE video_jobs SET state='READY_FOR_RENDER' WHERE id='example-id'")
+          assert conn.execute("SELECT state FROM video_jobs").fetchone()[0]=='READY_FOR_RENDER'
+          print("D1_SCHEMA_CONTRACTS_OK; GENERATION_AND_PUBLICATION_DISABLED")
+          PY
