@@ -438,7 +438,7 @@ def staging_review(access_code: str):
     import time as _time
     if not re.fullmatch(r"[A-Za-z0-9_-]{32,80}", access_code):
         raise HTTPException(404, detail="REVIEW_NOT_FOUND")
-    folder = JOBS_ROOT / "trial03"
+    folder = JOBS_ROOT / "trial04"
     marker = folder / "review.token"
     video = folder / "review.mp4"
     try:
