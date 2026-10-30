@@ -76,6 +76,16 @@ jobs:
           python integrations/moneyprinter-60/cloud_pilot.py prepare \
             --out "$RUNNER_TEMP/omda-mpt-pilot"
 
+      - name: Fail closed if final voice mux contract is missing
+        shell: bash
+        run: |
+          python - <<'PY'
+          from pathlib import Path
+          source = Path("integrations/moneyprinter-60/cloud_pilot.py").read_text()
+          assert '"-map", "0:v:0", "-map", "1:a:0"' in source
+          assert 'arabic_60.wav' in source
+          PY
+
       - name: Run genuine MoneyPrinterTurbo video pipeline
         shell: bash
         working-directory: vendor/MoneyPrinterTurbo
@@ -101,8 +111,8 @@ jobs:
         with:
           name: omda-moneyprinter60-owner-review
           path: |
-            /tmp/omda-mpt-pilot/verification.json
-            /tmp/omda-mpt-pilot/omda-moneyprinter60-review.mp4
+            ${{ runner.temp }}/omda-mpt-pilot/verification.json
+            ${{ runner.temp }}/omda-mpt-pilot/omda-moneyprinter60-review.mp4
           retention-days: 1
           if-no-files-found: error
           compression-level: 0
