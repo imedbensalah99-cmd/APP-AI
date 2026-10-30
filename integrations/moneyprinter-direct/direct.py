@@ -43,12 +43,12 @@ SOURCE_CHECKS: dict[str, dict] = {}
 SOURCE_TTL = 24 * 60 * 60  # Respect Pixabay 24h search-results caching policy.
 # No paid providers or general-purpose outbound URLs accepted.
 STOCK_SOURCES = {
-    "pexels": {"rank": 1, "key_env": "PEXELS_API_KEY",
+    "pexels": {"rank": 2, "key_env": "PEXELS_API_KEY",
                "provider_api": "https://api.pexels.com/v1/videos/search",
                "commercial_use": True,
                "attribution": "Show Pexels in OMDA and credit creators when possible",
                "docs": "https://www.pexels.com/api/documentation/"},
-    "pixabay": {"rank": 2, "key_env": "PIXABAY_API_KEY",
+    "pixabay": {"rank": 1, "key_env": "PIXABAY_API_KEY",
                "provider_api": "https://pixabay.com/api/videos/",
                "commercial_use": True,
                "attribution": "Display Pixabay source for search results and retain creator info",
@@ -69,7 +69,7 @@ class VideoRequest(BaseModel):
     script: str = Field(min_length=100, max_length=2200)
     terms: list[str] = Field(min_length=3, max_length=15)
     idempotency_key: str = Field(min_length=12, max_length=100)
-    video_source: Literal["pexels", "pixabay", "coverr"] = "pexels"
+    video_source: Literal["pexels", "pixabay", "coverr"] = "pixabay"
     duration_seconds: Literal[60] = 60
     language: Literal["ar"] = "ar"
     provider_policy: Literal["FREE_ONLY"] = "FREE_ONLY"
@@ -257,7 +257,7 @@ def available_sources():
     """Public, safe metadata. A configured key is NOT a verified source."""
     with SOURCE_LOCK:
         checks = dict(SOURCE_CHECKS)
-    return {"provider_order": ["pexels", "pixabay", "coverr"],
+    return {"provider_order": ["pixabay", "pexels", "coverr"],
             "sources": [{
                 "provider": name, "rank": item["rank"],
                 "configured": bool(source_key(name)),
