@@ -1,4 +1,5 @@
 name: OMDA MoneyPrinter — Cloudflare/Render live-safe contract smoke
+# Recheck after auth-before-body fix deployed as dep-dbi2f6942hec73c8rjrg
 on:
   push:
     branches:
