@@ -133,13 +133,21 @@ def prepare(folder):
     directory = folder/"licensed_media"
     directory.mkdir(exist_ok=True)
     chosen, seen, reasons = [], set(), []
+    rate_limited = False
     for idx, (term, _text) in enumerate(SCENES):
+        if rate_limited:
+            break
         candidates = []
         for phrase in SEARCH_PHRASES[idx]:
             try:
                 candidates += wiki_search(phrase)
             except Exception as exc:
-                reasons.append({"scene": idx+1, "query": phrase, "error": type(exc).__name__})
+                reasons.append({"scene": idx+1, "query": phrase, "error": type(exc).__name__, "http_code": getattr(exc,"code",None)})
+                if getattr(exc,"code",None) == 429:
+                    rate_limited = True
+                    break
+        if rate_limited:
+            break
         candidates.sort(key=lambda p: p.get("imageinfo", [{}])[0].get("size", 0))
         for page in candidates:
             meta = valid_file(page, seen, idx)
@@ -156,6 +164,9 @@ def prepare(folder):
             except Exception as exc:
                 dest.unlink(missing_ok=True)
                 reasons.append({"scene":idx+1, "file":meta["file_title"],"error":type(exc).__name__, "http_code":getattr(exc,"code",None)})
+                if getattr(exc,"code",None) == 429:
+                    rate_limited = True
+                    break
                 continue
             meta["scene"] = idx+1
             meta["search_term"] = term
@@ -163,11 +174,16 @@ def prepare(folder):
             seen.add(meta["url"])
             chosen.append(meta)
             break
+        if rate_limited:
+            break
     audit = {"provider": "Wikimedia Commons", "licensed_assets": chosen,
              "search_errors": reasons[:20], "expected_scenes": len(SCENES),
+             "source_rate_limited": rate_limited,
              "published": False, "reused_without_attribution": False}
     (folder/"source_audit.json").write_text(json.dumps(audit, indent=2, ensure_ascii=False), encoding="utf-8")
     if len(chosen) != len(SCENES):
+        if rate_limited:
+            raise RuntimeError("COMMONS_HTTP_429_RATE_LIMIT: stop source requests and use an authorized alternative")
         raise RuntimeError("STOCK_LICENSE_OR_AVAILABILITY_GATE_FAILED: found %d/%d assets" %
                            (len(chosen), len(SCENES)))
     script = " ".join(scene for _, scene in SCENES)
