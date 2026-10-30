@@ -96,3 +96,29 @@ def test_stock_terms_are_english_and_specific():
     with pytest.raises(HTTPException) as exc:
         make_payload(JobRequest(**sample(terms=["رسالة", "قطار", "ليل"])))
     assert exc.value.detail == "ENGLISH_STOCK_TERMS_REQUIRED"
+
+def test_audio_gate_requires_audible_signal(monkeypatch):
+    from types import SimpleNamespace
+    import api
+    monkeypatch.setattr(api.subprocess, "run",
+                        lambda *args, **kwargs: SimpleNamespace(stderr="max_volume: -14.1 dB"))
+    assert api.verify_audible_audio("clip.mp4") is True
+    monkeypatch.setattr(api.subprocess, "run",
+                        lambda *args, **kwargs: SimpleNamespace(stderr="max_volume: -inf dB"))
+    assert api.verify_audible_audio("clip.mp4") is False
+
+def test_visual_gate_rejects_static_frames(monkeypatch):
+    from types import SimpleNamespace
+    import api
+    same = bytes([25]) * (12 * 1024)
+    monkeypatch.setattr(api.subprocess, "run",
+                        lambda *args, **kwargs: SimpleNamespace(stdout=same))
+    assert api.verify_visual_activity("clip.mp4") is False
+
+def test_visual_gate_accepts_multiple_distinct_frames(monkeypatch):
+    from types import SimpleNamespace
+    import api
+    distinct = b"".join(bytes([20 + j * 8]) * 1024 for j in range(12))
+    monkeypatch.setattr(api.subprocess, "run",
+                        lambda *args, **kwargs: SimpleNamespace(stdout=distinct))
+    assert api.verify_visual_activity("clip.mp4") is True
