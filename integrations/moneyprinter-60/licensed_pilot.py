@@ -66,7 +66,8 @@ def valid_file(page, selected):
         return None
     if not str(entry.get("mime", "")).startswith("video/"):
         return None
-    lic, lic_url = extract_license(entry.get("extmetadata") or {})
+    extended = entry.get("extmetadata") or {}
+    lic, lic_url = extract_license(extended)
     if not ALLOW.match(lic):
         return None
     if url in selected:
@@ -74,7 +75,10 @@ def valid_file(page, selected):
     title = page.get("title", "")
     if not title.startswith("File:"):
         return None
-    return {"file_title": title, "url": url,
+    artist = html.unescape(re.sub("<[^>]*>", "", extended.get("Artist", {}).get("value", ""))).strip()
+    if not artist:
+        return None  # CC-BY / BY-SA attribution must not be anonymous.
+    return {"file_title": title, "url": url, "artist": artist,
             "page_url": "https://commons.wikimedia.org/wiki/" + title.replace(" ", "_"),
             "license": lic, "license_url": lic_url,
             "size": entry["size"], "mime": entry["mime"]}
