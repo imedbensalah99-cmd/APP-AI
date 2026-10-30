@@ -5,6 +5,8 @@ WORKDIR /app
 COPY requirements.txt /app/requirements.txt
 RUN pip install --no-cache-dir -r requirements.txt
 COPY api.py /app/api.py
+COPY test_api.py /app/test_api.py
+RUN pip install --no-cache-dir pytest==8.3.5 && python -m pytest -q /app/test_api.py
 RUN groupadd --gid 10001 omda && useradd --uid 10001 --gid 10001 --system omda && mkdir -p /tmp/omda-mpt-60 && chown 10001:10001 /tmp/omda-mpt-60
 USER 10001:10001
 EXPOSE 10000
