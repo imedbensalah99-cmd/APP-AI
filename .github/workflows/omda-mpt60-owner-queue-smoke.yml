@@ -1,0 +1,51 @@
+name: OMDA MoneyPrinter60 — owner queue access and D1 isolation smoke
+on:
+  push:
+    branches:
+      - omda-moneyprinter-60-staging-v1
+    paths:
+      - .github/workflows/omda-mpt60-owner-queue-smoke.yml
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  anonymous-must-not-access-private-drafts:
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    steps:
+      - name: Verify Access gates owner queue, POST and saved drafts
+        shell: bash
+        run: |
+          set -euo pipefail
+          host="https://omda-moneyprinter60-queue.imedbensalah9988.workers.dev"
+          for route in / /api/health /api/jobs /api/proof; do
+            result=$(curl -sS --max-time 40 -o /dev/null -w '%{http_code}' "$host$route")
+            case "$result" in
+              302|301|401|403) echo "PRIVATE_GATE_OK $route HTTP_$result";;
+              *) echo "PRIVATE_GATE_FAILED $route HTTP_$result";exit 1;;
+            esac
+          done
+          result=$(curl -sS --max-time 40 -o /dev/null -w '%{http_code}' \
+            -X POST "$host/api/jobs" -H 'Content-Type: application/json' \
+            -H 'X-OMDA-Action: create-draft' \
+            --data '{"title":"test only","script":"not long enough","duration_seconds":60,"language":"ar","provider_policy":"FREE_ONLY","publish_intent":false}')
+          case "$result" in
+            302|301|401|403) echo "PRIVATE_WRITE_GATE_OK HTTP_$result";;
+            *) echo "PRIVATE_WRITE_GATE_FAILED HTTP_$result";exit 1;;
+          esac
+      - name: Verify public sanitized proof remains read only
+        shell: bash
+        run: |
+          set -euo pipefail
+          curl -fsS --max-time 45 \
+            https://omda-moneyprinter-60-readonly.imedbensalah9988.workers.dev/v1/proof \
+            > proof.json
+          python - <<'PY'
+          import json
+          x=json.load(open("proof.json"))
+          assert x["publishing"] is False
+          assert x["paid_generation"] is False
+          assert x["safe_readonly"] is True
+          assert isinstance(x.get("run_id"),int)
+          print("SANITIZED_RENDER_PROOF_OK",x["run_id"],x["status"])
+          PY
