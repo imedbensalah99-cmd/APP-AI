@@ -159,7 +159,7 @@ async function app(request,env){
     const id=crypto.randomUUID();
     try{
       await env.JOBS.prepare(
-        "INSERT INTO video_jobs(id,idem_key,title,script,language,duration_seconds,state,provider_policy,publish_intent,paid_generation,created_at,updated_at) VALUES(?,?,?,?,60,60,'DRAFT','FREE_ONLY',0,0,?,?)"
+        "INSERT INTO video_jobs(id,idem_key,title,script,language,duration_seconds,state,provider_policy,publish_intent,paid_generation,created_at,updated_at) VALUES(?,?,?,?,'ar',60,'DRAFT','FREE_ONLY',0,0,?,?)"
       ).bind(id,d.idem_key,d.title.trim(),d.script.trim(),now,now).run();
     }catch{return json({error:"STORAGE_WRITE_FAILED"},503);}
     return json({id,state:"DRAFT",published:false,generation_started:false},201);
