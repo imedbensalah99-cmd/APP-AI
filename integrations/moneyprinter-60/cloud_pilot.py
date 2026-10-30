@@ -73,8 +73,25 @@ def prepare(base: Path):
     scenes = make_artwork(base)
     script = " ".join(SCENES)
     source = base / "arabic_raw.wav"
-    call(["espeak-ng", "-v", "ar", "-s", "155", "-w", str(source), "--stdin"],
-         input=script, encoding="utf-8", capture_output=True)
+    model_path = os.environ.get("OMDA_PIPER_MODEL", "").strip()
+    voice_source = "OFFLINE_ESPEAK_NG"
+    if model_path:
+        model = Path(model_path).resolve()
+        expected = "1578a9b27d01a0626227225b148179628b770607dd61bdbbc41865bd399106b1"
+        if not model.is_file() or not Path(str(model) + ".json").is_file():
+            raise RuntimeError("Required pinned Arabic Piper voice files missing")
+        digest = hashlib.sha256()
+        with model.open("rb") as fd:
+            for chunk in iter(lambda: fd.read(1024*1024), b""):
+                digest.update(chunk)
+        if digest.hexdigest() != expected:
+            raise RuntimeError("Pinned Arabic Piper model checksum mismatch")
+        call(["piper", "--model", str(model), "--output_file", str(source)],
+             input=script, encoding="utf-8", capture_output=True)
+        voice_source = "OFFLINE_PINNED_PIPER_AR_EMIRATI_FEMALE"
+    else:
+        call(["espeak-ng", "-v", "ar", "-s", "155", "-w", str(source), "--stdin"],
+             input=script, encoding="utf-8", capture_output=True)
     measured = float(probe(source)["format"]["duration"])
     if not (20 < measured < 180):
         raise RuntimeError(f"Invalid offline voice duration: {measured}")
@@ -118,7 +135,7 @@ def prepare(base: Path):
     (base/"manifest.json").write_text(json.dumps(task, ensure_ascii=False, indent=2),encoding="utf-8")
     (base/"pilot_source.json").write_text(json.dumps({
         "title":TITLE, "source_materials":"ORIGINAL_SYNTHETIC",
-        "narration":"OFFLINE_ESPEAK_NG", "raw_voice_duration":measured,
+        "narration":voice_source, "raw_voice_duration":measured,
         "normalized_voice_duration":actual, "target_duration":60,
         "moneyprinter_required":True, "published":False,
         "paid_generation":False
@@ -182,7 +199,7 @@ def verify(base: Path, mpt_root: Path):
         "audio_present":True,"captions_burned_in":True,
         "file_bytes":target.stat().st_size,"sha256":sha.hexdigest(),
         "published":False,"paid_generation":False,"flow_credits_used":0,
-        "original_synthetic_visuals":True,"narration":"OFFLINE_ESPEAK_NG",
+        "original_synthetic_visuals":True,"narration":json.loads((base/"pilot_source.json").read_text(encoding="utf-8"))["narration"],
         "quality_note":"Infrastructure proof only; synthetic visuals and robotic voice are not a polished channel video"
     }
     (base/"verification.json").write_text(
