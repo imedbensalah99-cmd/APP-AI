@@ -66,3 +66,9 @@ def test_reject_dangerous_output_urls(url):
 
 def test_relative_artifact_path():
     assert safe_file_url("/tasks/a.mp4", "https://engine.example") == "https://engine.example/tasks/a.mp4"
+
+def test_video_hashing_is_streaming():
+    from pathlib import Path
+    code = Path(__file__).with_name("api.py").read_text(encoding="utf-8")
+    assert "hashlib.sha256(temp.read_bytes())" not in code
+    assert "source.read(1024 * 1024)" in code
