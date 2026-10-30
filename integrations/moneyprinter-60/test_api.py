@@ -72,3 +72,11 @@ def test_video_hashing_is_streaming():
     code = Path(__file__).with_name("api.py").read_text(encoding="utf-8")
     assert "hashlib.sha256(temp.read_bytes())" not in code
     assert "source.read(1024 * 1024)" in code
+
+def test_unauthenticated_bad_body_rejected_before_validation(monkeypatch):
+    monkeypatch.setenv("OMDA_MPT_BRIDGE_TOKEN", "x" * 40)
+    for payload in ("{}", "not-json", '{"title":123}'):
+        response = client.post("/v1/mpt/jobs", data=payload,
+                               headers={"Content-Type":"application/json"})
+        assert response.status_code == 401
+        assert response.json()["detail"] == "UNAUTHORIZED"
