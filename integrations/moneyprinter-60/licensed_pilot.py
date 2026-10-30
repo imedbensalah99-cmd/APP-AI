@@ -29,6 +29,25 @@ SCENES = [
 ALLOW = re.compile(r"^(?:CC0(?:\s|$)|CC BY(?:-SA)?(?:\s|$)|PUBLIC DOMAIN(?:\s|$)|PD(?:\s|-|$))", re.I)
 CODEC_EXT = {".webm", ".ogv", ".ogg", ".mp4", ".mov"}
 MAX_FILE = 55 * 1024 * 1024
+# Scenes are rejected if the visible source title describes the wrong subject.
+TITLE_PATTERNS = (
+    re.compile(r"berlin", re.I),
+    re.compile(r"berlin.*(museum|architecture|building|courtyard|street|city|platz|rain)|(?:museum|building|street).*berlin", re.I),
+    re.compile(r"alps|alpine|bavaria|bavarian|zugspitze|mountain", re.I),
+    re.compile(r"forest|woodland|schwarzwald|trees", re.I),
+    re.compile(r"rhine|rhein|river", re.I),
+    re.compile(r"rail|train|bahn", re.I),
+)
+IRRELEVANT_TITLES = re.compile(r"wikipedia|anthem|animation|demo|protest|politic|covid|army|militar|simulation", re.I)
+SEARCH_PHRASES = (
+    ("Berlin street", "Berlin city", "Berlin"),
+    ("Berlin museum", "Berlin architecture", "Berlin"),
+    ("Bavarian Alps", "Alpine cows", "Bavaria mountain", "Alps"),
+    ("Black Forest Germany", "Schwarzwald", "forest"),
+    ("Rhine river Germany", "Rhein river", "Rhine"),
+    ("Germany train landscape", "German railway", "Deutsche Bahn", "railway Germany"),
+)
+
 
 def run(*args, **kwargs):
     return subprocess.run(list(args), check=True, capture_output=True, text=True, timeout=270, **kwargs)
@@ -54,7 +73,7 @@ def extract_license(meta):
     url = html.unescape(meta.get("LicenseUrl", {}).get("value", ""))
     return short, url
 
-def valid_file(page, selected):
+def valid_file(page, selected, scene_index):
     entry = (page.get("imageinfo") or [{}])[0]
     url = entry.get("url", "")
     parsed = urlsplit(url)
@@ -74,6 +93,8 @@ def valid_file(page, selected):
         return None
     title = page.get("title", "")
     if not title.startswith("File:"):
+        return None
+    if IRRELEVANT_TITLES.search(title) or not TITLE_PATTERNS[scene_index].search(title):
         return None
     artist = html.unescape(re.sub("<[^>]*>", "", extended.get("Artist", {}).get("value", ""))).strip()
     if not artist:
@@ -114,14 +135,14 @@ def prepare(folder):
     chosen, seen, reasons = [], set(), []
     for idx, (term, _text) in enumerate(SCENES):
         candidates = []
-        for phrase in (term, term.split()[0], "Germany"):
+        for phrase in SEARCH_PHRASES[idx]:
             try:
                 candidates += wiki_search(phrase)
             except Exception as exc:
                 reasons.append({"scene": idx+1, "query": phrase, "error": type(exc).__name__})
         candidates.sort(key=lambda p: p.get("imageinfo", [{}])[0].get("size", 0))
         for page in candidates:
-            meta = valid_file(page, seen)
+            meta = valid_file(page, seen, idx)
             if not meta:
                 continue
             dest = directory / ("scene-%02d" % (idx+1) + Path(urlsplit(meta["url"]).path).suffix.lower())
@@ -134,7 +155,7 @@ def prepare(folder):
                     raise RuntimeError("No moving-picture stream")
             except Exception as exc:
                 dest.unlink(missing_ok=True)
-                reasons.append({"scene":idx+1, "file":meta["file_title"],"error":type(exc).__name__})
+                reasons.append({"scene":idx+1, "file":meta["file_title"],"error":type(exc).__name__, "http_code":getattr(exc,"code",None)})
                 continue
             meta["scene"] = idx+1
             meta["search_term"] = term
