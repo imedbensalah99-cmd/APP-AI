@@ -1,0 +1,108 @@
+name: OMDA MoneyPrinterTurbo — free 60s engine proof
+
+# Exactly one automatic proof when this workflow file is added/changed on staging.
+# No schedules, no production deployments, no external publishing.
+on:
+  push:
+    branches:
+      - omda-moneyprinter-60-staging-v1
+    paths:
+      - .github/workflows/omda-moneyprinter60-cloud-proof.yml
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: omda-mpt60-cloud-proof
+  cancel-in-progress: false
+
+jobs:
+  render-one-original-demo:
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    env:
+      PYTHONUNBUFFERED: "1"
+      MPT_HOME: /tmp/omda-mpt-home
+      # No publishing credentials, AI-provider API keys or paid model integrations.
+      OMDA_MPT_ENABLE_JOBS: "0"
+      HF_HUB_OFFLINE: "1"
+    steps:
+      - name: Checkout isolated OMDA staging
+        uses: actions/checkout@v4
+        with:
+          persist-credentials: false
+
+      - name: Python 3.11 (supported upstream)
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+
+      - name: Free rendering dependencies
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y --no-install-recommends ffmpeg espeak-ng fonts-noto-core libharfbuzz0b libfribidi0
+          python -m pip install --no-cache-dir uv==0.12.12
+
+      - name: Checkout pinned official MoneyPrinterTurbo source
+        shell: bash
+        run: |
+          set -euo pipefail
+          mkdir -p vendor/MoneyPrinterTurbo
+          git -C vendor/MoneyPrinterTurbo init -q
+          git -C vendor/MoneyPrinterTurbo remote add origin https://github.com/harry0703/MoneyPrinterTurbo.git
+          git -C vendor/MoneyPrinterTurbo -c protocol.version=2 fetch --depth=1 origin 27843a994bfa29c43c02150861d51490a6ca4bd2
+          git -C vendor/MoneyPrinterTurbo checkout -q --detach FETCH_HEAD
+          test "$(git -C vendor/MoneyPrinterTurbo rev-parse HEAD)" = "27843a994bfa29c43c02150861d51490a6ca4bd2"
+          test -f vendor/MoneyPrinterTurbo/LICENSE
+          test -f vendor/MoneyPrinterTurbo/cli.py
+          test -f vendor/MoneyPrinterTurbo/requirements-security.txt
+          echo "Official upstream source pinned. No credentials are configured."
+
+      - name: Install genuine MoneyPrinterTurbo engine (no remote generation)
+        shell: bash
+        working-directory: vendor/MoneyPrinterTurbo
+        run: |
+          set -euo pipefail
+          uv pip install --system --no-cache \
+            --overrides requirements-security.txt \
+            -r requirements.txt \
+            'setuptools>=82.0.1' 'wheel>=0.46.2'
+
+      - name: Prepare 60s Arabic pilot with original media and offline voice
+        shell: bash
+        run: |
+          set -euo pipefail
+          python integrations/moneyprinter-60/cloud_pilot.py prepare \
+            --out "$RUNNER_TEMP/omda-mpt-pilot"
+
+      - name: Run genuine MoneyPrinterTurbo video pipeline
+        shell: bash
+        working-directory: vendor/MoneyPrinterTurbo
+        run: |
+          set -euo pipefail
+          python cli.py --batch-file "$RUNNER_TEMP/omda-mpt-pilot/manifest.json" \
+            --stop-at video > "$RUNNER_TEMP/omda-mpt-pilot/mpt_result.json"
+          test -s "$RUNNER_TEMP/omda-mpt-pilot/mpt_result.json"
+
+      - name: Verify MPT product and finish exactly 60s with captions
+        shell: bash
+        run: |
+          set -euo pipefail
+          python integrations/moneyprinter-60/cloud_pilot.py verify \
+            --out "$RUNNER_TEMP/omda-mpt-pilot" \
+            --mpt-root "$GITHUB_WORKSPACE/vendor/MoneyPrinterTurbo"
+          test -s "$RUNNER_TEMP/omda-mpt-pilot/verification.json"
+          test -s "$RUNNER_TEMP/omda-mpt-pilot/omda-moneyprinter60-review.mp4"
+
+      - name: Save one owner-review proof (expires after 1 day)
+        if: success()
+        uses: actions/upload-artifact@v4
+        with:
+          name: omda-moneyprinter60-owner-review
+          path: |
+            /tmp/omda-mpt-pilot/verification.json
+            /tmp/omda-mpt-pilot/omda-moneyprinter60-review.mp4
+          retention-days: 1
+          if-no-files-found: error
+          compression-level: 0
