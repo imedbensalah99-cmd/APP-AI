@@ -148,7 +148,11 @@ def verify_output(job_id, url):
         good_audio = any(s.get("codec_type") == "audio" for s in streams)
         if not (58.5 <= seconds <= 60.5 and good_video and good_audio):
             raise ValueError("Invalid duration, format or audio stream")
-        digest = hashlib.sha256(temp.read_bytes()).hexdigest()
+        digest_state = hashlib.sha256()
+        with temp.open("rb") as source:
+            for block in iter(lambda: source.read(1024 * 1024), b""):
+                digest_state.update(block)
+        digest = digest_state.hexdigest()
         temp.replace(dest)
         return {"duration_seconds": seconds, "sha256": digest,
                 "bytes": length, "published": False, "review_only": True}
