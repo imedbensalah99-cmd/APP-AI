@@ -17,7 +17,11 @@ import shutil
 import subprocess
 import sys
 import threading
+import time
 import uuid
+from urllib.error import HTTPError, URLError
+from urllib.parse import urlencode
+from urllib.request import Request as UrlRequest, urlopen
 from pathlib import Path
 from typing import Literal
 
@@ -34,6 +38,27 @@ JOBS: dict[str, dict] = {}
 KEYS: dict[str, str] = {}
 BUSY = False
 MAX_BODY = 8192
+SOURCE_LOCK = threading.RLock()
+SOURCE_CHECKS: dict[str, dict] = {}
+SOURCE_TTL = 24 * 60 * 60  # Respect Pixabay 24h search-results caching policy.
+# No paid providers or general-purpose outbound URLs accepted.
+STOCK_SOURCES = {
+    "pexels": {"rank": 1, "key_env": "PEXELS_API_KEY",
+               "provider_api": "https://api.pexels.com/v1/videos/search",
+               "commercial_use": True,
+               "attribution": "Show Pexels in OMDA and credit creators when possible",
+               "docs": "https://www.pexels.com/api/documentation/"},
+    "pixabay": {"rank": 2, "key_env": "PIXABAY_API_KEY",
+               "provider_api": "https://pixabay.com/api/videos/",
+               "commercial_use": True,
+               "attribution": "Display Pixabay source for search results and retain creator info",
+               "docs": "https://pixabay.com/api/docs/"},
+    "coverr": {"rank": 3, "key_env": "COVERR_API_KEY",
+               "provider_api": "https://api.coverr.co/videos",
+               "commercial_use": True,
+               "attribution": "Clickable Coverr logo required for API usage",
+               "docs": "https://api.coverr.co/docs/start/"}
+}
 app = FastAPI(title="OMDA — native MoneyPrinterTurbo on Render",
               docs_url=None, redoc_url=None, openapi_url=None)
 
@@ -44,7 +69,7 @@ class VideoRequest(BaseModel):
     script: str = Field(min_length=100, max_length=2200)
     terms: list[str] = Field(min_length=3, max_length=15)
     idempotency_key: str = Field(min_length=12, max_length=100)
-    video_source: Literal["pexels", "pixabay"] = "pexels"
+    video_source: Literal["pexels", "pixabay", "coverr"] = "pexels"
     duration_seconds: Literal[60] = 60
     language: Literal["ar"] = "ar"
     provider_policy: Literal["FREE_ONLY"] = "FREE_ONLY"
@@ -60,8 +85,7 @@ def require_auth(value: str | None) -> None:
 
 
 def source_key(provider: str) -> str:
-    return os.getenv({"pexels": "PEXELS_API_KEY",
-                      "pixabay": "PIXABAY_API_KEY"}[provider], "").strip()
+    return os.getenv(STOCK_SOURCES[provider]["key_env"], "").strip()
 
 
 def validate_request(body: VideoRequest) -> None:
@@ -84,6 +108,7 @@ def configure_engine(provider: str) -> None:
     section["video_source"] = provider
     section["pexels_api_keys"] = [source_key("pexels")] if source_key("pexels") else []
     section["pixabay_api_keys"] = [source_key("pixabay")] if source_key("pixabay") else []
+    section["coverr_api_keys"] = [source_key("coverr")] if source_key("coverr") else []
     # Explicitly disable all external video generation and cross-posting.
     section["upload_post_enabled"] = False
     section["upload_post_auto_upload"] = False
@@ -222,10 +247,102 @@ def health():
             "engine_installed": (ENGINE / "cli.py").is_file(),
             "version_pin": "27843a994bfa29c43c02150861d51490a6ca4bd2",
             "generation_enabled": os.getenv("OMDA_MPT_ENABLE_JOBS") == "1",
-            "free_stock": {"pexels": bool(source_key("pexels")),
-                           "pixabay": bool(source_key("pixabay"))},
+            "free_stock": {p: bool(source_key(p)) for p in STOCK_SOURCES},
             "target_seconds": 60, "publishing_enabled": False,
             "drive_connected": False, "durable_storage": False}
+
+
+@app.get("/v1/sources")
+def available_sources():
+    """Public, safe metadata. A configured key is NOT a verified source."""
+    with SOURCE_LOCK:
+        checks = dict(SOURCE_CHECKS)
+    return {"provider_order": ["pexels", "pixabay", "coverr"],
+            "sources": [{
+                "provider": name, "rank": item["rank"],
+                "configured": bool(source_key(name)),
+                "verified": bool(checks.get(name, {}).get("ok") and
+                                 time.time() - checks[name]["time"] < SOURCE_TTL),
+                "license": "commercial_allowed_with_conditions",
+                "attribution": item["attribution"],
+                "docs": item["docs"],
+                "render_generation_eligible": bool(source_key(name)) and
+                    bool(checks.get(name, {}).get("ok") and
+                         time.time() - checks[name]["time"] < SOURCE_TTL)
+                    and (name != "coverr" or
+                         (os.getenv("OMDA_COVERR_ATTRIBUTION_READY") == "1" and
+                          os.getenv("OMDA_COVERR_MPT_COMPAT_VERIFIED") == "1"))
+            } for name, item in STOCK_SOURCES.items()],
+            "other_sources": {"nasa": "topic_specific_license_review_required",
+                              "wikimedia_commons": "per_asset_licensing_and_rate_limit_review",
+                              "mixkit": "no_public_api_verified_do_not_scrape"},
+            "storage": "render_temp_only",
+            "publishing": False}
+
+
+def _probe_provider(provider: str) -> str:
+    """Single metadata-only key check: no paid endpoint, download, or scraping."""
+    key = source_key(provider)
+    if not key:
+        return "KEY_UNCONFIGURED"
+    if provider == "pexels":
+        target = STOCK_SOURCES[provider]["provider_api"] + "?query=nature&per_page=3"
+        headers = {"Authorization": key, "User-Agent": "OMDA-Private-MPT-Preflight/1"}
+        envelope = "videos"
+    elif provider == "pixabay":
+        target = STOCK_SOURCES[provider]["provider_api"] + "?" + urlencode(
+            {"key": key, "q": "nature", "per_page": 3})
+        headers = {"User-Agent": "OMDA-Private-MPT-Preflight/1"}
+        envelope = "hits"
+    else:
+        target = STOCK_SOURCES[provider]["provider_api"] + "?query=nature&page_size=3"
+        headers = {"x-api-key": key, "User-Agent": "OMDA-Private-MPT-Preflight/1"}
+        envelope = "hits"
+    try:
+        with urlopen(UrlRequest(target, headers=headers), timeout=15) as response:
+            if response.status != 200:
+                return "UPSTREAM_UNAVAILABLE"
+            # At most 1 MiB response, avoid unexpected memory pressure.
+            raw = response.read(1024 * 1024 + 1)
+            if len(raw) > 1024 * 1024:
+                return "RESPONSE_TOO_LARGE"
+            data = json.loads(raw)
+            if not isinstance(data, dict) or not isinstance(data.get(envelope), list):
+                return "API_SCHEMA_MISMATCH"
+            return "API_AUTH_OK"
+    except HTTPError as e:
+        if e.code in (401, 403):
+            return "API_AUTH_REJECTED"
+        if e.code == 429:
+            return "API_RATE_LIMITED"
+        return "UPSTREAM_UNAVAILABLE"
+    except (URLError, OSError, ValueError, TimeoutError):
+        return "UPSTREAM_UNAVAILABLE"
+
+
+@app.post("/v1/sources/{provider}/verify")
+def verify_stock_provider(provider: str, authorization: str | None = Header(default=None)):
+    require_auth(authorization)
+    if provider not in STOCK_SOURCES:
+        raise HTTPException(404, detail="PROVIDER_NOT_SUPPORTED")
+    # Pixabay API asks for 24h caching; no repeated query from this endpoint.
+    with SOURCE_LOCK:
+        cached = SOURCE_CHECKS.get(provider)
+        if cached and time.time() - cached["time"] < SOURCE_TTL:
+            return {"provider": provider, "state": cached["state"],
+                    "cached": True, "ready_for_generation": bool(cached["ok"])}
+        # Reserve the query before the network call to avoid bursts.
+        SOURCE_CHECKS[provider] = {"state": "CHECK_IN_PROGRESS",
+                                   "ok": False, "time": time.time()}
+    result = _probe_provider(provider)
+    ok = result == "API_AUTH_OK"
+    with SOURCE_LOCK:
+        SOURCE_CHECKS[provider] = {"state": result, "ok": ok, "time": time.time()}
+    return {"provider": provider, "state": result, "cached": False,
+            "ready_for_generation": ok and
+                (provider != "coverr" or
+                 (os.getenv("OMDA_COVERR_ATTRIBUTION_READY") == "1" and
+                  os.getenv("OMDA_COVERR_MPT_COMPAT_VERIFIED") == "1"))}
 
 
 @app.post("/v1/jobs", status_code=202)
@@ -244,6 +361,19 @@ async def create_job(request: Request, authorization: str | None = Header(defaul
         raise HTTPException(503, detail="GENERATION_DISABLED")
     if not source_key(body.video_source):
         raise HTTPException(503, detail="FREE_STOCK_KEY_UNCONFIGURED")
+    if body.video_source == "coverr" and (
+            os.getenv("OMDA_COVERR_ATTRIBUTION_READY") != "1"
+            or os.getenv("OMDA_COVERR_MPT_COMPAT_VERIFIED") != "1"):
+        # MPT's Coverr client currently uses Bearer auth; Coverr's new public
+        # example uses x-api-key. Do not dispatch a real video until both the
+        # native MPT client and clickable attribution are manually verified.
+        raise HTTPException(503, detail="COVERR_INTEGRATION_PENDING")
+    with SOURCE_LOCK:
+        checked = SOURCE_CHECKS.get(body.video_source)
+        verified = bool(checked and checked.get("ok") and
+                        time.time() - checked["time"] < SOURCE_TTL)
+    if not verified:
+        raise HTTPException(503, detail="FREE_STOCK_API_PREFLIGHT_REQUIRED")
     fingerprint = hashlib.sha256(body.model_dump_json().encode()).hexdigest()
     with LOCK:
         existing = KEYS.get(body.idempotency_key)
