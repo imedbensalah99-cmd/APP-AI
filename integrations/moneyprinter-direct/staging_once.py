@@ -12,10 +12,11 @@ from urllib.error import HTTPError, URLError
 from urllib.parse import urlencode
 from urllib.request import Request, urlopen
 
-TRIAL = "omda-ar60-20261030-test01"
+TRIAL = "omda-ar60-20261030-test02"
 if os.getenv("OMDA_STAGING_EXPERIMENT_ID", "") != TRIAL:
     sys.exit(0)
 
+import direct
 from direct import ENGINE, HOME, JOBS, VideoRequest, execute, source_key
 
 HOME.mkdir(parents=True, exist_ok=True, mode=0o700)
@@ -87,15 +88,46 @@ body = VideoRequest(
             "هذه الدورة البسيطة هي أحد أسرار استمرار الحياة على كوكب الأرض. "
             "لذلك، فإن حماية المياه من التلوث، وترشيد استخدامها، مسؤولية "
             "مشتركة بين الجميع."),
-    terms=["ocean waves", "waterfall", "forest rain", "river nature", "clouds sky"],
-    idempotency_key="omda-ar60-20261030-test01",
+    terms=["ocean waves", "waterfall", "forest rain"],
+    idempotency_key="omda-ar60-20261030-test02",
     video_source="pixabay", duration_seconds=60, language="ar",
     provider_policy="FREE_ONLY", publish_intent=False)
 job_id = uuid.uuid4().hex
 JOBS[job_id] = {"state": "QUEUED", "fingerprint": "internal-one-shot"}
+# Memory-constrained free tier: test narration without the heavy subtitle overlay.
+# Production defaults remain unchanged.
+original_manifest = direct.manifest
+def trial_manifest(request):
+    items = original_manifest(request)
+    items[0]["subtitle_enabled"] = False
+    return items
+direct.manifest = trial_manifest
+
+# Only logs aggregate process memory; never requests, credentials, or URLs.
+import threading
+finished = threading.Event()
+def monitor_memory():
+    while not finished.wait(10):
+        total_kib = 0
+        try:
+            for entry in os.listdir("/proc"):
+                if not entry.isdigit():
+                    continue
+                try:
+                    with open("/proc/" + entry + "/status", encoding="utf-8") as f:
+                        line = next((x for x in f if x.startswith("VmRSS:")), "")
+                    if line:
+                        total_kib += int(line.split()[1])
+                except (OSError, ValueError):
+                    pass
+            emit("PROCESS_RSS_MIB", round(total_kib / 1024))
+        except OSError:
+            pass
+threading.Thread(target=monitor_memory, daemon=True).start()
 emit("RENDER", "START")
 start = time.monotonic()
 execute(job_id, body)
+finished.set()
 record = JOBS[job_id]
 emit("RENDER", record.get("state", "UNKNOWN"))
 emit("ELAPSED_SECONDS", round(time.monotonic() - start))
