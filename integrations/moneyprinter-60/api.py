@@ -157,7 +157,7 @@ def verify_audible_audio(path):
             ["ffmpeg", "-hide_banner", "-nostdin", "-i", str(path),
              "-vn", "-af", "volumedetect", "-f", "null", "-"],
             capture_output=True, text=True, timeout=25, check=True)
-        measured = re.search(r"max_volume:\\s*(-?\\d+(?:\\.\\d+)?) dB",
+        measured = re.search(r"max_volume:\s*(-?\d+(?:\.\d+)?) dB",
                              proc.stderr)
         return bool(measured and float(measured.group(1)) > -32.0)
     except (OSError, subprocess.SubprocessError, ValueError):
