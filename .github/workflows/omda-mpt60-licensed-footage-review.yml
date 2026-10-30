@@ -1,0 +1,112 @@
+name: OMDA MPT60 — Licensed footage and male Arabic narration acceptance
+
+# One staging proof on workflow creation. No production, schedule or publication.
+on:
+  push:
+    branches: [omda-mpt60-licensed-footage-v1]
+    paths: [.github/workflows/omda-mpt60-licensed-footage-review.yml]
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: omda-mpt60-commons-acceptance
+  cancel-in-progress: true
+
+jobs:
+  verified-free-media-pilot:
+    runs-on: ubuntu-latest
+    timeout-minutes: 35
+    env:
+      PYTHONUNBUFFERED: "1"
+      MPT_HOME: /tmp/omda-mpt-home
+      HF_HUB_OFFLINE: "1"
+      OMDA_MPT_ENABLE_JOBS: "0"
+      # No paid model keys, storage tokens or YouTube publishing credentials.
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          persist-credentials: false
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+      - name: Install public free-software rendering dependencies
+        shell: bash
+        run: |
+          set -euo pipefail
+          sudo apt-get update
+          sudo apt-get install -y --no-install-recommends ffmpeg fonts-noto-core libharfbuzz0b libfribidi0
+          python -m pip install --no-cache-dir uv==0.12.12 edge-tts==7.2.7
+          python -m py_compile integrations/moneyprinter-60/licensed_pilot.py
+      - name: Acquire exact genuine MoneyPrinterTurbo engine version
+        shell: bash
+        run: |
+          set -euo pipefail
+          mkdir -p vendor/MoneyPrinterTurbo
+          git -C vendor/MoneyPrinterTurbo init -q
+          git -C vendor/MoneyPrinterTurbo remote add origin https://github.com/harry0703/MoneyPrinterTurbo.git
+          git -C vendor/MoneyPrinterTurbo -c protocol.version=2 fetch --depth=1 origin 27843a994bfa29c43c02150861d51490a6ca4bd2
+          git -C vendor/MoneyPrinterTurbo checkout -q --detach FETCH_HEAD
+          test "$(git -C vendor/MoneyPrinterTurbo rev-parse HEAD)" = "27843a994bfa29c43c02150861d51490a6ca4bd2"
+          test -f vendor/MoneyPrinterTurbo/requirements-security.txt
+          test -f vendor/MoneyPrinterTurbo/LICENSE
+      - name: Install pinned genuine engine
+        working-directory: vendor/MoneyPrinterTurbo
+        shell: bash
+        run: |
+          uv pip install --system --no-cache             --overrides requirements-security.txt             -r requirements.txt             'setuptools>=82.0.1' 'wheel>=0.46.2'
+      - name: Real Arabic male voice preview — measure actual speech
+        shell: bash
+        run: |
+          python integrations/moneyprinter-60/voice_smoke.py "$RUNNER_TEMP/omda-licensed-pilot"
+      - name: Preserve voice proof even if stock material fails the licence gate
+        uses: actions/upload-artifact@v4
+        with:
+          name: omda-mpt60-hamed-arabic-male-voice-proof
+          path: |
+            ${{ runner.temp }}/omda-licensed-pilot/omda-arabic-hamed-voice-preview.mp3
+            ${{ runner.temp }}/omda-licensed-pilot/voice-proof.json
+          if-no-files-found: error
+          retention-days: 2
+      - name: Agent preflight — six verified-licence moving clips + Edge Arabic Hamed
+        shell: bash
+        run: |
+          python integrations/moneyprinter-60/licensed_pilot.py prepare             --out "$RUNNER_TEMP/omda-licensed-pilot"
+      - name: Generate genuine MPT video with downloaded moving footage
+        shell: bash
+        working-directory: vendor/MoneyPrinterTurbo
+        run: |
+          set -euo pipefail
+          python cli.py --batch-file "$RUNNER_TEMP/omda-licensed-pilot/manifest.json"             --stop-at video > "$RUNNER_TEMP/omda-licensed-pilot/mpt_result.json"
+          test -s "$RUNNER_TEMP/omda-licensed-pilot/mpt_result.json"
+      - name: Agent postflight — validate audio, motion, timing, hash, sources, review lock
+        shell: bash
+        run: |
+          set -euo pipefail
+          python integrations/moneyprinter-60/licensed_pilot.py verify             --out "$RUNNER_TEMP/omda-licensed-pilot"             --mpt-root "$GITHUB_WORKSPACE/vendor/MoneyPrinterTurbo"
+          test -s "$RUNNER_TEMP/omda-licensed-pilot/qa_report.json"
+          test -s "$RUNNER_TEMP/omda-licensed-pilot/omda-licensed-60-owner-review.mp4"
+      - name: Upload owner-only manual-review assets, no publishing
+        if: success()
+        uses: actions/upload-artifact@v4
+        with:
+          name: omda-mpt60-real-scenes-arabic-licensed-owner-review
+          path: |
+            ${{ runner.temp }}/omda-licensed-pilot/omda-licensed-60-owner-review.mp4
+            ${{ runner.temp }}/omda-licensed-pilot/source_audit.json
+            ${{ runner.temp }}/omda-licensed-pilot/qa_report.json
+            ${{ runner.temp }}/omda-licensed-pilot/agent_preflight.json
+          retention-days: 2
+          if-no-files-found: error
+          compression-level: 0
+      - name: Preserve nonsecret diagnostic manifest even on failed readiness
+        if: failure()
+        uses: actions/upload-artifact@v4
+        with:
+          name: omda-mpt60-license-readiness-diagnostic
+          path: |
+            ${{ runner.temp }}/omda-licensed-pilot/source_audit.json
+            ${{ runner.temp }}/omda-licensed-pilot/agent_preflight.json
+          if-no-files-found: ignore
+          retention-days: 2
