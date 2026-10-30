@@ -122,3 +122,29 @@ def test_visual_gate_accepts_multiple_distinct_frames(monkeypatch):
     monkeypatch.setattr(api.subprocess, "run",
                         lambda *args, **kwargs: SimpleNamespace(stdout=distinct))
     assert api.verify_visual_activity("clip.mp4") is True
+
+def test_review_uses_final_narrated_video_not_intermediate(monkeypatch):
+    import api
+    job_id = "a" * 32
+    monkeypatch.setenv("OMDA_MPT_BRIDGE_TOKEN", "x" * 40)
+    selected = []
+    monkeypatch.setattr(api, "mpt",
+                        lambda method, path: {
+                            "state": 1,
+                            "videos": ["/tasks/example/final-1.mp4"],
+                            "combined_videos": ["/tasks/example/combined-1.mp4"]})
+    monkeypatch.setattr(api, "verify_output",
+                        lambda task_id, file_url: (
+                            selected.append(file_url) or
+                            {"duration_seconds": 60.0, "review_only": True}))
+    with api.LOCK:
+        api.JOBS[job_id] = {"state": "PROCESSING", "upstream_id": "valid-task-id-123"}
+    try:
+        response = client.get("/v1/mpt/jobs/" + job_id,
+                              headers={"Authorization": "Bearer " + "x" * 40})
+        assert response.status_code == 200
+        assert response.json()["state"] == "READY_FOR_REVIEW"
+        assert selected == ["/tasks/example/final-1.mp4"]
+    finally:
+        with api.LOCK:
+            api.JOBS.pop(job_id, None)
