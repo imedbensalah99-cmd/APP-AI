@@ -80,3 +80,19 @@ def test_unauthenticated_bad_body_rejected_before_validation(monkeypatch):
                                headers={"Content-Type":"application/json"})
         assert response.status_code == 401
         assert response.json()["detail"] == "UNAUTHORIZED"
+
+def test_quality_settings_are_locked():
+    payload = make_payload(JobRequest(**sample()))
+    assert payload["video_source"] == "pexels"
+    assert payload["match_materials_to_script"] is True
+    assert payload["video_concat_mode"] == "sequential"
+    assert payload["video_fit_mode"] == "cover"
+    assert payload["voice_name"] == "ar-SA-HamedNeural-Male"
+    assert payload["voice_rate"] == 1.0
+    assert payload["bgm_volume"] == 0
+    assert "video_materials" not in payload
+
+def test_stock_terms_are_english_and_specific():
+    with pytest.raises(HTTPException) as exc:
+        make_payload(JobRequest(**sample(terms=["رسالة", "قطار", "ليل"])))
+    assert exc.value.detail == "ENGLISH_STOCK_TERMS_REQUIRED"
