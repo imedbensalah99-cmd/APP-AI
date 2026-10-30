@@ -430,3 +430,28 @@ def download(job_id: str, authorization: str | None = Header(default=None)):
         raise HTTPException(410, detail="EPHEMERAL_VIDEO_EXPIRED")
     return FileResponse(path, filename="omda-60-review.mp4",
                         media_type="video/mp4", headers={"Cache-Control": "no-store"})
+
+
+@app.get("/v1/staging-review/{access_code}/video.mp4")
+def staging_review(access_code: str):
+    """Unlisted 24-hour owner test link. No directory listing or publication."""
+    import time as _time
+    if not re.fullmatch(r"[A-Za-z0-9_-]{32,80}", access_code):
+        raise HTTPException(404, detail="REVIEW_NOT_FOUND")
+    folder = JOBS_ROOT / "trial03"
+    marker = folder / "review.token"
+    video = folder / "review.mp4"
+    try:
+        if _time.time() - marker.stat().st_mtime > 86400:
+            raise HTTPException(410, detail="REVIEW_EXPIRED")
+        recorded = marker.read_text(encoding="utf-8")
+        if not hmac.compare_digest(recorded, access_code):
+            raise HTTPException(404, detail="REVIEW_NOT_FOUND")
+        if not video.is_file() or video.is_symlink():
+            raise HTTPException(404, detail="REVIEW_NOT_READY")
+    except FileNotFoundError:
+        raise HTTPException(404, detail="REVIEW_NOT_READY") from None
+    return FileResponse(video, filename="omda-arabic-documentary-trial.mp4",
+                        media_type="video/mp4", content_disposition_type="inline",
+                        headers={"Cache-Control":"private, no-store, max-age=0",
+                                 "X-Content-Type-Options":"nosniff"})
