@@ -1,43 +1,41 @@
-# OMDA 2 — Paperclip Cloud (Isolated staging)
+# OMDA 2 — Cloud-only Paperclip and real AI agents
 
-**Created:** 2026-11-01 (Asia/Qatar)
+**Status at 2026-11-01: staged infrastructure; no live Paperclip agent execution.**
 
-OMDA 2 is a **separate project** from the original OMDA AI Company. Only new Render services, a new database, a new Cloudflare Worker and a dedicated Google Drive folder were created. The existing OMDA production resources must not be changed.
+This project is **not** the original OMDA AI Company. All source additions are under `omda2/` on branch `omda2-paperclip-cloud-v1`; existing OMDA branches and deployments were not altered.
 
-## Architecture
+## Verified
 
-- Core orchestration: [Paperclip](https://github.com/paperclipai/paperclip), official stable container image `ghcr.io/paperclipai/paperclip:latest`.
-- Cloud runtime: Render web service `omda2-paperclip-runtime` (Frankfurt, free beta, auto-deploy OFF).
-- Public application: https://omda2-paperclip-runtime.onrender.com — **must be verified and bootstrapped before production use**.
-- Mobile shell: Cloudflare Worker `omda2-command-center`, served on `https://omda2-command-center.imedbensalah9988.workers.dev/`.
-- New database: Render PostgreSQL 18 `omda2-paperclip-db`, free beta expires on **2026-11-30**; **DATABASE_URL is not yet configured**.
-- Drive: https://drive.google.com/drive/folders/1BNVt7JPpTmYfZsr9JYfEGLpuCPfdXeaL
-- Source branch: `imedbensalah99-cmd/APP-AI@omda2-paperclip-cloud-v1`, isolated from existing deployed branches; the branch only adds `omda2/` files.
+- New Cloudflare Worker: `omda2-command-center`, URL https://omda2-command-center.imedbensalah9988.workers.dev/ — code deployed, but requires a **server-side secret** `OMDA2_PASSWORD` before login can work. The dashboard is an early shell only; 9 labels are planned roles, not running agents.
+- New Render free web service `omda2-paperclip-staging`: source build failed (>8 GiB build memory).
+- New Render free web service `omda2-paperclip-runtime`: official Paperclip image was built successfully, but process crashed with exit 134 due to JavaScript heap out-of-memory. Not a healthy running Paperclip.
+- New Render free PostgreSQL `omda2-paperclip-db`: available but not connected; expires 2026-11-30.
+- Dedicated Google Drive folder: https://drive.google.com/drive/folders/1BNVt7JPpTmYfZsr9JYfEGLpuCPfdXeaL
+- Project plan Doc: https://docs.google.com/document/d/1nA2tSKZq6YngKGMqDkCGlV6hPDJurkNs7L5kwBwM3q4/edit
 
-## Current status and blockers
+## Preferred $0 cloud solution
+**OCI Always Free A1 (2 OCPU + 12 GiB, subject to eligibility/capacity) + official Paperclip ARM64 Docker container + persistent bind mount + Tailscale Personal/Serve private HTTPS + verified free model endpoint + OpenCode or appropriate Paperclip adapter.**
 
-1. Paperclip Dockerfile built from source initially failed on Render (build memory limit 8 GiB).
-2. Replaced build with a lightweight Dockerfile `FROM ghcr.io/paperclipai/paperclip:latest`; build succeeded.
-3. Render deploy startup and HTTP health need verification.
-4. Wire `DATABASE_URL` from the new Render PostgreSQL instance using the Render dashboard **without pasting secrets in chat**.
-5. Free Render web services have no persistent disk. Persistent Paperclip agent workspaces, uploaded assets and secrets master key require persistent storage. Until that is addressed, this is staging, **not production**.
-6. The Cloudflare dashboard intentionally fails closed until a secret named `OMDA2_PASSWORD` is configured in the **new Worker**'s Settings > Variables and Secrets. Do not hard-code the password in source.
-7. Paperclip public admin bootstrap requires the authenticated/public onboarding process. Do not disable auth or claim the board through a publicly open first-visitor flow.
-8. Connect an approved AI provider account inside Paperclip and set spend to zero until user approves usage. No agent has been created or activated.
+See [the step-by-step deployment and operating runbook](oracle/RUNBOOK.md), [Compose template](oracle/docker-compose.yml), and [non-secret environment template](oracle/.env.example).
 
-## Planned agents
+Use only a genuinely free model API (e.g. Gemini Developer API Free Tier *without billing*, Cloudflare Workers AI 10k free neurons/day, OpenRouter explicit `:free` models with quota). The Google AI Pro consumer subscription alone does not authorize free Gemini CLI access as of June 18, 2026. Never use paid credits, fake uptime load or autonomous publishing. Do not put model credentials in Google Drive, GitHub or frontend JavaScript.
 
-CEO, Operations, Developer, Research, Scriptwriter, Design, Video Production, Quality Assurance, and Finance. These are **planned roles**, not active agents.
+## Launch gate
+Before declaring success: verify OCI VM; verify Paperclip health, authentication and persistence after restart; connect a free inference provider and record a real AI API call; create one Research agent + QA agent with evidence from Paperclip run IDs and written artifacts; verify strict quota and no paid services. Until then: **0 functional agents verified**.
 
-## Security guardrails
+## Hard blockers
+- No Oracle Cloud account or VM is connected through the available tools. User must sign up and pass phone/card verification if required. A small temporary card hold may occur. Oracle can reclaim idle free VMs.
+- Free Render cannot reliably host this instance; no reason to loop deployments.
+- The Cloudflare dashboard needs `OMDA2_PASSWORD` secret configured securely.
+- Account-wide free quotas and actual model usage must be verified rather than assumed.
+- Need automated encrypted offsite backup before production. The Drive folder is not a backup.
 
-- `PAPERCLIP_DEPLOYMENT_MODE=authenticated`, `PAPERCLIP_DEPLOYMENT_EXPOSURE=public`.
-- Keep `BETTER_AUTH_SECRET` and `PAPERCLIP_TOOL_ACTION_SIGNING_SECRET` private and stable.
-- Never publish, purchase, or execute financial transactions autonomously.
-- Never reuse original OMDA credentials.
-- New files and branches only; no updates to existing OMDA production services.
-- Disable automatic upstream deployments and pin the official image digest once runtime is validated.
-
-## Why this is not yet production-ready
-
-Render free PostgreSQL expires in 30 days; Render free web filesystem is ephemeral; a fully persistent Paperclip company also needs durable asset and secret storage. A stable 24/7 cloud deployment may require a different cloud host or paid persistent resources.
+## Authoritative documentation
+- https://docs.oracle.com/en-us/iaas/Content/FreeTier/freetier_topic-Always_Free_Resources.htm
+- https://docs.paperclip.ing/reference/deploy/docker/
+- https://docs.paperclip.ing/reference/deploy/https/
+- https://docs.paperclip.ing/reference/adapters/opencode/
+- https://developers.cloudflare.com/workers-ai/platform/pricing/
+- https://ai.google.dev/gemini-api/docs/pricing
+- https://openrouter.ai/collections/free-models/
+- https://render.com/docs/free
