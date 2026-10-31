@@ -34,4 +34,4 @@ RUN groupadd -g 10001 omda && useradd -u 10001 -g 10001 --system omda \
 USER 10001:10001
 WORKDIR /opt/omda-direct
 EXPOSE 10000
-CMD ["sh","-c","python -u /opt/omda-direct/trial04.py & exec uvicorn direct:app --host 0.0.0.0 --port ${PORT:-10000} --workers 1"]
+CMD ["sh","-c","exec uvicorn direct:app --host 0.0.0.0 --port ${PORT:-10000} --workers 1"]
