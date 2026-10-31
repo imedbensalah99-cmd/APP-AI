@@ -1,0 +1,13 @@
+import assert from 'node:assert/strict';
+import {readFileSync} from 'node:fs';
+const s=readFileSync(new URL('./worker.mjs', import.meta.url),'utf8');
+assert.match(s,/verifyAccess\(req,env\)/);
+assert.match(s,/crypto\.subtle\.verify/);
+assert.match(s,/OMDA_READ\.prepare/);
+assert.match(s,/VIDEO_READ\.prepare/);
+assert.match(s,/AGENCY_JOBS\.put/);
+assert.match(s,/No health-check bypass/);
+assert.match(s,/paidAllowed:false,publishAllowed:false/);
+assert.ok(!/process\.env|ENCRYPTION_KEY\s*=|api_key\s*=\s*['"]/i.test(s));
+assert.ok(!/await env\.OMDA_READ\.prepare\([^)]*(INSERT|UPDATE|DELETE)/i.test(s));
+console.log('9 contract/security checks passed; live authenticated browser test still required.');
