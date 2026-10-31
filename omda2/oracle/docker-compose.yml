@@ -1,0 +1,32 @@
+# OMDA 2: private Paperclip on OCI Always Free (staging template).
+# Never run on the original OMDA infrastructure.
+# Only the loopback interface is published; Tailscale Serve terminates HTTPS.
+services:
+  paperclip:
+    image: ${PAPERCLIP_IMAGE:?Set PAPERCLIP_IMAGE in .env to a verified ARM64-compatible Paperclip digest}
+    restart: unless-stopped
+    stop_grace_period: 90s
+    pids_limit: 1024
+    mem_limit: 8g
+    ports:
+      - "127.0.0.1:3100:3100"
+    environment:
+      HOST: "0.0.0.0"
+      PORT: "3100"
+      PAPERCLIP_HOME: "/paperclip"
+      PAPERCLIP_DEPLOYMENT_MODE: "authenticated"
+      PAPERCLIP_DEPLOYMENT_EXPOSURE: "private"
+      PAPERCLIP_PUBLIC_URL: "${PAPERCLIP_PUBLIC_URL:?Use your Tailscale HTTPS hostname}"
+      PAPERCLIP_ALLOWED_HOSTNAMES: "${PAPERCLIP_ALLOWED_HOSTNAMES:?Use your Tailscale hostname}"
+      BETTER_AUTH_SECRET: "${BETTER_AUTH_SECRET:?Generate with openssl rand -hex 32}"
+      PAPERCLIP_TOOL_ACTION_SIGNING_SECRET: "${PAPERCLIP_TOOL_ACTION_SIGNING_SECRET:?Generate independent secret}"
+      OPENCODE_ALLOW_ALL_MODELS: "true"
+    volumes:
+      - /srv/omda2/data:/paperclip
+    security_opt:
+      - no-new-privileges:true
+    logging:
+      driver: json-file
+      options:
+        max-size: "10m"
+        max-file: "3"
