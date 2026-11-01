@@ -1,0 +1,52 @@
+name: OMDA FreeLLMAPI secure runtime source (staging only)
+on:
+  pull_request:
+    paths:
+      - '.github/workflows/omda-freellmapi-runtime-source.yml'
+permissions:
+  contents: write
+jobs:
+  stage-source:
+    runs-on: ubuntu-latest
+    timeout-minutes: 16
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          repository: tashfeenahmed/freellmapi
+          ref: eae1a4038d5908c7a9a6ad771df96d324731c78a
+          persist-credentials: false
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '24'
+      - name: Patch vulnerable runtime dependencies and migrate Zod
+        run: |
+          npm pkg set -w client 'devDependencies.shadcn=^4.2.0'
+          npm pkg delete -w client dependencies.shadcn
+          npm pkg set -w server dependencies.zod=^4.6.7
+          npm pkg set -w server dependencies.undici=^6.29.1
+          npm install --package-lock-only --ignore-scripts --no-fund
+          npm audit fix --omit=dev --package-lock-only --ignore-scripts --no-fund || true
+          find server/src -name '*.ts' -print0 | xargs -0 sed -i 's/\.error\.errors/\.error\.issues/g'
+          sed -i 's/z.record(enabledSchema)/z.record(z.string(), enabledSchema)/g' server/src/services/compression/config.ts
+          sed -i 's/z.record(z.record(z.unknown()))/z.record(z.string(), z.record(z.string(), z.unknown()))/g' server/src/services/compression/config.ts
+          sed -i 's/config: validated.data,/config: validated.data as CompressionEngineConfig,/' server/src/services/compression/pipeline.ts
+          sed -i '/^  CompressionMode,$/a\  CompressionEngineConfig,' server/src/services/compression/pipeline.ts
+      - name: Install, compile and fail on any production advisory
+        run: |
+          npm ci --no-fund
+          npm run build
+          npm audit --omit=dev --audit-level=low
+      - name: Export patched source to isolated APP-AI branch, never main
+        env:
+          GH_TOKEN: ${{ github.token }}
+          REPOSITORY: ${{ github.repository }}
+        shell: bash
+        run: |
+          set -euo pipefail
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git checkout --orphan omda-freellmapi-secure-runtime-v1
+          git add -A
+          git commit -m "OMDA: pinned FreeLLMAPI with zero audited runtime advisories"
+          header="$(printf 'x-access-token:%s' "$GH_TOKEN" | base64 -w 0)"
+          git -c "http.https://github.com/.extraheader=AUTHORIZATION: basic $header" push "https://github.com/$REPOSITORY.git" HEAD:refs/heads/omda-freellmapi-secure-runtime-v1
