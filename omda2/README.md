@@ -39,3 +39,13 @@ Before declaring success: verify OCI VM; verify Paperclip health, authentication
 - https://ai.google.dev/gemini-api/docs/pricing
 - https://openrouter.ai/collections/free-models/
 - https://render.com/docs/free
+
+## 2026-11-01 — verified no-spend Cloudflare agent-engine milestone
+- New **separate** Cloudflare Worker `omda2-agent-engine` successfully deployed.
+- Binding checks verified `AI` (Workers AI), `TASK_DB` (D1), `RUN_ENABLED=false`, and a four-call/day application limit.
+- New D1 database `omda2-agent-tasks-v1` created and verified: `agent_runs`, `audit_events`, `daily_limits`.
+- Public workers.dev routing OFF; Cron schedules empty; `ADMIN_TOKEN` secret not yet configured. The live service is inaccessible for task submission until securely activated.
+- Wrote and fetched one D1 preflight record, `omda2-preflight-2026-11-01`, correctly marked **blocked**, not completed; zero AI inference requests were initiated during this milestone.
+- Billing scope on Cloudflare connector returned 403, so **Workers AI account plan cannot be verified**. Do not enable model inference until the owner checks free vs paid plan and free usage.
+- Paperclip is **not yet operational** on OCI or Render; this independent service is a future secure adapter, not a Paperclip agent. A genuine live-agent run is still pending.
+- Code and configuration: [Cloudflare task engine](cloudflare/README.md), [source](cloudflare/agent-engine.mjs), [Wrangler](cloudflare/wrangler.jsonc), [D1 schema](cloudflare/schema.sql).
