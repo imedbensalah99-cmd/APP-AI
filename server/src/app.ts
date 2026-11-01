@@ -1,4 +1,5 @@
 import express from 'express';
+import crypto from 'node:crypto';
 import compression from 'compression';
 import cors from 'cors';
 import helmet from 'helmet';
@@ -113,6 +114,26 @@ export function createApp(config?: Config) {
   // above everything below — its whole value is answering before any state or
   // credential is touched.
   app.use(createHostGuard(cfg.allowedHosts));
+
+  // OMDA-only cloud origin gate: Cloudflare Access authenticates the user,
+  // and this shared secret blocks direct Render subdomain bypass.
+  // Fail closed when enabled without a valid key.
+  if (process.env.OMDA_ORIGIN_GATE_ENABLED === 'true') {
+    const gateToken = process.env.OMDA_ORIGIN_TOKEN || '';
+    if (gateToken.length < 48) throw new Error('OMDA origin gate token missing or too short');
+    const expected = Buffer.from(gateToken, 'utf8');
+    app.use((req, res, next) => {
+      if (req.method === 'GET' && (req.path === '/api/ping' || req.path === '/livez' || req.path === '/readyz')) {
+        return next();
+      }
+      const supplied = req.get('x-omda-origin-token') || '';
+      const got = Buffer.from(supplied, 'utf8');
+      if (got.length === expected.length && crypto.timingSafeEqual(got, expected)) return next();
+      res.setHeader('Cache-Control', 'no-store');
+      res.status(403).json({ error: { type: 'origin_gate', message: 'Forbidden' } });
+    });
+  }
+
   const allowedCorsOrigins = new Set([
     ...DEFAULT_DASHBOARD_ORIGINS,
     ...cfg.dashboardOrigins,
