@@ -1,0 +1,11 @@
+import test from 'node:test';import assert from 'node:assert/strict';
+import worker,{tick,verdictOf,canDispatch,nextMission} from './worker.mjs';
+const valid={id:'demo-goal',task:'Create a fictional and accurate OMDA dashboard brief.',agents:JSON.stringify(['content-creator','reality-checker']),active:1,max_runs:2};
+test('public fetch rejects all callers',async()=>{assert.equal((await worker.fetch(new Request('https://test.invalid/'))).status,404);});
+test('QA requires explicit verdict',()=>{assert.equal(verdictOf({steps:[{agent:'reality-checker',status:'COMPLETED',output:'Looks great'}]}).verdict,'UNVERIFIED');assert.equal(verdictOf({steps:[{agent:'reality-checker',status:'COMPLETED',output:'VERDICT: REVISE\nFINDINGS: one mistake'}]}).verdict,'REVISE')});
+test('no repeated mission with PASS',()=>{const s={goals:[valid],work:[{goal_id:'demo-goal',iteration:1,status:'REVIEW',verdict:'PASS'}]};assert.equal(nextMission(s),null)});
+test('one QA-driven revision, never more than two',()=>{const past={goal_id:'demo-goal',iteration:1,status:'REVIEW',verdict:'REVISE',qa_note:'Missed checks'};assert.equal(nextMission({goals:[valid],work:[past]}).iteration,2);assert.equal(nextMission({goals:[valid],work:[past,{...past,iteration:2}]}),null)});
+test('no second run for a BLOCKED or UNVERIFIED result',()=>{for(const verdict of ['BLOCK','UNVERIFIED','PENDING'])assert.equal(nextMission({goals:[valid],work:[{goal_id:'demo-goal',iteration:1,status:'REVIEW',verdict,qa_note:'Some note'}]}),null)});
+test('only safe approved roles with QA',()=>{for(const agents of [['sales-outreach'],['content-creator','sales-outreach'],['arbitrary','reality-checker']])assert.equal(nextMission({goals:[{...valid,agents:JSON.stringify(agents)}],work:[]}),null)});
+test('daily and concurrent caps prevent dispatch',()=>{const s={jobs:[{status:'QUEUED',createdAt:'2026-11-01'},{status:'IN_PROGRESS',createdAt:'2026-11-01'}],work:[]};assert.equal(canDispatch(s),false)});
+test('no publication or spending in runtime source',async()=>{const fs=await import('node:fs');const src=fs.readFileSync(new URL('./worker.mjs',import.meta.url),'utf8');assert.match(src,/paidAllowed:false,publishAllowed:false/);assert.match(src,/modelProvider:'cloudflare-ai'/);assert.doesNotMatch(src,/env\.AI\.run|api\/chat\/completions|fetch\('https:\/\//);});
