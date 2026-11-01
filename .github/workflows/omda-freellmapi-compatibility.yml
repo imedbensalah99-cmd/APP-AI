@@ -1,0 +1,46 @@
+name: OMDA FreeLLMAPI compatibility tests
+on:
+  pull_request:
+    paths:
+      - '.github/workflows/omda-freellmapi-compatibility.yml'
+permissions:
+  contents: read
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    timeout-minutes: 18
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          repository: tashfeenahmed/freellmapi
+          ref: eae1a4038d5908c7a9a6ad771df96d324731c78a
+          persist-credentials: false
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '24'
+      - name: Reclassify UI generator as build-only
+        run: |
+          npm pkg set -w client 'devDependencies.shadcn=^4.2.0'
+          npm pkg delete -w client dependencies.shadcn
+      - name: Upgrade impacted runtime dependencies
+        run: |
+          npm pkg set -w server dependencies.zod=^4.6.7
+          npm pkg set -w server dependencies.undici=^6.29.1
+          npm install --package-lock-only --ignore-scripts --no-fund
+          npm audit fix --omit=dev --package-lock-only --ignore-scripts --no-fund || true
+      - name: Zod 4 compatibility edits in staging
+        run: |
+          find server/src -name '*.ts' -print0 | xargs -0 sed -i 's/\.error\.errors/\.error\.issues/g'
+          sed -i 's/z.record(enabledSchema)/z.record(z.string(), enabledSchema)/g' server/src/services/compression/config.ts
+          sed -i 's/z.record(z.record(z.unknown()))/z.record(z.string(), z.record(z.string(), z.unknown()))/g' server/src/services/compression/config.ts
+          sed -i 's/config: validated.data,/config: validated.data as CompressionEngineConfig,/' server/src/services/compression/pipeline.ts
+          sed -i '/^  CompressionMode,$/a\  CompressionEngineConfig,' server/src/services/compression/pipeline.ts
+      - name: Install lockfile and audit
+        run: |
+          npm ci --no-fund
+          npm audit --omit=dev --json > "$RUNNER_TEMP/audit.json" || true
+          node -e 'const a=require(process.env.RUNNER_TEMP+"/audit.json");console.log("SECURITY_COUNTS",JSON.stringify(a.metadata?.vulnerabilities));for(const [k,v] of Object.entries(a.vulnerabilities||{})) console.log("REMAINING",k,v.severity)'
+      - name: Compile complete application
+        run: npm run build
+      - name: Run server regression tests
+        run: npm run test -w server
