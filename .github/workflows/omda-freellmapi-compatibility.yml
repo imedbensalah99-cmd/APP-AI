@@ -28,9 +28,12 @@ jobs:
           npm pkg set -w server dependencies.undici=^6.29.1
           npm install --package-lock-only --ignore-scripts --no-fund
           npm audit fix --omit=dev --package-lock-only --ignore-scripts --no-fund || true
-      - name: Migrate ZodError .errors property references (staging only)
+      - name: Zod 4 compatibility edits in staging
         run: |
           find server/src -name '*.ts' -print0 | xargs -0 sed -i 's/\.error\.errors/\.error\.issues/g'
+          sed -i 's/z.record(enabledSchema)/z.record(z.string(), enabledSchema)/g' server/src/services/compression/config.ts
+          sed -i 's/z.record(z.record(z.unknown()))/z.record(z.string(), z.record(z.string(), z.unknown()))/g' server/src/services/compression/config.ts
+          sed -i 's/config: validated.data,/config: validated.data as CompressionEngineConfig,/' server/src/services/compression/pipeline.ts
       - name: Install lockfile and audit
         run: |
           npm ci --no-fund
