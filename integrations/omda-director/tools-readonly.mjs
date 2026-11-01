@@ -1,3 +1,4 @@
+import {driveBridgeTick} from './drive-bridge.mjs';
 // OMDA Agency Tools v1: public read-only sources; no external writes, tokens or public HTTP.
 const NOW=()=>new Date().toISOString();
 const UA='OMDA-Agency-Research/1.0 (public data; no automated editing)';
@@ -48,4 +49,4 @@ export async function runToolsTick(env,transport=fetch){
  await db.prepare('INSERT INTO tool_checks(name,status,detail,checked_at) VALUES(?,?,?,?) ON CONFLICT(name) DO UPDATE SET status=excluded.status,detail=excluded.detail,checked_at=excluded.checked_at').bind('wikipedia_research',result.research,JSON.stringify({jobs:jobs.length}),NOW()).run();
  return result;
 }
-export default {async fetch(){return new Response('Not found',{status:404,headers:{'cache-control':'no-store'}});},async scheduled(event,env,ctx){ctx.waitUntil(runToolsTick(env));}};
+export default {async fetch(){return new Response('Not found',{status:404,headers:{'cache-control':'no-store'}});},async scheduled(event,env,ctx){ctx.waitUntil(Promise.all([runToolsTick(env),driveBridgeTick(env)]));}};
