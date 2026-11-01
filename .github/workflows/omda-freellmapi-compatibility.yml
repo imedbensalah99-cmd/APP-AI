@@ -1,0 +1,25 @@
+name: OMDA FreeLLMAPI compatibility tests
+on:
+  pull_request:
+    paths:
+      - '.github/workflows/omda-freellmapi-compatibility.yml'
+permissions:
+  contents: read
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          repository: tashfeenahmed/freellmapi
+          ref: eae1a4038d5908c7a9a6ad771df96d324731c78a
+          persist-credentials: false
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '24'
+      - run: npm pkg set -w server dependencies.zod=^4.6.7
+      - run: npm pkg set -w server dependencies.undici=^6.29.1
+      - run: npm install --package-lock-only --ignore-scripts
+      - run: npm ci
+      - run: npm run build
