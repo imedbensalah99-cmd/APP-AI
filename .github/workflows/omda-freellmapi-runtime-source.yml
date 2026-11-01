@@ -46,6 +46,7 @@ jobs:
           git config user.name "github-actions[bot]"
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
           git checkout --orphan omda-freellmapi-secure-runtime-v1
+          rm -rf .github/workflows
           git add -A
           git commit -m "OMDA: pinned FreeLLMAPI with zero audited runtime advisories"
           header="$(printf 'x-access-token:%s' "$GH_TOKEN" | base64 -w 0)"
