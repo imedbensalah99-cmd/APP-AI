@@ -1,0 +1,48 @@
+name: OMDA — safe agent file build (isolated)
+on:
+  pull_request:
+    paths:
+      - 'integrations/omda-director/github-tool.mjs'
+      - 'integrations/omda-director/github-tool.test.mjs'
+      - 'integrations/omda-director/preview-generator.mjs'
+      - 'integrations/omda-director/preview-generator.test.mjs'
+      - '.github/workflows/omda-agent-build.yml'
+  workflow_dispatch:
+    inputs:
+      title:
+        description: 'Title for internal preview file (max 80 characters)'
+        required: true
+        type: string
+      description:
+        description: 'Description for internal preview file (max 500 characters)'
+        required: true
+        type: string
+permissions:
+  contents: read
+concurrency:
+  group: omda-pilot-${{ github.event.pull_request.number || github.run_id }}
+  cancel-in-progress: false
+jobs:
+  safe_file_build:
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+      - name: Test isolated GitHub execution tool and generator
+        run: node --test integrations/omda-director/github-tool.test.mjs integrations/omda-director/preview-generator.test.mjs
+      - name: Generate real HTML and JSON output files
+        env:
+          OMDA_TITLE: ${{ inputs.title || 'OMDA Agent Pilot' }}
+          OMDA_DESCRIPTION: ${{ inputs.description || 'Isolated GitHub Actions test; no publishing or repository writes.' }}
+        run: node integrations/omda-director/preview-generator.mjs
+      - name: Validate output file
+        run: test -s .omda-build/index.html && test -s .omda-build/manifest.json && node -e "const f=require('fs');const c=require('crypto');const m=JSON.parse(f.readFileSync('.omda-build/manifest.json'));if(c.createHash('sha256').update(f.readFileSync('.omda-build/index.html')).digest('hex')!==m.sha256)process.exit(1);"
+      - name: Archive private workflow output
+        uses: actions/upload-artifact@v4
+        with:
+          name: omda-agent-preview-${{ github.run_id }}
+          path: .omda-build/
+          retention-days: 3
