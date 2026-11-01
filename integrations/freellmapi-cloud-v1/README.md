@@ -18,9 +18,16 @@
 - `FREEAPI_DB_BACKUP_INTERVAL_MS=300000`
 - `NODE_ENV=production`, `PORT=3001`, `HOST=0.0.0.0`
 
+## Verified on 2026-11-01
+- Render deployed successfully (status `live`) at upstream commit `eae1a403`.
+- Initial encrypted backup was uploaded to dedicated D1 successfully.
+- A subsequent redeploy logged `[db-backup] restored 430080 bytes` and then a fresh upload. This verifies restore from the independent backup.
+- Provider credentials have not been added; OMDA Director has not yet been connected to the unified key.
+- **Security hold:** `npm prune --omit=dev` still reported 25 dependency advisories (1 critical, 14 high, 9 moderate, 1 low). Assess production exploitability and remediate before connecting real provider credentials or allowing autonomous use.
+
 ## Go-live gates
-1. Confirm Render build and app health endpoint `/api/ping`.
-2. Confirm backup uploads to D1 and encrypted restore succeeds after a restart.
+1. Confirm real HTTP health check on `/api/ping`.
+2. Confirm the encrypted backup continues after storing non-sensitive test state.
 3. Claim the first admin through the dashboard (remote first-run setup requires the one-time code printed in the *private* Render logs).
 4. Set individual provider API keys **only in the secured FreeLLMAPI dashboard or approved secrets manager**.
 5. Test one provider request via `/v1/chat/completions` using the unified API key.
