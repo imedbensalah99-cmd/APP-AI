@@ -1,0 +1,28 @@
+name: OMDA FreeLLMAPI secure migration checks
+
+on:
+  push:
+    branches:
+      - omda-freellmapi-secure-runtime-v1
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  verify-safe-migration:
+    runs-on: ubuntu-latest
+    timeout-minutes: 25
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '24'
+          cache: npm
+      - run: npm ci --ignore-scripts=false
+      - name: Typecheck and compile server
+        run: npm run build -w server
+      - name: Test read-only migration protection
+        run: npm run test -w server -- src/__tests__/lib/db-backup-restore-only.test.ts
+      - name: Production dependency security audit
+        run: npm audit --omit=dev --audit-level=low
