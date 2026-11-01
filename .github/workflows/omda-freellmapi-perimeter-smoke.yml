@@ -1,0 +1,53 @@
+name: OMDA FreeLLMAPI staging perimeter smoke test
+on:
+  push:
+    branches:
+      - omda-freellmapi-secure-runtime-v1
+    paths:
+      - '.github/workflows/omda-freellmapi-perimeter-smoke.yml'
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: omda-freellmapi-perimeter-smoke
+  cancel-in-progress: false
+
+jobs:
+  verify-origin-and-access:
+    runs-on: ubuntu-latest
+    timeout-minutes: 12
+    steps:
+      - name: Direct Render origin must be locked down
+        shell: bash
+        run: |
+          set -euo pipefail
+          origin="https://omda-freellmapi-secure-staging-v1.onrender.com"
+          for path in / /api/auth/status /v1/models /mcp; do
+            status="$(curl --silent --show-error --retry 2 --retry-delay 10 --connect-timeout 15 --max-time 120 --output /dev/null --write-out '%{http_code}' "${origin}${path}")"
+            printf 'Direct origin %s -> HTTP %s\n' "$path" "$status"
+            if [[ "$status" != "403" ]]; then
+              echo 'SECURITY FAIL: direct origin accessible or not responding as expected' >&2
+              exit 1
+            fi
+          done
+      - name: Public liveness endpoint stays healthy
+        shell: bash
+        run: |
+          set -euo pipefail
+          url="https://omda-freellmapi-secure-staging-v1.onrender.com/api/ping"
+          status="$(curl --silent --show-error --retry 2 --retry-delay 10 --connect-timeout 15 --max-time 120 --output /dev/null --write-out '%{http_code}' "$url")"
+          printf 'Liveness -> HTTP %s\n' "$status"
+          test "$status" = "200"
+      - name: Cloudflare Access must block anonymous gateway entry
+        shell: bash
+        run: |
+          set -euo pipefail
+          url="https://omda-freellmapi-secure-gateway-v1.imedbensalah9988.workers.dev/"
+          status="$(curl --silent --show-error --connect-timeout 15 --max-time 90 --output /dev/null --write-out '%{http_code}' "$url")"
+          printf 'Cloudflare gateway (anonymous) -> HTTP %s\n' "$status"
+          case "$status" in
+            302|303|307|308|401|403) echo 'Authentication challenge present' ;;
+            *) echo 'SECURITY FAIL: gateway did not challenge anonymous access' >&2; exit 1 ;;
+          esac
