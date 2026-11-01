@@ -1,7 +1,7 @@
 import {driveBridgeTick} from './drive-bridge.mjs';
 // OMDA Agency Tools v1: public read-only sources; no external writes, tokens or public HTTP.
 const NOW=()=>new Date().toISOString();
-const UA='OMDA-Agency-Research/1.0 (public data; no automated editing)';
+const UA='OMDAAgencyResearchBot/1.0 (https://github.com/imedbensalah99-cmd/APP-AI)';
 const CLEAN=s=>String(s??'').replace(/<[^>]*>/g,'').replace(/[\x00-\x1f]/g,' ').trim();
 export function validateQuery(q) {
  if(typeof q!=='string'||q.trim().length<2||q.trim().length>120||/[\x00-\x1f]/.test(q))throw Error('Invalid bounded research query');
@@ -10,7 +10,7 @@ export function validateQuery(q) {
 export async function publicResearch(query,transport=fetch){
  const q=validateQuery(query);
  const url='https://en.wikipedia.org/w/rest.php/v1/search/page?q='+encodeURIComponent(q)+'&limit=3';
- const response=await transport(url,{headers:{'Api-User-Agent':UA,'Accept':'application/json'},signal:AbortSignal.timeout(8000)});
+ const response=await transport(url,{headers:{'User-Agent':UA,'Api-User-Agent':UA,'Accept':'application/json'},signal:AbortSignal.timeout(8000)});
  if(response.status!==200)throw Error('Wikipedia HTTP '+response.status);
  const data=await response.json();
  if(!Array.isArray(data.pages))throw Error('Invalid Wikipedia response');
