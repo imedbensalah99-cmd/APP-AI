@@ -18,7 +18,7 @@ test('Google Drive only creates an app-owned folder',async()=>{
 });
 test('Google Drive proof destination is validated and content bounded',async()=>{
  await assert.rejects(driveWriteProof('mock','../../foo',async()=>({status:200})),/Invalid folder/);
- const out=await driveWriteProof('mock','folderproof12345',async (url,o)=>{assert.match(url,/uploadType=multipart/);assert.match(o.body,/'+'folderproof12345'+');assert.match(o.body,/connection-proof/);assert.ok(o.body.length<1600);return {status:200,json:async()=>({id:'fileproof123456',name:'OMDA-Drive-connection-proof.txt'})}});
+ const out=await driveWriteProof('mock','folderproof12345',async (url,o)=>{assert.match(url,/uploadType=multipart/);assert.ok(o.body.includes('folderproof12345'));assert.match(o.body,/connection-proof/);assert.ok(o.body.length<1600);return {status:200,json:async()=>({id:'fileproof123456',name:'OMDA-Drive-connection-proof.txt'})}});
  assert.equal(out.id,'fileproof123456');
 });
 test('disabled setup never creates folder or uploads file',async()=>{
