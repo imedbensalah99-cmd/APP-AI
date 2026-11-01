@@ -242,6 +242,10 @@ export async function restoreDbBackupIfNeeded(dbPath = getDefaultDbPath()): Prom
 }
 
 export async function backupDbNow(db: Db, dbPath = getDefaultDbPath()): Promise<DbBackupResult> {
+  // During migration, the source backup must NEVER be overwritten by staging.
+  if (process.env.FREEAPI_DB_BACKUP_RESTORE_ONLY?.trim().toLowerCase() === 'true') {
+    return { ok: true, skipped: 'restore-only mode: backup writes disabled' };
+  }
   const target = backupTarget();
   if (!target) return { ok: true, skipped: 'not configured' };
   if (dbPath === ':memory:') return { ok: true, target, skipped: 'memory database' };
@@ -261,6 +265,8 @@ export async function backupDbNow(db: Db, dbPath = getDefaultDbPath()): Promise<
 }
 
 export function startDbBackupPump(db: Db, scheduler: Scheduler, dbPath = getDefaultDbPath()): (() => void) | null {
+  // Even the initial immediate backup would overwrite the migration source.
+  if (process.env.FREEAPI_DB_BACKUP_RESTORE_ONLY?.trim().toLowerCase() === 'true') return null;
   if (!backupTarget()) return null;
   const run = () => {
     void backupDbNow(db, dbPath).catch(err => {
