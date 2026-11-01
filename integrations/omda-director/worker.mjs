@@ -87,11 +87,70 @@ async function tick(env){
   throw new Error('KV dispatch failed');
  }
 }
+
+const GITHUB_PILOT_KEY='github_pilot_v1';
+const GITHUB_DISPATCH_URL='https://api.github.com/repos/imedbensalah99-cmd/APP-AI/actions/workflows/omda-agent-build.yml/dispatches';
+const GITHUB_RUNS_URL='https://api.github.com/repos/imedbensalah99-cmd/APP-AI/actions/workflows/omda-agent-build.yml/runs?event=workflow_dispatch&per_page=30';
+function safeGithubPilot(job){
+ if(!job||job.task!=='create_static_preview'||job.state!=='READY')throw Error('Pilot not allowlisted');
+ for(const [key,max] of [['title',80],['description',500]]){
+  if(typeof job[key]!=='string'||!job[key].trim()||job[key].length>max||/[\x00-\x1F]/.test(job[key]))throw Error('Invalid '+key);
+ }
+}
+async function saveGithubPilot(env,oldValue,pilot){
+ const newValue=JSON.stringify(pilot);
+ const result=await env.DIRECTOR_DB.prepare('UPDATE meta SET value=?,updated_at=? WHERE key=? AND value=?')
+  .bind(newValue,iso(),GITHUB_PILOT_KEY,oldValue).run();
+ return Number(result.meta?.changes||0)===1?newValue:null;
+}
+// Opt-in only: one pre-approved preview task, one dispatch at most, no retries after unknown outcomes.
+// The GitHub token is never logged or persisted to D1. Only GitHub Actions artifacts are generated.
+async function githubPilotTick(env,transport=fetch){
+ if(env.OMDA_GITHUB_BUILD_ENABLED!=='true')return {action:'GITHUB_DISABLED'};
+ if(!env.OMDA_GITHUB_TOKEN)return {action:'GITHUB_NOT_CONFIGURED'};
+ if(!env.DIRECTOR_DB)throw Error('D1 binding missing');
+ const row=await env.DIRECTOR_DB.prepare('SELECT value FROM meta WHERE key=?').bind(GITHUB_PILOT_KEY).first();
+ if(!row?.value)return {action:'GITHUB_IDLE'};
+ let pilot;try{pilot=JSON.parse(row.value)}catch{return {action:'GITHUB_INVALID_STATE'}};
+ if(pilot.state==='READY'){
+  safeGithubPilot(pilot);
+  const reserved={...pilot,state:'RESERVED',updatedAt:iso()};
+  let expected=await saveGithubPilot(env,row.value,reserved);
+  if(!expected)return {action:'GITHUB_DUPLICATE_GUARD'};
+  let httpStatus=0;
+  try{
+   const response=await transport(GITHUB_DISPATCH_URL,{
+    method:'POST',
+    headers:{Authorization:'Bearer '+env.OMDA_GITHUB_TOKEN,Accept:'application/vnd.github+json','X-GitHub-Api-Version':'2022-11-28','Content-Type':'application/json','User-Agent':'omda-director-pilot'},
+    body:JSON.stringify({ref:'main',inputs:{title:pilot.title,description:pilot.description}})
+   });
+   httpStatus=response.status;
+  }catch{ /* Fail closed on unknown network outcome; never retry automatically. */ }
+  const accepted=httpStatus===204;
+  const next={...reserved,state:accepted?'ACCEPTED':'FAILED',httpStatus,updatedAt:iso()};
+  await saveGithubPilot(env,expected,next);
+  await event(env,accepted?'GITHUB_ACCEPTED':'GITHUB_FAILED',accepted?'Preview workflow accepted':('Dispatch failed with HTTP '+httpStatus));
+  return {action:accepted?'GITHUB_ACCEPTED':'GITHUB_FAILED',httpStatus};
+ }
+ if(!['ACCEPTED','RUNNING'].includes(pilot.state))return {action:'GITHUB_'+text(pilot.state,30)};
+ // Read-only status check: GitHub's public workflow listing; no write or GitHub token in query.
+ const resp=await transport(GITHUB_RUNS_URL,{method:'GET',headers:{Accept:'application/vnd.github+json','User-Agent':'omda-director-pilot'}});
+ if(resp.status!==200)return {action:'GITHUB_AWAITING_STATUS'};
+ let data;try{data=await resp.json()}catch{return {action:'GITHUB_AWAITING_STATUS'}};
+ const match=(data.workflow_runs||[]).find(r=>r.display_title==='OMDA GitHub | '+pilot.title && r.event==='workflow_dispatch');
+ if(!match)return {action:'GITHUB_AWAITING_RUN'};
+ const state=match.status==='completed'?(match.conclusion==='success'?'PASSED':'FAILED'):'RUNNING';
+ const next={...pilot,state,runId:match.id,runUrl:match.html_url||'',updatedAt:iso()};
+ await saveGithubPilot(env,row.value,next);
+ await event(env,'GITHUB_STATUS',state+' '+match.id);
+ return {action:'GITHUB_'+state,runId:match.id};
+}
+
 export default {
  async fetch(){return new Response('Not found',{status:404,headers:{'cache-control':'no-store','x-content-type-options':'nosniff'}})},
  async scheduled(controller,env,ctx){ctx.waitUntil((async()=>{
-  try { const result=await tick(env);await env.DIRECTOR_DB.prepare("INSERT INTO meta(key,value,updated_at) VALUES('last_result',?,?) ON CONFLICT(key) DO UPDATE SET value=excluded.value,updated_at=excluded.updated_at").bind(JSON.stringify(result).slice(0,300),iso()).run(); }
+  try { const result=await tick(env); const github=await githubPilotTick(env);await env.DIRECTOR_DB.prepare("INSERT INTO meta(key,value,updated_at) VALUES('last_result',?,?) ON CONFLICT(key) DO UPDATE SET value=excluded.value,updated_at=excluded.updated_at").bind(JSON.stringify({director:result,github}).slice(0,300),iso()).run(); }
   catch(e){await event(env,'ERROR',String(e?.message||'Director tick failed').slice(0,100));throw e;}
  })());}
 };
-export {tick,verdictOf,canDispatch,nextMission};
+export {tick,verdictOf,canDispatch,nextMission,githubPilotTick};
