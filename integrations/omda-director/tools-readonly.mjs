@@ -26,7 +26,9 @@ export async function githubPublicInfo(transport=fetch){
 export async function runToolsTick(env,transport=fetch){
  if(!env.DIRECTOR_DB)throw Error('D1 binding missing');
  const db=env.DIRECTOR_DB;const stamp=NOW();const result={github:'ERROR',research:'IDLE',at:stamp};
- try {
+ const previous=await db.prepare("SELECT checked_at FROM tool_checks WHERE name='github_public_read'").first();
+ const recent=previous?.checked_at && Date.now()-Date.parse(previous.checked_at)<60*60*1000;
+ if(!recent)try {
   const info=await githubPublicInfo(transport);
   result.github='PASS';
   await db.prepare('INSERT INTO tool_checks(name,status,detail,checked_at) VALUES(?,?,?,?) ON CONFLICT(name) DO UPDATE SET status=excluded.status,detail=excluded.detail,checked_at=excluded.checked_at').bind('github_public_read','PASS',JSON.stringify(info).slice(0,600),stamp).run();
