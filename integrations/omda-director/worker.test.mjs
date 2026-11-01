@@ -1,5 +1,5 @@
 import test from 'node:test';import assert from 'node:assert/strict';
-import worker,{tick,verdictOf,canDispatch,nextMission} from './worker.mjs';
+import worker,{tick,verdictOf,canDispatch,nextMission,githubPilotTick} from './worker.mjs';
 const valid={id:'demo-goal',task:'Create a fictional and accurate OMDA dashboard brief.',agents:JSON.stringify(['content-creator','reality-checker']),active:1,max_runs:2};
 test('public fetch rejects all callers',async()=>{assert.equal((await worker.fetch(new Request('https://test.invalid/'))).status,404);});
 test('QA requires explicit verdict',()=>{assert.equal(verdictOf({steps:[{agent:'reality-checker',status:'COMPLETED',output:'Looks great'}]}).verdict,'UNVERIFIED');assert.equal(verdictOf({steps:[{agent:'reality-checker',status:'COMPLETED',output:'VERDICT: REVISE\nFINDINGS: one mistake'}]}).verdict,'REVISE')});
@@ -19,4 +19,34 @@ test('director dispatches a safe pilot, reconciles REVISE, retries once, then st
  const second=await tick(env);assert.equal(second.action,'DISPATCH');assert.equal(second.iteration,2);
  const two=saved.get('job-'+second.jobId);saved.set('job-'+second.jobId,{...two,status:'REVIEW',steps:[{agent:'reality-checker',status:'COMPLETED',output:'VERDICT: PASS\nFINDINGS: no factual claims'}]});
  const end=await tick(env);assert.equal(end.action,'WAIT');assert.equal(dispatches.length,2);assert.equal(dispatches[1].verdict,'PASS');
+});
+
+test('GitHub integration fails closed without secret or explicit enable',async()=>{
+ let calls=0;const fake=async()=>{calls++;throw Error('unexpected network')};
+ assert.equal((await githubPilotTick({},fake)).action,'GITHUB_DISABLED');
+ assert.equal((await githubPilotTick({OMDA_GITHUB_BUILD_ENABLED:'true'},fake)).action,'GITHUB_NOT_CONFIGURED');
+ assert.equal(calls,0);
+});
+test('GitHub pilot dispatch is deduplicated, bounded and reconciled by workflow result',async()=>{
+ let value=JSON.stringify({task:'create_static_preview',state:'READY',title:'OMDA-PILOT-unique-01',description:'Internal QA preview only'});
+ const eventLog=[],calls=[];
+ const db={prepare(sql){let p=[];return{bind(...v){p=v;return this},async first(){if(sql.startsWith('SELECT value'))return{value};throw Error(sql)},async run(){if(sql.startsWith('UPDATE meta')){if(p[3]!==value)return{meta:{changes:0}};value=p[0];return{meta:{changes:1}}}if(sql.startsWith('INSERT INTO events')){eventLog.push(p);return{meta:{changes:1}}}throw Error(sql)}}}};
+ const env={DIRECTOR_DB:db,OMDA_GITHUB_BUILD_ENABLED:'true',OMDA_GITHUB_TOKEN:'ONLY_FOR_TEST'};
+ const fake=async (url,options)=>{calls.push({url,options});if(options.method==='POST')return{status:204};return{status:200,async json(){return {workflow_runs:[{id:321,display_title:'OMDA GitHub | OMDA-PILOT-unique-01',event:'workflow_dispatch',status:'completed',conclusion:'success',html_url:'https://github.com/imedbensalah99-cmd/APP-AI/actions/runs/321'}]}}}};
+ assert.equal((await githubPilotTick(env,fake)).action,'GITHUB_ACCEPTED');
+ assert.equal(JSON.parse(value).state,'ACCEPTED');
+ assert.equal(calls.length,1);
+ assert.equal(JSON.parse(calls[0].options.body).ref,'main');
+ assert.ok(!calls[0].options.body.includes('ONLY_FOR_TEST'));
+ assert.equal((await githubPilotTick(env,fake)).action,'GITHUB_PASSED');
+ assert.equal(JSON.parse(value).state,'PASSED');
+ assert.equal((await githubPilotTick(env,fake)).action,'GITHUB_PASSED');
+ assert.equal(calls.length,2);
+});
+test('invalid GitHub work fails before dispatch and never runs arbitrary tasks',async()=>{
+ const payload=JSON.stringify({task:'run_arbitrary_code',state:'READY',title:'bad',description:'bad'});
+ const env={OMDA_GITHUB_BUILD_ENABLED:'true',OMDA_GITHUB_TOKEN:'x',DIRECTOR_DB:{prepare(){return{bind(){return{first:async()=>({value:payload})}}}}}};
+ let calls=0;
+ await assert.rejects(githubPilotTick(env,async()=>{calls++}),/allowlisted/);
+ assert.equal(calls,0);
 });
