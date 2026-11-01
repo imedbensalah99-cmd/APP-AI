@@ -1,0 +1,17 @@
+{
+  "$schema": "node_modules/wrangler/config-schema.json",
+  "name": "omda2-agent-engine",
+  "main": "agent-engine.mjs",
+  "compatibility_date": "2026-11-01",
+  "workers_dev": false,
+  "ai": { "binding": "AI" },
+  "d1_databases": [{
+    "binding": "TASK_DB",
+    "database_name": "omda2-agent-tasks-v1",
+    "database_id": "4e4b1072-35a1-4378-af93-716b9474134d"
+  }],
+  "vars": {
+    "RUN_ENABLED": "false",
+    "MAX_DAILY_CALLS": "4"
+  }
+}
