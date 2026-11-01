@@ -1,4 +1,5 @@
 name: OMDA — safe agent file build (isolated)
+run-name: "OMDA GitHub | ${{ inputs.title || 'OMDA Agent Pilot' }}"
 on:
   pull_request:
     paths:
