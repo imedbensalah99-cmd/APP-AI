@@ -1,0 +1,34 @@
+name: OMDA FreeLLMAPI - 502 read-only cold-start probe
+on:
+  push:
+    branches: [omda-freellmapi-secure-runtime-v1]
+    paths:
+      - '.github/workflows/omda-freellmapi-502-readonly-probe.yml'
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  probe:
+    runs-on: ubuntu-latest
+    timeout-minutes: 7
+    steps:
+      - name: Probe Render health GET and Cloudflare gateway GET without credentials
+        shell: bash
+        run: |
+          set -euo pipefail
+          origin='https://omda-freellmapi-secure-staging-v1.onrender.com/api/ping'
+          gateway='https://omda-freellmapi-secure-gateway-v1.imedbensalah9988.workers.dev/models/chat'
+          for attempt in 1 2 3 4 5; do
+            code="$(curl -sS -o /dev/null -w '%{http_code}' --max-time 95 --max-redirs 0 "$origin" || true)"
+            echo "ORIGIN_ATTEMPT=$attempt HTTP_STATUS=$code"
+            if [ "$code" = '200' ]; then break; fi
+            sleep 12
+          done
+          gateway_code="$(curl -sS -o /dev/null -w '%{http_code}' --max-time 50 --max-redirs 0 "$gateway" || true)"
+          echo "GATEWAY_HTTP_STATUS=$gateway_code"
+          if [ "$code" = '200' ] && [[ "$gateway_code" = '302' || "$gateway_code" = '200' ]]; then
+            echo 'READ_ONLY_GATEWAY_HEALTH=PASS'
+          else
+            echo 'READ_ONLY_GATEWAY_HEALTH=FAIL'
+            exit 1
+          fi
