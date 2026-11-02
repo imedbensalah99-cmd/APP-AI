@@ -1,0 +1,24 @@
+name: OMDA FreeLLMAPI guarded agent bridge - offline tests
+on:
+  push:
+    branches:
+      - omda-freellmapi-secure-runtime-v1
+    paths:
+      - 'integrations/omda-freellmapi-agent-bridge/**'
+      - '.github/workflows/omda-freellmapi-agent-bridge-ci.yml'
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  verify:
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '24'
+      - name: Syntax check
+        run: node --check integrations/omda-freellmapi-agent-bridge/worker.mjs
+      - name: Offline zero-credit tests
+        run: node --test integrations/omda-freellmapi-agent-bridge/worker.test.mjs
