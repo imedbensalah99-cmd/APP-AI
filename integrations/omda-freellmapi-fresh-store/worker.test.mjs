@@ -13,6 +13,12 @@ function db(){
     if(sql.startsWith('INSERT INTO fresh_backup_versions')){versions.set(args[0],{version_id:args[0],sha256:args[1],size_bytes:args[2],chunk_count:args[3]});return{};}
     if(sql.startsWith('INSERT INTO fresh_backup_chunks')){const arr=chunks.get(args[0])||[];arr.push({ordinal:args[1],payload_b64:args[2]});chunks.set(args[0],arr);return{};}
     if(sql.startsWith('INSERT INTO fresh_backup_head')){current=args[0];return{};}
+    if(sql.startsWith('DELETE FROM fresh_backup_')){
+      const stale=[...versions.keys()].filter(id=>id!==current).reverse().slice(2);
+      if(sql.startsWith('DELETE FROM fresh_backup_chunks'))stale.forEach(id=>chunks.delete(id));
+      else stale.forEach(id=>versions.delete(id));
+      return{};
+    }
     throw Error('Unexpected SQL: '+sql);
   }
   const fake={prepare(sql){let params=[];return{bind(...a){params=a;return this},async first(){return result(sql,params)},async all(){return result(sql,params)},async run(){return result(sql,params)}}},async batch(steps){for(const s of steps)await s.run();return[]}};
@@ -59,4 +65,22 @@ test('unsupported route and verb fail closed',async()=>{
  const s=db();
  assert.equal((await worker.fetch(new Request('https://example.invalid/'),env(s))).status,404);
  assert.equal((await worker.fetch(new Request(endpoint,{method:'DELETE'}),env(s))).status,405);
+});
+
+test('retains exactly three encrypted rollback versions and never discards the current head',async()=>{
+ const s=db();
+ for(let i=0;i<6;i++){
+   const sample=Uint8Array.from(body);
+   sample[sample.length-1]=i;
+   const response=await worker.fetch(req('PUT',token,sample),env(s));
+   assert.equal(response.status,200);
+   assert.ok(s.versions.size<=3,'D1 version retention must remain bounded');
+ }
+ assert.equal(s.versions.size,3);
+ assert.equal(s.chunks.size,3);
+ assert.ok(s.versions.has(s.getCurrent()));
+ const latest=await worker.fetch(req(),env(s));
+ assert.equal(latest.status,200);
+ const expected=Uint8Array.from(body);expected[expected.length-1]=5;
+ assert.deepEqual(Buffer.from(await latest.arrayBuffer()),Buffer.from(expected));
 });
