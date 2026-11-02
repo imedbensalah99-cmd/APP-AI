@@ -1,0 +1,23 @@
+name: OMDA FreeLLMAPI private Agent test runner (offline)
+on:
+  push:
+    branches: [omda-freellmapi-secure-runtime-v1]
+    paths:
+      - 'integrations/omda-freellmapi-agent-private-console/**'
+      - '.github/workflows/omda-freellmapi-agent-private-console-ci.yml'
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  validate:
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '24'
+      - name: Syntax verification
+        run: node --check integrations/omda-freellmapi-agent-private-console/worker.mjs
+      - name: 100% offline security tests
+        run: node --test integrations/omda-freellmapi-agent-private-console/worker.test.mjs
