@@ -14,6 +14,7 @@ import { runImageGeneration, runVideoGeneration, runSpeech, runTranscription, Me
 import multer from 'multer';
 import { getDb } from '../db/index.js';
 import { resolveAuth, prependSystemPrompt, type ResolvedAuth } from '../lib/system-prompt.js';
+import { isOmdaAgentAuth, omdaProviderAllowed } from '../lib/omda-agent-server-guard.js';
 import { contentToString, estimateInputTokens, messageHasImage, normalizeOutboundContent, sanitizeResponse } from '../lib/content.js';
 import { routeOutputBudget } from '../lib/output-cap.js';
 import { resolveTaskType } from '../lib/task-type.js';
@@ -2537,6 +2538,12 @@ proxyRouter.post('/chat/completions', async (req: Request, res: Response) => {
       return routeRequest(routingEstimate, state.skipKeys.size > 0 ? state.skipKeys : undefined, preferredModel, hasImage, wantsTools, state.skipModels.size > 0 ? state.skipModels : undefined, groupChain ?? resolvedChain?.chain, samplingParams.response_format !== undefined, state.skipPlatforms.size > 0 ? state.skipPlatforms : undefined, outputReserve, taskType, resolvedChain?.strategyOverride);
     },
     dispatch: async (route, attempt, ctx) => {
+    // Server-side provider pin — reject before ANY outbound provider request.
+    // This is essential even if a catalog unification/failover alias maps the
+    // pinned model ID to another provider with paid billing.
+    if (isOmdaAgentAuth(auth) && !omdaProviderAllowed(route)) {
+      throw Object.assign(new Error('OMDA Agent provider/model policy denied'), { status: 403, code: 'omda_provider_denied' });
+    }
     const contextBudget = routeOutputBudget(route, estimatedInputTokens);
     const modelKey = `${route.platform}:${route.modelId}`;
     traceRouteEvent('Proxy', {
