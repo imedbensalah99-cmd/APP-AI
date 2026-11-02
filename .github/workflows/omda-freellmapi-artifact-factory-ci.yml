@@ -1,0 +1,51 @@
+name: OMDA Universal Artifact Agent — zero-credit CI
+on:
+  push:
+    branches:
+      - omda-freellmapi-secure-runtime-v1
+    paths:
+      - 'integrations/omda-freellmapi-artifact-factory/**'
+      - '.github/workflows/omda-freellmapi-artifact-factory-ci.yml'
+  workflow_dispatch:
+    inputs:
+      request:
+        description: "Natural-language request for offline drafts (website / Excel CSV / email / document / job plan)"
+        required: true
+        type: string
+      title:
+        description: "Optional title for the draft"
+        required: false
+        type: string
+permissions:
+  contents: read
+jobs:
+  build-drafts:
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '24'
+      - name: Syntax
+        run: |
+          node --check integrations/omda-freellmapi-artifact-factory/engine.mjs
+          node --check integrations/omda-freellmapi-artifact-factory/cli.mjs
+      - name: Functional tests (no external APIs)
+        run: node --test integrations/omda-freellmapi-artifact-factory/engine.test.mjs
+      - name: Execute natural-language request into actual files
+        env:
+          OMDA_TASK_TEXT: ${{ github.event.inputs.request || 'Build website and Excel tracker and draft an email' }}
+          OMDA_TASK_TITLE: ${{ github.event.inputs.title || 'OMDA Draft' }}
+        run: node integrations/omda-freellmapi-artifact-factory/cli.mjs
+      - name: Assert generated files really exist
+        run: |
+          test -s integrations/omda-freellmapi-artifact-factory/generated/manifest.json
+          node -e 'const fs=require("node:fs");const p="integrations/omda-freellmapi-artifact-factory/generated/manifest.json";const m=JSON.parse(fs.readFileSync(p));if(!m.files.length||m.paidApiCalls||m.publishing||m.externalActions.length)process.exit(1);for(const f of m.files)if(!fs.statSync("integrations/omda-freellmapi-artifact-factory/generated/"+f.path).size)process.exit(1);console.log("OMDA_ARTIFACTS_VERIFIED="+m.files.length)'
+      - name: Store real output as downloadable GitHub artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: omda-artifacts-${{ github.run_number }}
+          path: integrations/omda-freellmapi-artifact-factory/generated/
+          if-no-files-found: error
+          retention-days: 7
