@@ -58,7 +58,15 @@ describe('OMDA staging client policy',()=>{
      omdaAgentProfileGate(req,res,()=>{next++;});expect(state.status).toBe(403);expect(next).toBe(0);}
    expect((getDb().prepare("SELECT name FROM sqlite_master WHERE name='omda_agent_server_quotas'").get() as any)).toBeUndefined();
  });
+ it('refuses to enable inference when server opt-in is absent',()=>{
+   delete process.env.OMDA_AGENT_INFERENCE_ALLOWED;
+   const key=add(OMDA_AGENT_PROFILE,1);
+   const {state,res}=fakeResponse();let next=0;
+   omdaAgentProfileGate(fakeRequest(key),res,()=>{next++;});
+   expect(state.status).toBe(403);expect(next).toBe(0);
+ });
  it('enforces server-side one-minute and ten-per-day quotas, with 429 on overuse',()=>{
+   process.env.OMDA_AGENT_INFERENCE_ALLOWED='true';
    const key=add(OMDA_AGENT_PROFILE,1);
    let now=new Date('2026-11-02T11:00:00Z');
    const original=Date.prototype.toISOString;
@@ -71,6 +79,6 @@ describe('OMDA staging client policy',()=>{
      for(let i=1;i<10;i++){now=new Date(Date.UTC(2026,10,2,11,i));expect(invoke()).toBe(200);}
      now=new Date('2026-11-02T11:15:00Z');expect(invoke()).toBe(429);
      expect(calls).toBe(10);
-   }finally{Date.prototype.toISOString=original;}
+   }finally{Date.prototype.toISOString=original; delete process.env.OMDA_AGENT_INFERENCE_ALLOWED;}
  });
 });
