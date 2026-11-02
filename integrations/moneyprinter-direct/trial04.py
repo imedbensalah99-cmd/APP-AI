@@ -8,6 +8,7 @@ import sys
 import time
 import uuid
 from pathlib import Path
+from clip_quality import select_unique_candidates, plan_unique_segments
 from urllib.error import HTTPError, URLError
 from urllib.parse import urlencode
 from urllib.request import Request, urlopen
@@ -47,7 +48,7 @@ if not key:
 
 # Exactly one metadata-only request before attempting any video.
 try:
-    query = urlencode({"key": key, "q": "nature", "per_page": 3})
+    query = urlencode({"key": key, "q": "nature", "per_page": 9})
     req = Request("https://pixabay.com/api/videos/?" + query,
                   headers={"User-Agent": "OMDA-60s-Owner-Approved-Preflight/1"})
     with urlopen(req, timeout=18) as response:
@@ -65,8 +66,8 @@ try:
                  for variant in (item.get("videos") or {}).values())]
     emit("PIXABAY_AUTH", "OK")
     emit("CLIPS_IN_SAMPLE", len(clips))
-    if not clips:
-        emit("STOP", "NO_USABLE_VIDEO_IN_SAMPLE")
+    if len(select_unique_candidates(hits)) < 3:
+        emit("STOP", "INSUFFICIENT_DISTINCT_VIDEO_METADATA")
         sys.exit(1)
 except HTTPError as exc:
     emit("STOP", "PIXABAY_HTTP_" + str(exc.code))
@@ -128,15 +129,7 @@ if not 20<=duration<=120:
 
 # Pixabay API provided the video metadata earlier in this exact test.
 emit("STOCK_DOWNLOAD","START")
-candidates=[]
-for clip in parsed.get("hits",[]):
-    if not isinstance(clip,dict):
-        continue
-    variants=clip.get("videos") or {}
-    selected=next((variants[k] for k in ("small","tiny","medium")
-                   if isinstance(variants.get(k),dict) and variants[k].get("url")),None)
-    if selected:
-        candidates.append((clip.get("id"),clip.get("user"),selected["url"]))
+candidates=select_unique_candidates(parsed.get("hits",[]))
 material=[]
 for clip_id,creator,uri in candidates[:9]:
     if len(material)>=3:
@@ -168,15 +161,16 @@ for clip_id,creator,uri in candidates[:9]:
     except (Exception,ValueError):
         dest.unlink(missing_ok=True)
         continue
-if not material:
-    emit("STOP","NO_DOWNLOADABLE_STOCK")
+try:
+    planned=plan_unique_segments(material)
+except ValueError:
+    emit("STOP","INSUFFICIENT_UNIQUE_STOCK")
     sys.exit(2)
 # Per-asset credits remain in temporary private file, never exposed in logs.
 (work/"stock_credits.json").write_text(json.dumps([{"id":str(v[0]),"creator":str(v[1])} for v in candidates[:9]]),encoding="utf-8")
 emit("COMPOSE","START")
 segments=[]
-for j in range(3):
-    src=material[j%len(material)]
+for j, src in enumerate(planned):
     part=work/("part"+str(j)+".mp4")
     args=["ffmpeg","-nostdin","-hide_banner","-loglevel","error","-y",
           "-threads","1","-stream_loop","-1","-i",str(src),"-t","20",
