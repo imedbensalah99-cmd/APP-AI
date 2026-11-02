@@ -1,0 +1,24 @@
+name: OMDA FreeLLMAPI — live backup auth perimeter
+on:
+  push:
+    branches:
+      - omda-freellmapi-secure-runtime-v1
+    paths:
+      - '.github/workflows/omda-freellmapi-backup-perimeter.yml'
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  verify:
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    steps:
+      - name: Only anonymous GET; verify backup origin denies without token
+        shell: bash
+        run: |
+          set -euo pipefail
+          url='https://omda-freellmapi-fresh-backup-v1.imedbensalah9988.workers.dev/freeapi.db.backup'
+          status="$(curl --silent --show-error --fail-with-body --max-time 50 --output /dev/null --write-out '%{http_code}' --max-redirs 0 "$url" || true)"
+          echo "Unauthenticated backup GET HTTP status: $status"
+          test "$status" = "401"
+          echo "PASS: secret required, no GET payload readable anonymously"
