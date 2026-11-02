@@ -1,0 +1,27 @@
+name: OMDA FreeLLMAPI protected UI anonymous route diagnostics
+on:
+  push:
+    branches:
+      - omda-freellmapi-secure-runtime-v1
+    paths:
+      - '.github/workflows/omda-freellmapi-gateway-ui-readonly.yml'
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  inspect:
+    runs-on: ubuntu-latest
+    timeout-minutes: 4
+    steps:
+      - name: Read-only anonymous GETs; no secrets, redirects, post or cookies
+        shell: bash
+        run: |
+          set -euo pipefail
+          for location in \
+            'https://omda-freellmapi-secure-gateway-v1.imedbensalah9988.workers.dev/keys' \
+            'https://omda-freellmapi-secure-staging-v1.onrender.com/keys'
+          do
+            case "$location" in *workers.dev*) label=gateway;; *) label=origin;; esac
+            status="$(curl --silent --show-error --max-time 60 --max-redirs 0 --output /dev/null --write-out '%{http_code}' "$location" || true)"
+            echo "$label /keys HTTP $status"
+          done
