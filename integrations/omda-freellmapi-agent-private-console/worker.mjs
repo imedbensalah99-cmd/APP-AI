@@ -37,8 +37,23 @@ async function run(request,env){
  if(Number(request.headers.get('content-length')||'0')>512)
   return response(400,{error:'invalid_request'});
  let input;
- try{const text=await request.text();if(text.length>512)throw Error('too_large');input=JSON.parse(text);}
- catch{return response(400,{error:'invalid_request'});}
+ // Stream-bounded parsing protects against chunked requests without length header.
+ try{
+  if(!request.body)throw Error('missing_body');
+  const reader=request.body.getReader();let total=0;const chunks=[];
+  try{
+   while(true){
+    const {done,value}=await reader.read();
+    if(done)break;
+    total+=value.byteLength;
+    if(total>512){await reader.cancel();throw Error('too_large');}
+    chunks.push(value);
+   }
+  }finally{reader.releaseLock();}
+  const all=new Uint8Array(total);let offset=0;
+  for(const chunk of chunks){all.set(chunk,offset);offset+=chunk.length;}
+  input=JSON.parse(new TextDecoder('utf-8',{fatal:true}).decode(all));
+ }catch{return response(400,{error:'invalid_request'});}
  if(!input||typeof input!=='object'||Array.isArray(input)||
     Object.keys(input).sort().join(',')!=='task'||
     typeof input.task!=='string'||input.task.trim().length<1||
