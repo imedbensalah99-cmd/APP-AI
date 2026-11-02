@@ -1,0 +1,26 @@
+name: OMDA FreeLLMAPI server-side agent policy
+on:
+  push:
+    branches: [omda-freellmapi-secure-runtime-v1]
+    paths:
+      - 'server/src/lib/omda-agent-server-guard.ts'
+      - 'server/src/__tests__/lib/omda-agent-server-guard.test.ts'
+      - 'server/src/app.ts'
+      - 'server/src/routes/proxy.ts'
+      - '.github/workflows/omda-agent-server-guard-ci.yml'
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    timeout-minutes: 12
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with: {node-version: '24'}
+      - run: npm ci
+      - name: Server guard tests with no provider calls
+        run: npm --workspace server test -- src/__tests__/lib/omda-agent-server-guard.test.ts
+      - name: TypeScript build
+        run: npm --workspace server run build
