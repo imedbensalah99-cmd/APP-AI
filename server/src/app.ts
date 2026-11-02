@@ -7,6 +7,7 @@ import path from 'path';
 import { fileURLToPath } from 'url';
 import { keysRouter } from './routes/keys.js';
 import { clientProfilesRouter } from './routes/client-profiles.js';
+import { omdaAgentProfileGate } from './lib/omda-agent-server-guard.js';
 import { conversationsRouter } from './routes/conversations.js';
 import { logsRouter } from './routes/logs.js';
 import { modelsRouter } from './routes/models.js';
@@ -229,6 +230,10 @@ export function createApp(config?: Config) {
     express.json({ limit: cfg.requestBodyLimitBytes }),
   );
   app.use(express.json({ limit: '10mb' }));
+  // Restrict the dedicated OMDA Agent profile across ALL API surfaces,
+  // before Ollama, OpenAI, Anthropic, Responses, Gemini, MCP, or admin routing.
+  // Other existing clients are unchanged. This does not enable inference.
+  app.use(omdaAgentProfileGate);
 
   // Caller identity (IP + User-Agent) for request analytics, carried in
   // AsyncLocalStorage so logRequest() can read it from any depth.
