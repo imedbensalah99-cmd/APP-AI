@@ -71,7 +71,7 @@ test('paid-model substitution and upstream failure return only sanitized errors'
 });
 test('there are no provider calls, direct origin calls, media or cron in source',async()=>{
  const src=(await import('node:fs')).readFileSync(new URL('./worker.mjs',import.meta.url),'utf8');
- assert.doesNotMatch(src,/onrender\\.com|api\\.groq\\.com|openai\\.com|scheduled\\s*\\(/);
- assert.match(src,/env\\.AGENT_BRIDGE\\.fetch/);
+ assert.ok(!src.includes('onrender.com') && !src.includes('api.groq.com') && !src.includes('openai.com') && !src.includes('scheduled('));
+ assert.ok(src.includes('env.AGENT_BRIDGE.fetch'));
  assert.doesNotMatch(src,/publish|video generation|createPayment/i);
 });
