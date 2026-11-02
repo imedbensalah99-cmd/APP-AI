@@ -113,6 +113,20 @@ clientProfilesRouter.patch('/:id', (req: Request, res: Response) => {
   const row = getProfile(id);
   if (!row) return notFound(res);
 
+  // Prevent an enabled OMDA staging profile being renamed to escape its
+  // server-side model/provider and quota policy. An admin may still revoke it.
+  const requestedName = parsed.data.name;
+  if (requestedName !== undefined && requestedName !== row.name &&
+      (requestedName === 'OMDA-Agent-Staging' || row.name === 'OMDA-Agent-Staging')) {
+    res.status(403).json({error:{message:'OMDA Agent profile identity is locked for safety.'}});
+    return;
+  }
+  if (row.name === 'OMDA-Agent-Staging' && parsed.data.enabled === true &&
+      process.env.OMDA_AGENT_INFERENCE_ALLOWED !== 'true') {
+    res.status(403).json({error:{message:'OMDA Agent inference is disabled by the server.'}});
+    return;
+  }
+
   const { name, systemPrompt, enabled } = parsed.data;
   const nextPrompt = systemPrompt === undefined
     ? row.system_prompt
