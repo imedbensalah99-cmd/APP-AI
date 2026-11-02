@@ -1,0 +1,24 @@
+name: OMDA FreeLLMAPI — isolated agent heartbeat safety
+on:
+  push:
+    branches:
+      - omda-freellmapi-secure-runtime-v1
+    paths:
+      - 'integrations/omda-freellmapi-agent-watch/**'
+      - '.github/workflows/omda-freellmapi-agent-watch-ci.yml'
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  verify:
+    runs-on: ubuntu-latest
+    timeout-minutes: 6
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '24'
+      - name: Strictly read-only smoke tests
+        run: node --test integrations/omda-freellmapi-agent-watch/worker.test.mjs
+      - name: Syntax check
+        run: node --check integrations/omda-freellmapi-agent-watch/worker.mjs
