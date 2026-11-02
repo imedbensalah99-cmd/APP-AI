@@ -1,0 +1,52 @@
+name: OMDA FreeLLMAPI staging post-deploy readiness (read-only)
+
+on:
+  push:
+    branches:
+      - omda-freellmapi-secure-runtime-v1
+    paths:
+      - '.github/workflows/omda-freellmapi-postdeploy-readiness.yml'
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  verify:
+    runs-on: ubuntu-latest
+    timeout-minutes: 12
+    steps:
+      - name: Origin must deny unauthenticated direct access
+        shell: bash
+        run: |
+          set -euo pipefail
+          origin='https://omda-freellmapi-secure-staging-v1.onrender.com'
+          for path in / /api/auth/status /v1/models /mcp; do
+            code="$(curl -sS --retry 2 --retry-delay 10 --max-time 120 -o /dev/null -w '%{http_code}' "$origin$path")"
+            printf '%s direct-origin HTTP %s\n' "$path" "$code"
+            [[ "$code" == 403 ]]
+          done
+
+      - name: Liveness must succeed
+        shell: bash
+        run: |
+          set -euo pipefail
+          code="$(curl -sS --max-time 90 -o /dev/null -w '%{http_code}' 'https://omda-freellmapi-secure-staging-v1.onrender.com/api/ping')"
+          echo "liveness HTTP $code"
+          [[ "$code" == 200 ]]
+
+      - name: Owner gateway must challenge anonymous access
+        shell: bash
+        run: |
+          set -euo pipefail
+          code="$(curl -sS --max-time 45 -o /dev/null -w '%{http_code}' 'https://omda-freellmapi-secure-gateway-v1.imedbensalah9988.workers.dev/')"
+          echo "gateway HTTP $code"
+          case "$code" in 302|303|307|308|401|403) ;; *) exit 1 ;; esac
+
+      - name: Encrypted backup endpoint must reject anonymous reads
+        shell: bash
+        run: |
+          set -euo pipefail
+          code="$(curl -sS --max-time 45 -o /dev/null -w '%{http_code}' 'https://omda-freellmapi-backup-v1.imedbensalah9988.workers.dev/freellmapi.db.backup')"
+          echo "backup anonymous GET HTTP $code"
+          [[ "$code" == 401 ]]
