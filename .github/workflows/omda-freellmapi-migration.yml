@@ -23,6 +23,6 @@ jobs:
       - name: Typecheck and compile server
         run: npm run build -w server
       - name: Test immutable backup restoration, SQLite integrity and wrong-key fail-closed
-        run: npm run test -w server -- src/__tests__/lib/db-backup-restore-only.test.ts src/__tests__/lib/omda-migration-integrity.test.ts
+        run: npm run test -w server -- src/__tests__/lib/db-backup-restore-only.test.ts src/__tests__/lib/omda-migration-integrity.test.ts src/__tests__/lib/omda-fresh-store-e2e.test.ts
       - name: Production dependency security audit
         run: npm audit --omit=dev --audit-level=low
