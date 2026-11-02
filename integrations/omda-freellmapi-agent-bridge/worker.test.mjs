@@ -85,7 +85,7 @@ test('unknown routes and methods are rejected even with valid bearer',async()=>{
 test('redirects, oversized answers, absent answers or substituted models fail closed',async()=>{
  const cases=[
   async()=>({status:302}),
-  async()=>({status:200,headers:new Headers({'content-length':'50000'}),text:async()=>'{'} }),
+  async()=>({status:200,headers:new Headers({'content-length':'50000'}),text:async()=>String.fromCharCode(123) }),
   async()=>({status:200,headers:new Headers(),text:async()=>JSON.stringify({model:MODEL,choices:[{message:{}}]})}),
   async()=>({status:200,headers:new Headers(),text:async()=>JSON.stringify({model:'paid-model',choices:[{message:{content:'bad'}}]})})
  ];
