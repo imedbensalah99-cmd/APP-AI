@@ -54,7 +54,24 @@ function isHttpTarget(target: string): boolean {
 }
 
 function parseBackupKey(): Buffer {
-  const raw = (process.env.FREEAPI_DB_BACKUP_KEY || process.env.ENCRYPTION_KEY || '').trim();
+  const freshOnly = process.env.OMDA_FREELLMAPI_FRESH_ONLY?.trim().toLowerCase() === 'true';
+  const dedicated = (process.env.FREEAPI_DB_BACKUP_KEY || '').trim();
+  const fallback = (process.env.ENCRYPTION_KEY || '').trim();
+  // Never silently use the primary application encryption key for the clean
+  // FreeLLMAPI backup: it is an independent, specifically provisioned secret.
+  if (freshOnly) {
+    if (dedicated === PLACEHOLDER_KEY || !/^[0-9a-fA-F]{64}$/.test(dedicated)) {
+      throw new Error('OMDA fresh-only backup requires a dedicated 64-hex FREEAPI_DB_BACKUP_KEY');
+    }
+    if (fallback && dedicated.toLowerCase() === fallback.toLowerCase()) {
+      throw new Error('OMDA fresh-only backup key must be distinct from ENCRYPTION_KEY');
+    }
+    const token = (process.env.FREEAPI_DB_BACKUP_TOKEN || '').trim();
+    if (!/^[A-Za-z0-9_-]{48,256}$/.test(token)) {
+      throw new Error('OMDA fresh-only backup requires a configured authentication token');
+    }
+  }
+  const raw = freshOnly ? dedicated : (dedicated || fallback);
   if (!raw || raw === PLACEHOLDER_KEY || !/^[0-9a-fA-F]{64}$/.test(raw)) {
     throw new Error('FREEAPI_DB_BACKUP_KEY or ENCRYPTION_KEY must be a 64-character hex key when DB backup is enabled');
   }
