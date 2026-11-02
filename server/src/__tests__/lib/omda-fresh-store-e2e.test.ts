@@ -73,6 +73,30 @@ afterEach(()=>{
  for(const dir of dirs.splice(0)){fs.rmSync(dir,{recursive:true,force:true});}
 });
 
+describe('OMDA fresh-only key isolation',()=>{
+ it('never substitutes the application encryption key for the missing backup key',async()=>{
+   prepareEnv();
+   delete process.env.FREEAPI_DB_BACKUP_KEY;
+   const {db,source}=makeDatabase();
+   vi.stubGlobal('fetch',async()=>{throw new Error('Network must never be called with missing backup key');});
+   try{await expect(backupDbNow(db,source)).rejects.toThrow(/dedicated 64-hex FREEAPI_DB_BACKUP_KEY/);}finally{db.close();}
+ });
+ it('rejects reuse of the application encryption key',async()=>{
+   prepareEnv();
+   process.env.FREEAPI_DB_BACKUP_KEY=process.env.ENCRYPTION_KEY;
+   const {db,source}=makeDatabase();
+   vi.stubGlobal('fetch',async()=>{throw new Error('Network must never be called with reused backup key');});
+   try{await expect(backupDbNow(db,source)).rejects.toThrow(/distinct from ENCRYPTION_KEY/);}finally{db.close();}
+ });
+ it('requires backup authentication before any upload',async()=>{
+   prepareEnv();
+   delete process.env.FREEAPI_DB_BACKUP_TOKEN;
+   const {db,source}=makeDatabase();
+   vi.stubGlobal('fetch',async()=>{throw new Error('Network must never be called without auth token');});
+   try{await expect(backupDbNow(db,source)).rejects.toThrow(/requires a configured authentication token/);}finally{db.close();}
+ });
+});
+
 describe('OMDA FreeLLMAPI fresh-only backup integration (no external requests)',()=>{
  it('rejects legacy or missing backup targets before any read or write',()=>{
    prepareEnv();
