@@ -48,8 +48,13 @@ test('record only status codes, zero secrets and bounded last 30 checks',async()
 test('public Worker route is unavailable and scheduled checks never return content',async()=>{
  const res=await worker.fetch(new Request('https://example.invalid/'));assert.equal(res.status,404);
  assert.equal(res.headers.get('Cache-Control'),'no-store');
- let task;const db=mockDb();const fn=worker.scheduled({},{CHECK_DB:db},{waitUntil(p){task=p;}});
- await task;await fn;
+ let task;const db=mockDb();
+ const prior=globalThis.fetch;
+ globalThis.fetch=async url=>({status:url.endsWith('/api/ping')?200:403});
+ try {
+   const fn=worker.scheduled({},{CHECK_DB:db},{waitUntil(p){task=p;}});
+   await task;await fn;
+ } finally {globalThis.fetch=prior;}
  assert.equal(db.rows.length,1);
 });
 test('no changes to OMDA Director, billing or publishing APIs',async()=>{
