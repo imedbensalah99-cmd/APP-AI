@@ -26,6 +26,15 @@ function backupTarget(): string | null {
     ?? process.env.FREEAPI_DB_BACKUP_PATH
     ?? '';
   const trimmed = raw.trim();
+  // OMDA clean-start staging must never restore from or overwrite the legacy
+  // encrypted backup, even if somebody mistakenly copies its environment URL.
+  // Enable this flag only after provisioning the new store and its secrets.
+  if (process.env.OMDA_FREELLMAPI_FRESH_ONLY?.trim().toLowerCase() === 'true') {
+    const isolated = 'https://omda-freellmapi-fresh-backup-v1.imedbensalah9988.workers.dev/freeapi.db.backup';
+    if (trimmed !== isolated) {
+      throw new Error('OMDA fresh-only mode requires the dedicated new backup URL; legacy or missing targets are forbidden');
+    }
+  }
   return trimmed.length > 0 ? trimmed : null;
 }
 
