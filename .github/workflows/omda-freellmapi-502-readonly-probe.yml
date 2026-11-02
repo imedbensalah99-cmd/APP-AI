@@ -32,3 +32,4 @@ jobs:
             echo 'READ_ONLY_GATEWAY_HEALTH=FAIL'
             exit 1
           fi
+# Post-deploy regression verification for Cloudflare gateway coldstart-v3 (read-only).
