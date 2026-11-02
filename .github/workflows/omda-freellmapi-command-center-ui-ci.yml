@@ -1,0 +1,55 @@
+name: OMDA Mobile Command Center — offline UI smoke
+on:
+  push:
+    branches:
+      - omda-freellmapi-secure-runtime-v1
+    paths:
+      - 'integrations/omda-freellmapi-command-center/**'
+      - 'integrations/omda-freellmapi-artifact-factory/**'
+      - '.github/workflows/omda-freellmapi-command-center-ui-ci.yml'
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  ui-smoke:
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '24'
+      - name: Validate inline UI module JavaScript syntax
+        shell: bash
+        run: |
+          node --experimental-vm-modules --input-type=module <<'NODE'
+          import fs from 'node:fs';
+          import vm from 'node:vm';
+          import path from 'node:path';
+          const file='integrations/omda-freellmapi-command-center/index.html';
+          const html=fs.readFileSync(file,'utf8');
+          const match=html.match(/<script type="module">([\s\S]*?)<\/script>/);
+          if(!match)throw Error('UI module missing');
+          new vm.SourceTextModule(match[1]);
+          const imports=[...match[1].matchAll(/import\s+\{[^}]+\}\s+from\s+'([^']+)'/g)];
+          if(imports.length!==1)throw Error('Expected exactly one local module import');
+          const resolved=path.resolve(path.dirname(file),imports[0][1]);
+          if(!fs.existsSync(resolved))throw Error('Command engine import broken');
+          if(!html.includes('form.addEventListener(')&&!html.includes("addEventListener('submit'"))throw Error('Submit handler missing');
+          console.log('OMDA_MOBILE_UI_MODULE_SYNTAX=PASS');
+          NODE
+      - name: Serve UI and module through a local HTTP server only
+        shell: bash
+        run: |
+          set -euo pipefail
+          python3 -m http.server 18765 --bind 127.0.0.1 --directory integrations >/tmp/omda-ui.log 2>&1 &
+          pid=$!
+          trap 'kill "$pid" 2>/dev/null || true' EXIT
+          sleep 2
+          curl -fsS http://127.0.0.1:18765/omda-freellmapi-command-center/index.html -o /tmp/omda-ui.html
+          curl -fsS http://127.0.0.1:18765/omda-freellmapi-artifact-factory/engine.mjs -o /tmp/omda-engine.mjs
+          grep -q 'OMDA.*Command Center' /tmp/omda-ui.html
+          grep -q 'export {execute' /tmp/omda-engine.mjs
+          echo 'OMDA_MOBILE_UI_HTTP_SMOKE=PASS'
+      - name: Recheck live artifact generation engine without API use
+        run: node --test integrations/omda-freellmapi-artifact-factory/engine.test.mjs
