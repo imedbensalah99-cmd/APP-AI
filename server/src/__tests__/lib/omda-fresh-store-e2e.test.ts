@@ -38,6 +38,12 @@ function fakeStore(){
    if(sql.startsWith('INSERT INTO fresh_backup_versions')){versions.set(args[0],{version_id:args[0],sha256:args[1],size_bytes:args[2],chunk_count:args[3]});return{};}
    if(sql.startsWith('INSERT INTO fresh_backup_chunks')){const c=chunks.get(args[0])||[];c.push({ordinal:args[1],payload_b64:args[2]});chunks.set(args[0],c);return{};}
    if(sql.startsWith('INSERT INTO fresh_backup_head')){current=args[0];return{};}
+   if(sql.startsWith('DELETE FROM fresh_backup_')){
+     const stale=[...versions.keys()].filter(id=>id!==current).reverse().slice(2);
+     if(sql.startsWith('DELETE FROM fresh_backup_chunks'))stale.forEach(id=>chunks.delete(id));
+     else stale.forEach(id=>versions.delete(id));
+     return{};
+   }
    throw Error('Unexpected D1 operation');
  };
  const db={
