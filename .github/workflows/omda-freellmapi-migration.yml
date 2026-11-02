@@ -22,7 +22,7 @@ jobs:
       - run: npm ci --ignore-scripts=false
       - name: Typecheck and compile server
         run: npm run build -w server
-      - name: Test read-only migration protection
-        run: npm run test -w server -- src/__tests__/lib/db-backup-restore-only.test.ts
+      - name: Test immutable backup restoration, SQLite integrity and wrong-key fail-closed
+        run: npm run test -w server -- src/__tests__/lib/db-backup-restore-only.test.ts src/__tests__/lib/omda-migration-integrity.test.ts
       - name: Production dependency security audit
         run: npm audit --omit=dev --audit-level=low
