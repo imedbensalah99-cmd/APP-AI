@@ -1,0 +1,40 @@
+name: OMDA Private Agent external perimeter (no inference)
+on:
+  push:
+    branches: [omda-freellmapi-secure-runtime-v1]
+    paths:
+      - '.github/workflows/omda-freellmapi-private-perimeter-ci.yml'
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  perimeter:
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    steps:
+      - name: Verify private Workers cannot be reached via workers.dev
+        shell: bash
+        run: |
+          set -euo pipefail
+          for host in \
+            'omda-freellmapi-agent-private-console-staging-v1.imedbensalah9988.workers.dev' \
+            'omda-freellmapi-agent-bridge-staging-v1.imedbensalah9988.workers.dev'
+          do
+            code="$(curl -sS -o /dev/null -w '%{http_code}' --max-redirs 0 --max-time 25 "https://$host/agent/test" || true)"
+            echo "PRIVATE_WORKER_ACCESS_HTTP=$code for $host"
+            case "$code" in 000|401|403|404|410|530) ;; *) echo 'FAIL: unexpected public access status' >&2; exit 1;; esac
+          done
+      - name: Verify owner gateway requires auth and origin is locked
+        shell: bash
+        run: |
+          set -euo pipefail
+          gateway="https://omda-freellmapi-secure-gateway-v1.imedbensalah9988.workers.dev/playground"
+          origin="https://omda-freellmapi-secure-staging-v1.onrender.com/v1/models"
+          gw="$(curl -sS -o /dev/null -w '%{http_code}' --max-redirs 0 --max-time 65 "$gateway")"
+          echo "OWNER_GATEWAY_ANONYMOUS_HTTP=$gw"
+          case "$gw" in 302|303|307|308|401|403) ;; *) echo 'FAIL: owner gateway not protected' >&2; exit 1;; esac
+          up="$(curl -sS -o /dev/null -w '%{http_code}' --max-redirs 0 --max-time 65 "$origin")"
+          echo "DIRECT_ORIGIN_ANONYMOUS_HTTP=$up"
+          test "$up" = '403'
+      - name: No secrets or inference used
+        run: echo 'Read-only anonymous GETs, no provider tokens, no agent invocations, no paid API calls.'
