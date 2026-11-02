@@ -1,0 +1,42 @@
+name: OMDA MoneyPrinter — unique footage quality gate
+
+on:
+  push:
+    branches:
+      - omda-mpt-render-engine-staging-v1
+    paths:
+      - 'integrations/moneyprinter-direct/clip_quality.py'
+      - 'integrations/moneyprinter-direct/trial04.py'
+      - 'integrations/moneyprinter-direct/test_clip_quality.py'
+      - 'integrations/moneyprinter-direct/Dockerfile'
+      - '.github/workflows/omda-mpt-unique-clips-ci.yml'
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  verify-no-repeat:
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+      - name: Syntax validation (no provider calls)
+        run: python -m py_compile integrations/moneyprinter-direct/clip_quality.py integrations/moneyprinter-direct/trial04.py
+      - name: Pure offline stock selection tests (no downloads)
+        working-directory: integrations/moneyprinter-direct
+        run: python -m unittest -v test_clip_quality.py
+      - name: Reject repeat-by-modulo regressions
+        run: |
+          python - <<'PY'
+          from pathlib import Path
+          src=Path('integrations/moneyprinter-direct/trial04.py').read_text()
+          assert 'j%len(material)' not in src
+          assert 'plan_unique_segments(material)' in src
+          assert 'INSUFFICIENT_UNIQUE_STOCK' in src
+          assert '"per_page": 9' in src
+          print('Guardrails verified; no stock or AI requests made')
+          PY
