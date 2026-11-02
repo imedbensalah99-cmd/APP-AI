@@ -1,0 +1,30 @@
+name: OMDA FreeLLMAPI Agent policy — post-deployment perimeter
+on:
+  push:
+    branches:
+      - omda-freellmapi-secure-runtime-v1
+    paths:
+      - '.github/workflows/omda-agent-policy-live-smoke.yml'
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  safe-smoke:
+    runs-on: ubuntu-latest
+    timeout-minutes: 6
+    steps:
+      - name: Probe anonymous GETs without secrets, prompts or paid calls
+        shell: bash
+        run: |
+          set -euo pipefail
+          root='https://omda-freellmapi-secure-staging-v1.onrender.com'
+          gateway='https://omda-freellmapi-secure-gateway-v1.imedbensalah9988.workers.dev'
+          check() {
+            code="$(curl -sS -o /dev/null -w '%{http_code}' --max-redirs 0 --max-time 100 "$1")"
+            echo "$2 HTTP $code (expected $3)"
+            test "$code" = "$3"
+          }
+          check "$root/api/ping" 'Render health' 200
+          check "$root/v1/models" 'Render origin protected' 403
+          check "$gateway/models/chat" 'Protected browser gateway' 302
+          echo 'PASS: no secrets submitted or inference attempted'
