@@ -1,0 +1,31 @@
+name: OMDA FreeLLMAPI agent adapter — zero-spend validation
+on:
+  push:
+    branches:
+      - omda-freellmapi-secure-runtime-v1
+    paths:
+      - 'integrations/omda-freellmapi-agent-adapter/**'
+      - '.github/workflows/omda-freellmapi-agent-adapter-ci.yml'
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  verify:
+    runs-on: ubuntu-latest
+    timeout-minutes: 6
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '24'
+      - name: Offline unit tests — never submit prompts
+        run: node --test integrations/omda-freellmapi-agent-adapter/adapter.test.mjs
+      - name: Strictly read-only external staging perimeter smoke
+        shell: bash
+        run: |
+          set -euo pipefail
+          base='https://omda-freellmapi-secure-staging-v1.onrender.com'
+          ping="$(curl -sS --retry 2 --retry-delay 8 --max-time 110 -o /dev/null -w '%{http_code}' "$base/api/ping")"
+          locked="$(curl -sS --max-time 80 -o /dev/null -w '%{http_code}' "$base/v1/models")"
+          printf 'health=%s origin_gate=%s\n' "$ping" "$locked"
+          [[ "$ping" = 200 && "$locked" = 403 ]]
