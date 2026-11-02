@@ -5,6 +5,9 @@
 const PATH = '/freeapi.db.backup';
 const MAX_BYTES = 2 * 1024 * 1024;
 const CHUNK_BYTES = 64 * 1024;
+// Keep the current encrypted backup and two prior rollback points.
+// Bounded retention applies only to the NEW isolated store, never legacy D1.
+const RETAIN_VERSIONS = 3;
 const MAGIC = new Uint8Array([70,65,80,73,66,75,49,0]); // FAPIBK1\0
 const NO_STORE = {'Cache-Control':'no-store','X-Content-Type-Options':'nosniff','Referrer-Policy':'no-referrer'};
 
@@ -74,6 +77,15 @@ async function upload(req,db){
     ...chunks.map((item,i)=>db.prepare('INSERT INTO fresh_backup_chunks(version_id,ordinal,payload_b64) VALUES(?,?,?)').bind(id,i,item)),
     db.prepare('INSERT INTO fresh_backup_head(id,version_id) VALUES(1,?) ON CONFLICT(id) DO UPDATE SET version_id=excluded.version_id').bind(id)
   ];
+  // Prune within the same D1 transaction, never before the new head is durable.
+  // Keep head + two most recent non-head versions. Do not touch legacy D1.
+  const oldVersions = `SELECT version_id FROM fresh_backup_versions
+    WHERE version_id <> (SELECT version_id FROM fresh_backup_head WHERE id=1)
+    ORDER BY created_at DESC, rowid DESC LIMIT -1 OFFSET ${RETAIN_VERSIONS-1}`;
+  steps.push(
+    db.prepare(`DELETE FROM fresh_backup_chunks WHERE version_id IN (${oldVersions})`),
+    db.prepare(`DELETE FROM fresh_backup_versions WHERE version_id IN (${oldVersions})`)
+  );
   // Cloudflare D1 batch is an atomic transaction: partial backups never become current.
   await db.batch(steps);
   return reply(200,'Stored');
