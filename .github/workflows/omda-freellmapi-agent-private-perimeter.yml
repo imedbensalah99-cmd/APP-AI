@@ -1,0 +1,38 @@
+name: OMDA FreeLLMAPI private Agent console perimeter (no credentials)
+on:
+  push:
+    branches: [omda-freellmapi-secure-runtime-v1]
+    paths:
+      - '.github/workflows/omda-freellmapi-agent-private-perimeter.yml'
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  public-surface:
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    steps:
+      - name: Private service must not be reachable via workers.dev
+        shell: bash
+        run: |
+          set -euo pipefail
+          base='https://omda-freellmapi-agent-private-console-staging-v1.imedbensalah9988.workers.dev'
+          status=$(curl -sS --max-time 30 --max-redirs 0 -o /dev/null -w '%{http_code}' "$base/agent/test" || true)
+          echo "PRIVATE_CONSOLE_ANON_GET_HTTP=$status"
+          if [[ "$status" == '200' || "$status" == '201' || "$status" == '202' || "$status" == '301' || "$status" == '302' || "$status" == '307' || "$status" == '308' || "$status" == '401' || "$status" == '405' || "$status" == '503' ]]; then
+            echo 'FAIL: private runner appears reachable via public workers.dev'
+            exit 1
+          fi
+          echo 'PRIVATE_CONSOLE_PUBLIC_SURFACE=NOT_EXPOSED'
+      - name: Private bridge must also remain unreachable
+        shell: bash
+        run: |
+          set -euo pipefail
+          base='https://omda-freellmapi-agent-bridge-staging-v1.imedbensalah9988.workers.dev'
+          status=$(curl -sS --max-time 30 --max-redirs 0 -o /dev/null -w '%{http_code}' "$base/agent/chat" || true)
+          echo "PRIVATE_BRIDGE_ANON_GET_HTTP=$status"
+          if [[ "$status" == '200' || "$status" == '201' || "$status" == '202' || "$status" == '301' || "$status" == '302' || "$status" == '307' || "$status" == '308' || "$status" == '401' || "$status" == '405' || "$status" == '503' ]]; then
+            echo 'FAIL: private agent bridge appears reachable via public workers.dev'
+            exit 1
+          fi
+          echo 'PRIVATE_BRIDGE_PUBLIC_SURFACE=NOT_EXPOSED'
