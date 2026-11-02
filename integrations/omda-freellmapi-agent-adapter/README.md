@@ -19,3 +19,19 @@ Scope: FreeLLMAPI (new clean account), Cloudflare, Render, OMDA AI Agents. No vi
 ## Gates before enabling actual agents
 
 Confirm backup-token and 64-hex key are set independently in Cloudflare and Render through authorized UI, verify source and destination credentials match, verify D1 remote PUT/GET and restore across a Render restart, ensure no old backup target remains, then design a scoped server-to-server credential with private identity. Only afterward may a separate staging agent send a bounded test. No paid providers, auto-publication, or changing production in this milestone.
+
+
+## Step 6 execution — 2026-11-02
+
+A **separate staging-only agent-watch Worker** was created:
+- Cloudflare Worker: `omda-freellmapi-agent-watch-staging-v1`
+- Independent Cloudflare D1: `omda-freellmapi-agent-readiness-v1`, table `agent_checks`
+- Worker never accepts public HTTP requests (`fetch=404`, workers.dev disabled, previews disabled); no secrets bound
+- Scheduled code reads only two FreeLLMAPI endpoints using *anonymous GET*: `/api/ping` and `/v1/models`
+- It stores only timestamp, HTTP codes and readiness status, retaining at most 30 checks. Never stores credentials, responses or prompts
+- Six unit/security tests passed; independent real probe on GitHub Actions observed `healthHttp=200`, `modelsWithoutAuthorizationHttp=403`, `state=PERIMETER_OK`. Source: https://github.com/imedbensalah99-cmd/APP-AI/actions/runs/41422810899
+- **Scheduled Cloudflare cron NOT active**. The account has reached the Workers Free limit of 5 cron triggers. API rejected a new trigger (10072). We did **not** upgrade, remove triggers, edit current Director or touch production
+- An isolated GitHub Actions workflow provides read-only probe on branch updates, but it is **not a recurring default-branch schedule**. The D1 for agent check results is empty until the separate Worker is actually invoked.
+- No connection to inference keys, no paid API, no generative task/publishing, and no live changes to original Director or OMDA 2.
+
+**Next safe gate:** Choose a production-neutral recurring trigger (or later safely reuse an existing authorized cron without disturbing it) and secure a scoped client-profile API credential; only then authorize a bounded no-spend inference test. Never present perimeter readiness as proof of model inference or Agent orchestration.
