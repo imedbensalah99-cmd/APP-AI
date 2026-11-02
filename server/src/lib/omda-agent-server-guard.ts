@@ -74,6 +74,12 @@ export function omdaAgentProfileGate(req:Request,res:Response,next:NextFunction)
   if (!token) { next(); return; }
   const auth=resolveAuth(token);
   if(!isOmdaAgentAuth(auth)){ next();return; }
+  // An operator's accidental UI toggle cannot enable inference before the
+  // separately reviewed provider/bridge setup. OFF unless explicitly set.
+  if(process.env.OMDA_AGENT_INFERENCE_ALLOWED!=='true'){
+    res.status(403).json({error:{type:'omda_agent_disabled',message:'OMDA Agent inference is not enabled on this server.'}});
+    return;
+  }
   const path=req.originalUrl.split('?')[0]!;
   if(!validOmdaAgentRequest(req.method,path,req.body)){
     res.setHeader('Cache-Control','no-store');
