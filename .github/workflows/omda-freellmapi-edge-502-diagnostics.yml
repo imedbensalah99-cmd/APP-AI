@@ -1,0 +1,33 @@
+name: OMDA FreeLLMAPI read-only 502 edge diagnostics
+on:
+  push:
+    branches: [omda-freellmapi-secure-runtime-v1]
+    paths:
+      - '.github/workflows/omda-freellmapi-edge-502-diagnostics.yml'
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  inspect:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - name: Probe authenticated boundary and Render warmup without secrets
+        shell: bash
+        run: |
+          set -uo pipefail
+          origin='https://omda-freellmapi-secure-staging-v1.onrender.com'
+          gateway='https://omda-freellmapi-secure-gateway-v1.imedbensalah9988.workers.dev'
+          for record in \
+            "origin-ping|$origin/api/ping" \
+            "origin-dashboard|$origin/playground" \
+            "gateway-ping|$gateway/api/ping" \
+            "gateway-dashboard|$gateway/playground"; do
+            label="${record%%|*}"; target="${record#*|}"
+            echo "---- $label ----"
+            status=$(curl -sS --max-redirs 0 --connect-timeout 15 --max-time 95 \
+              -o /dev/null -w 'HTTP=%{http_code} CONNECT=%{time_connect} TLS=%{time_appconnect} FIRST_BYTE=%{time_starttransfer} TOTAL=%{time_total}' \
+              "$target") || status="network-error"
+            echo "$status"
+          done
+          echo 'All requests are anonymous GETs; redirect following disabled; no API keys, cookies, or AI calls.'
