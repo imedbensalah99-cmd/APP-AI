@@ -1,0 +1,24 @@
+name: OMDA FreeLLMAPI — isolated fresh-store security checks
+on:
+  push:
+    branches:
+      - omda-freellmapi-secure-runtime-v1
+    paths:
+      - 'integrations/omda-freellmapi-fresh-store/**'
+      - '.github/workflows/omda-freellmapi-fresh-store-ci.yml'
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  verify:
+    runs-on: ubuntu-latest
+    timeout-minutes: 7
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '24'
+      - name: Check syntax
+        run: node --check integrations/omda-freellmapi-fresh-store/worker.mjs
+      - name: Test isolated encrypted backup store without secrets or network
+        run: node --test integrations/omda-freellmapi-fresh-store/worker.test.mjs
