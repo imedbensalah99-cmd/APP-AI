@@ -22,3 +22,8 @@ jobs:
         run: node --test integrations/omda-freellmapi-agent-watch/worker.test.mjs
       - name: Syntax check
         run: node --check integrations/omda-freellmapi-agent-watch/worker.mjs
+      - name: Real staging perimeter check — anonymous GET only
+        shell: bash
+        run: |
+          node integrations/omda-freellmapi-agent-watch/probe.mjs
+
