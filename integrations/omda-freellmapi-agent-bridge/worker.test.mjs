@@ -63,3 +63,45 @@ test('wrong upstream model and upstream failures fail closed',async()=>{
  const x2=env();
  assert.equal((await handle(make(),x2,async()=>({status:403}))).status,502);
 });
+
+test('bad JSON, content type, extra fields, and oversized bodies fail before provider',async()=>{
+ const x=env();let calls=0;const remote=async()=>{calls++;return success()};
+ const bad=[
+  new Request(url,{method:'POST',headers:{authorization:'Bearer '+bridge,'content-type':'text/plain'},body:'hello'}),
+  new Request(url,{method:'POST',headers:{authorization:'Bearer '+bridge,'content-type':'application/json'},body:'{invalid'}),
+  new Request(url,{method:'POST',headers:{authorization:'Bearer '+bridge,'content-type':'application/json'},body:JSON.stringify({task:'test',model:'paid-model'})}),
+  new Request(url,{method:'POST',headers:{authorization:'Bearer '+bridge,'content-type':'application/json'},body:JSON.stringify({task:'x'.repeat(3000)})})
+ ];
+ for(const req of bad)assert.equal((await handle(req,x,remote)).status,400);
+ assert.equal(calls,0);assert.equal(x.QUOTA_DB.records.size,0);
+});
+test('unknown routes and methods are rejected even with valid bearer',async()=>{
+ const x=env();let calls=0;const remote=async()=>{calls++;return success()};
+ for(const path of ['/agent/whoami','/agent/chat/extra','/api/ping'])
+  assert.equal((await handle(new Request('https://omda.invalid'+path,{headers:{authorization:'Bearer '+bridge}}),x,remote)).status,404);
+ assert.equal((await handle(new Request(url,{method:'GET',headers:{authorization:'Bearer '+bridge}}),x,remote)).status,405);
+ assert.equal(calls,0);
+});
+test('redirects, oversized answers, absent answers or substituted models fail closed',async()=>{
+ const cases=[
+  async()=>({status:302}),
+  async()=>({status:200,headers:new Headers({'content-length':'50000'}),text:async()=>'{'} }),
+  async()=>({status:200,headers:new Headers(),text:async()=>JSON.stringify({model:MODEL,choices:[{message:{}}]})}),
+  async()=>({status:200,headers:new Headers(),text:async()=>JSON.stringify({model:'paid-model',choices:[{message:{content:'bad'}}]})})
+ ];
+ for(const remote of cases){const x=env();assert.equal((await handle(make(),x,remote)).status,502)}
+});
+test('daily quota and fixed nonpaid parameters survive 10 requests and block 11th',async()=>{
+ const x=env();let calls=0;
+ const remote=async(u,init)=>{
+  calls++;assert.equal(u,'https://omda-freellmapi-secure-staging-v1.onrender.com/v1/chat/completions');
+  const body=JSON.parse(init.body);
+  assert.deepEqual(Object.keys(body).sort(),['max_tokens','messages','model','stream','temperature']);
+  assert.equal(body.model,MODEL);assert.equal(body.max_tokens,128);
+  assert.equal(body.stream,false);assert.equal(body.temperature,0.2);assert.equal(init.redirect,'manual');
+  return success(u,init);
+ };
+ for(let m=0;m<10;m++)assert.equal((await handle(make(),x,remote,()=>new Date(Date.UTC(2026,10,2,12,m)))).status,200);
+ assert.equal((await handle(make(),x,remote,()=>new Date('2026-11-02T13:00:00Z'))).status,429);
+ assert.equal(calls,10);
+});
