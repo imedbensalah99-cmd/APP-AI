@@ -24,8 +24,11 @@ COPY integrations/moneyprinter-direct/test_direct.py /opt/omda-direct/test_direc
 COPY integrations/moneyprinter-direct/staging_once.py /opt/omda-direct/staging_once.py
 COPY integrations/moneyprinter-direct/trial03.py /opt/omda-direct/trial03.py
 COPY integrations/moneyprinter-direct/trial04.py /opt/omda-direct/trial04.py
+COPY integrations/moneyprinter-direct/clip_quality.py /opt/omda-direct/clip_quality.py
+COPY integrations/moneyprinter-direct/test_clip_quality.py /opt/omda-direct/test_clip_quality.py
 RUN cd /opt/omda-direct && python -m pytest -q test_direct.py \
-    && python -m py_compile staging_once.py trial03.py trial04.py \
+    && python -m unittest -v test_clip_quality.py \
+    && python -m py_compile staging_once.py trial03.py trial04.py clip_quality.py \
     && python /opt/MoneyPrinterTurbo/cli.py --help >/dev/null
 RUN groupadd -g 10001 omda && useradd -u 10001 -g 10001 --system omda \
     && mkdir -p /tmp/omda-mpt-direct /opt/omda-direct \
