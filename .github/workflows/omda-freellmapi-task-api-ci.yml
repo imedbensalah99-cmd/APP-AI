@@ -5,6 +5,7 @@ on:
       - omda-freellmapi-task-api-v1
     paths:
       - 'integrations/omda-freellmapi-task-os/**'
+      - 'integrations/omda-freellmapi-project/**'
       - '.github/workflows/omda-freellmapi-task-api-ci.yml'
   workflow_dispatch:
 permissions:
