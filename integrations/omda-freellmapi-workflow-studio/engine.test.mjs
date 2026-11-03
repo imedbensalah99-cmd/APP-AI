@@ -1,6 +1,6 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
-import {makePlan,detectWork,updateStep,summary,validatePlan,exportJSON,MAX_INPUT,MAX_STEPS} from './engine.mjs';
+import {makePlan,detectWork,updateStep,summary,validatePlan,exportJSON,exportCSV,MAX_INPUT,MAX_STEPS} from './engine.mjs';
 
 test('creates multiple independent workstreams in Arabic and English',()=>{
   const p=makePlan('اعمل ويبسايت وجدول إكسل and an email draft');
@@ -55,4 +55,20 @@ test('safe export round trip and progress',()=>{
   const s=exportJSON(p);
   assert.deepEqual(JSON.parse(s),p);
   assert.deepEqual(summary(p),{todo:3,doing:0,done:0,blocked:0,total:3,percent:0});
+});
+
+test('exports Excel-compatible CSV and neutralizes spreadsheet formulas',()=>{
+  const p=makePlan('make excel sheet');
+  const malicious={...p,steps:p.steps.map((s,i)=>i===0?{...s,title:'=HYPERLINK("https://attacker.invalid")'}:s)};
+  const csv=exportCSV(malicious);
+  assert.ok(csv.startsWith('\uFEFF'));
+  assert.match(csv,/^\uFEFF"ID","Workstream","Task","Status"/);
+  assert.match(csv,/"'=HYPERLINK\(""https:\/\/attacker\.invalid""\)"/);
+  assert.match(csv,/\r\n/);
+});
+test('cannot reopen completed prerequisites while descendants remain complete',()=>{
+  let p=makePlan('create website');
+  p=updateStep(p,'website-1','done');
+  p=updateStep(p,'website-2','done');
+  assert.throws(()=>updateStep(p,'website-1','todo'),/prerequisites/);
 });
