@@ -92,5 +92,17 @@ function summary(plan){
   for(const step of plan.steps)counts[step.status]++;
   return {...counts,total:plan.steps.length,percent:Math.round(100*counts.done/plan.steps.length)};
 }
+function csvCell(value){
+  const raw=String(value??'');
+  // Excel/LibreOffice formula-injection guard, including leading whitespace.
+  const safe=/^[\s\uFEFF]*[=+\-@]/.test(raw)?"'"+raw:raw;
+  return '"'+safe.replace(/"/g,'""')+'"';
+}
+function exportCSV(plan){
+  validatePlan(plan);
+  const rows=[['ID','Workstream','Task','Status','Dependencies','Approval required']];
+  for(const s of plan.steps)rows.push([s.id,s.kind,s.title,s.status,s.dependsOn.join(' | '),s.approvalRequired?'Yes':'No']);
+  return '\uFEFF'+rows.map(r=>r.map(csvCell).join(',')).join('\r\n')+'\r\n';
+}
 function exportJSON(plan){validatePlan(plan);return JSON.stringify(plan,null,2)+'\n';}
-export {makePlan,detectWork,updateStep,summary,validatePlan,exportJSON,MAX_INPUT,MAX_STEPS};
+export {makePlan,detectWork,updateStep,summary,validatePlan,exportJSON,exportCSV,MAX_INPUT,MAX_STEPS};
