@@ -60,3 +60,12 @@ Candidate A: namespace new task tables in dedicated FreeLLMAPI **readiness** D1,
 - **Fresh backup network exposure** remains present (workers.dev enabled), but bearer route was not probed. Do not claim protected until independently checked. No unauthenticated access to private data attempted.
 - Branch isolation diff verified against base: changes only under integrations/omda-freellmapi-* and their dedicated .github workflows; no main/legacy OMDA/OMDA2 edits. Existing Render deploy was not triggered.
 - Pending next critical gate: owner-authenticated private API/perimeter and verified fresh dedicated task-backup/restore and D1 quota before migration. If blocked, implement safe session/worker code behind offline tests only.
+
+
+## Session checkpoint — 2026-11-03, Task API security slice
+- Verified starting branch omda-freellmapi-xlsx-v1 SHA ba75c0ed4602f675a2fd608926d897878b27e960 with artifact CI success (41616433565); PR #17 remains draft, never merged.
+- New isolated child omda-freellmapi-task-api-v1 forked exactly from this head. It adds access.mjs (real Cloudflare Access RS256 JWKS validation, issuer/audience/owner allowlist, fail-closed) and worker.mjs (D1 task create/read/list/pause/resume/cancel/events with idempotency digest, optimistic versions and atomic audit). Original task schema was updated to include request_digest_sha256; offline schema tests adjusted.
+- Cloudflare Access inventory: seven account Access apps at this verification; one FreeLLMAPI Gateway Owner Only application exists, but **none dedicated to Task OS**. Do not borrow another OMDA app's audience or identity.
+- GitHub Actions verified at commit 68fded72bbb082e91c9c336cdac4363dbb477062: https://github.com/imedbensalah99-cmd/APP-AI/actions/runs/41620688703 — **8/8 schema SQLite + 8/8 Node API/RS256 integration PASS**. No model provider calls or paid operations performed. Real SQLite open/reopen worked; Cloudflare Access JWT remote origin is mocked through fixture-generated RS256 signatures, not a live Access login. No cloud D1 migration, staging Worker deploy, external effect or UI rollout occurred.
+- **Status API code: CI_VERIFIED, not STAGING_VERIFIED or LIVE_VERIFIED.** Existing Command Center remains OFFLINE_ONLY. Feature blocked for Cloudflare release by verified owner-only Access routing and task backup/restore, plus rate limiting and migration gating.
+- Render still on older SHA and auto-deploy off; no Render mutation. Parent PR #17 unchanged. Unrelated OMDA AI Company, OMDA 2 and original main remain outside scope.
