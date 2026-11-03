@@ -1,0 +1,41 @@
+name: OMDA FreeLLMAPI Task OS — encrypted recovery rehearsal (zero cloud writes)
+on:
+  push:
+    branches:
+      - omda-freellmapi-recovery-v1
+    paths:
+      - 'integrations/omda-freellmapi-task-os/**'
+      - 'integrations/omda-freellmapi-project/**'
+      - '.github/workflows/omda-freellmapi-recovery-ci.yml'
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  task-recovery:
+    runs-on: ubuntu-latest
+    timeout-minutes: 8
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '24'
+      - name: Check schema, backup and API syntax
+        run: |
+          node --check integrations/omda-freellmapi-task-os/recovery.mjs
+          node --check integrations/omda-freellmapi-task-os/recovery.test.mjs
+          node --check integrations/omda-freellmapi-task-os/worker.mjs
+          node --check integrations/omda-freellmapi-task-os/access.mjs
+      - name: Real SQL schema test
+        run: python3 integrations/omda-freellmapi-task-os/test_schema.py
+      - name: Real signed JWT and task API test
+        run: node --test integrations/omda-freellmapi-task-os/worker.test.mjs
+      - name: Real AES-256-GCM task-only recovery and coexistence tests
+        run: node --test integrations/omda-freellmapi-task-os/recovery.test.mjs
+      - name: Offline-only verification
+        run: |
+          echo "OMDA_TASK_BACKUPS_CONTAIN_REAL_DATA=false"
+          echo "OMDA_LIVE_D1_EXPORT_OR_RESTORE=false"
+          echo "OMDA_D1_MIGRATION=false"
+          echo "OMDA_CLOUDFLARE_ACCESS_APP_CREATED=false"
+          echo "OMDA_WORKER_DEPLOYMENT=false"
+          echo "OMDA_PROVIDER_CALLS=0"
