@@ -1,0 +1,33 @@
+name: OMDA Workflow Studio CI
+on:
+  push:
+    branches: [omda-freellmapi-secure-runtime-v1]
+    paths:
+      - "integrations/omda-freellmapi-workflow-studio/**"
+      - ".github/workflows/omda-freellmapi-workflow-studio-ci.yml"
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  workflow-studio:
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: "22"
+      - name: Run offline workflow engine tests
+        run: node --test integrations/omda-freellmapi-workflow-studio/engine.test.mjs
+      - name: Verify browser UI links working engine and no remote scripts
+        run: |
+          node --input-type=module -e '
+            import fs from "node:fs";
+            import assert from "node:assert/strict";
+            const html=fs.readFileSync("integrations/omda-freellmapi-workflow-studio/index.html","utf8");
+            assert.match(html,/from \x27\.\/engine\.mjs\x27/);
+            assert.match(html,/localStorage/);
+            assert.match(html,/exportJSON/);
+            assert.doesNotMatch(html,/<script[^>]+src=["\x27]https?:/);
+            console.log("PASS: frontend static integration");
+          '
