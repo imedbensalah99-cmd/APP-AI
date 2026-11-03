@@ -28,6 +28,7 @@ CREATE TABLE IF NOT EXISTS omda_task_tasks (
   project_scope TEXT NOT NULL DEFAULT 'omda-freellmapi-agents'
     CHECK(project_scope='omda-freellmapi-agents'),
   idempotency_key TEXT NOT NULL CHECK(length(idempotency_key) BETWEEN 8 AND 128),
+  request_digest_sha256 TEXT NOT NULL CHECK(length(request_digest_sha256)=64),
   original_command TEXT NOT NULL CHECK(length(original_command) BETWEEN 3 AND 2500),
   intent_json TEXT NOT NULL DEFAULT '[]' CHECK(json_valid(intent_json)),
   status TEXT NOT NULL CHECK(status IN

@@ -1,0 +1,36 @@
+name: OMDA FreeLLMAPI Task API — signed access and SQLite integration CI
+on:
+  push:
+    branches:
+      - omda-freellmapi-task-api-v1
+    paths:
+      - 'integrations/omda-freellmapi-task-os/**'
+      - 'integrations/omda-freellmapi-project/**'
+      - '.github/workflows/omda-freellmapi-task-api-ci.yml'
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  secure-task-api:
+    runs-on: ubuntu-latest
+    timeout-minutes: 6
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '24'
+      - name: Validate syntax without secrets or deployment
+        run: |
+          node --check integrations/omda-freellmapi-task-os/access.mjs
+          node --check integrations/omda-freellmapi-task-os/worker.mjs
+          node --check integrations/omda-freellmapi-task-os/worker.test.mjs
+      - name: Real SQLite Task schema isolation and approval tests
+        run: python3 integrations/omda-freellmapi-task-os/test_schema.py
+      - name: Signed Access JWT and actual SQLite-backed Task API integration tests
+        run: node --test integrations/omda-freellmapi-task-os/worker.test.mjs
+      - name: Prove offline-only execution gate
+        run: |
+          echo "OMDA_TASK_API_DEPLOYED=false"
+          echo "OMDA_D1_LIVE_MIGRATION=false"
+          echo "OMDA_PUBLIC_ACTIONS=0"
+          echo "OMDA_PAID_MODEL_CALLS=0"

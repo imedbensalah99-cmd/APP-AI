@@ -24,3 +24,12 @@ Owner-authorized staging **read-only** auth/perimeter evaluation and independent
 - [CI_VERIFIED / NOT DEPLOYED] MIME email generator accepts Arabic UTF-8 bodies and encoded subjects, emits parser-valid unsent draft, neutralizes header injection. CI 41615769838.
 - [CI_VERIFIED SCHEMA ONLY] Task OS namespaced relational schema, temporary SQLite replay/concurrency tests, actor scoping and one-time approval guard. CI 41616226493. **Not a running D1-backed service.**
 - [NOT_STARTED] Real API auth, D1 migration/recovery, persistent artifact delivery and mobile end-to-end remain gated. Do not confuse offline tests with a useful owner task system.
+
+
+## Task API checkpoint — 2026-11-03
+- [CI_VERIFIED, NOT DEPLOYED] Signed Access JWT verification with strict issuer/aud/owner matching and WebCrypto; private configuration and default kill switch.
+- [CI_VERIFIED, NOT DEPLOYED] D1-compatible create/list/inspect/pause/resume/cancel/events with optimistic versions, atomic audit and idempotency hashes; real disposable SQLite + RS256 tests on GitHub Actions (run 41620688703).
+- [NOT_STARTED] Real Cloudflare Access-protected Task OS route and dedicated Access app; do not reuse Gateway or other project audiences.
+- [NOT_STARTED] Isolated backup of task tables, fresh-instance restore, reversible D1 migration and free quota proof.
+- [NOT_STARTED] Durable task runner, exact hashed approvals API, server-side rate limits, artifact persistence, authenticated mobile dashboard and restart acceptance in staging.
+- [BLOCKED_ACCESS] Live Groq only after validated free plan, hidden private caller, server quotas and one authorized smoke request.
