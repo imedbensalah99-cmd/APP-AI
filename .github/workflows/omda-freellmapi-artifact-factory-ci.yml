@@ -6,6 +6,8 @@ on:
       - omda-freellmapi-xlsx-v1
     paths:
       - 'integrations/omda-freellmapi-artifact-factory/**'
+      - 'integrations/omda-freellmapi-project/**'
+      - 'integrations/omda-freellmapi-workflow-studio/engine.mjs'
       - '.github/workflows/omda-freellmapi-artifact-factory-ci.yml'
   workflow_dispatch:
     inputs:
@@ -34,7 +36,7 @@ jobs:
           node --check integrations/omda-freellmapi-artifact-factory/engine.mjs
           node --check integrations/omda-freellmapi-artifact-factory/cli.mjs
       - name: Functional tests (no external APIs)
-        run: node --test integrations/omda-freellmapi-artifact-factory/engine.test.mjs integrations/omda-freellmapi-artifact-factory/xlsx.test.mjs
+        run: node --test integrations/omda-freellmapi-artifact-factory/engine.test.mjs integrations/omda-freellmapi-artifact-factory/xlsx.test.mjs integrations/omda-freellmapi-workflow-studio/engine.test.mjs
       - name: Execute natural-language request into actual files
         env:
           OMDA_TASK_TEXT: ${{ github.event.inputs.request || 'Build website and Excel tracker and draft an email' }}
