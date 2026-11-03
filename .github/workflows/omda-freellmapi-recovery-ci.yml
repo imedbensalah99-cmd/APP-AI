@@ -31,6 +31,8 @@ jobs:
         run: node --test integrations/omda-freellmapi-task-os/worker.test.mjs
       - name: Real AES-256-GCM task-only recovery and coexistence tests
         run: node --test integrations/omda-freellmapi-task-os/recovery.test.mjs
+      - name: Atomic owner request limits in real SQLite
+        run: node --test integrations/omda-freellmapi-task-os/rate-limit.test.mjs
       - name: Offline-only verification
         run: |
           echo "OMDA_TASK_BACKUPS_CONTAIN_REAL_DATA=false"
