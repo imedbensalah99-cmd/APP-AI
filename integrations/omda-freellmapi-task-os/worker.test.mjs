@@ -63,7 +63,9 @@ test('fail-closed configuration and cryptographically signed Access identity',as
   assert.equal((await f.call('/api/me',{auth:await sign({email:'intruder@example.test'})})).status,401);
   assert.equal((await f.call('/api/me',{auth:await sign({exp:1})})).status,401);
   assert.equal((await f.call('/api/me',{auth:await sign({}, {alg:'none'})})).status,401);
-  const invalid=(await sign()).replace(/.$/,'x');
+  const validParts=(await sign()).split('.');
+  const signature=validParts[2];
+  const invalid=[validParts[0],validParts[1],(signature[0]==='A'?'B':'A')+signature.slice(1)].join('.');
   assert.equal((await f.call('/api/me',{auth:invalid})).status,401);
   assert.equal((await f.call('/api/me')).status,200);
   const body=await (await f.call('/api/me')).json();
