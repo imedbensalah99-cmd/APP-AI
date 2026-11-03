@@ -57,7 +57,7 @@ CREATE TABLE IF NOT EXISTS omda_task_steps (
   status TEXT NOT NULL CHECK(status IN
     ('DRAFT','PLANNED','QUEUED','RUNNING','WAITING_FOR_APPROVAL','PAUSED',
      'BLOCKED','RETRYABLE_FAILURE','FAILED','COMPLETED','CANCELED')),
-  approved_required INTEGER NOT NULL DEFAULT 0 CHECK(approved_required IN (0,1)),
+  approval_required INTEGER NOT NULL DEFAULT 0 CHECK(approval_required IN (0,1)),
   attempt_count INTEGER NOT NULL DEFAULT 0 CHECK(attempt_count >= 0),
   max_attempts INTEGER NOT NULL DEFAULT 2 CHECK(max_attempts BETWEEN 0 AND 3),
   lease_owner TEXT,
@@ -102,6 +102,7 @@ CREATE TABLE IF NOT EXISTS omda_task_approvals (
   approved_at TEXT,
   consumed_at TEXT,
   audit_event_id TEXT NOT NULL,
+  UNIQUE(approval_id, task_id, owner_scope),
   CHECK(expires_at > issued_at),
   FOREIGN KEY(task_id, owner_scope)
     REFERENCES omda_task_tasks(task_id, owner_scope) ON DELETE RESTRICT
@@ -124,8 +125,8 @@ CREATE TABLE IF NOT EXISTS omda_task_external_actions (
   recorded_at TEXT NOT NULL,
   FOREIGN KEY(task_id, owner_scope)
     REFERENCES omda_task_tasks(task_id, owner_scope) ON DELETE RESTRICT,
-  FOREIGN KEY(approval_id)
-    REFERENCES omda_task_approvals(approval_id) ON DELETE RESTRICT
+  FOREIGN KEY(approval_id, task_id, owner_scope)
+    REFERENCES omda_task_approvals(approval_id, task_id, owner_scope) ON DELETE RESTRICT
 );
 
 CREATE TABLE IF NOT EXISTS omda_task_artifacts (
