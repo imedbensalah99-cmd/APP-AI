@@ -54,6 +54,7 @@ button:hover,.file:hover{border-color:#a97aff}
 <h2>الملفات والحفظ</h2>
 <div class="actions">
 <button type="button" id="export" disabled>تصدير JSON</button>
+<button type="button" id="csv-export" disabled>تصدير Excel CSV</button>
 <label class="file" for="file">استيراد خطة</label><input id="file" type="file" accept=".json,application/json">
 <button type="button" id="clear" class="subtle">مسح الخطة</button>
 </div>
@@ -68,7 +69,7 @@ button:hover,.file:hover{border-color:#a97aff}
 <p id="status" class="status" role="status">جهّز أول مشروع، أو حمّل خطة موجودة.</p>
 </main>
 <script type="module">
-import {makePlan,updateStep,summary,validatePlan,exportJSON} from './engine.mjs';
+import {makePlan,updateStep,summary,validatePlan,exportJSON,exportCSV} from './engine.mjs';
 const KEY='omda.workflow-studio.v1';
 const byId=id=>document.getElementById(id);
 const board=byId('board'),status=byId('status'),steps=byId('steps');
@@ -77,7 +78,7 @@ function notice(message,isError=false){status.textContent=message;status.classLi
 function save(){try{if(plan)localStorage.setItem(KEY,exportJSON(plan));else localStorage.removeItem(KEY);}catch{notice('تعذر الحفظ المحلي؛ استخدم تصدير JSON.',true);}}
 function cell(tag,text,className=''){const e=document.createElement(tag);e.textContent=text;if(className)e.className=className;return e;}
 function render(){
-  board.hidden=!plan;byId('export').disabled=!plan;steps.replaceChildren();
+  board.hidden=!plan;byId('export').disabled=!plan;byId('csv-export').disabled=!plan;steps.replaceChildren();
   if(!plan)return;
   const counts=summary(plan);
   byId('percentage').textContent=counts.percent+'%';
@@ -112,6 +113,12 @@ byId('export').addEventListener('click',()=>{
   if(!plan)return;
   const url=URL.createObjectURL(new Blob([exportJSON(plan)],{type:'application/json'}));
   const a=document.createElement('a');a.href=url;a.download='omda-workflow-plan.json';a.click();
+  setTimeout(()=>URL.revokeObjectURL(url),1000);
+});
+byId('csv-export').addEventListener('click',()=>{
+  if(!plan)return;
+  const url=URL.createObjectURL(new Blob([exportCSV(plan)],{type:'text/csv;charset=utf-8'}));
+  const a=document.createElement('a');a.href=url;a.download='omda-workflow-tasks.csv';a.click();
   setTimeout(()=>URL.revokeObjectURL(url),1000);
 });
 byId('clear').addEventListener('click',()=>{
