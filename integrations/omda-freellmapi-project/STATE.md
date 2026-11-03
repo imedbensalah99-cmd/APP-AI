@@ -51,3 +51,12 @@ Candidate A: namespace new task tables in dedicated FreeLLMAPI **readiness** D1,
 - Feature child branch has not been deployed and carries no service or secret mutation. To roll back, close/abandon the child branch/PR; keep base at 3961d3f.
 - No emails, applications, public-site publishing, paid model calls, restores, D1 migrations, or cross-project mutations performed in this session.
 - Next highest priority: safely prove durable storage and auth at staging without touching fresh-backup internals, then connect validated XLSX to persistent owner-only task output.
+
+
+## Session update — 2026-11-03 (continuation, verified)
+- XLSX and MIME EML offline generation both connected to the existing Artifact Factory command dispatch. CI run 41615769838 at commit eb27f9a5747a9101dc23ac7578ff884861328c55: **29/29 Node tests PASS**, independently parsed XLSX ZIP/XML + SHA-256 manifest PASS, Python MIME-parser check PASS, three synthetic files uploaded as GitHub Actions artifact, NO paid inference, no external action.
+- Added a new independently testable **Task OS candidate schema** scoped to omda_task_* and its offline SQLite security suite. CI run 41616226493 at commit 88da7cd8f7dd5f7cc28ed4a604642e50f4022dc8: PASS. Explicitly validates idempotency, cross-owner constraints, exact approval payload/target/expiry, single-consumption including parallel claim, 0 paid budget and artifact metadata.
+- **Task OS itself remains NOT_STARTED** as a connected service: schema CI is not staging D1 migration, real authentication, durable task execution or a mobile download. No live DB writes, restores, platform deployments or provider calls.
+- **Fresh backup network exposure** remains present (workers.dev enabled), but bearer route was not probed. Do not claim protected until independently checked. No unauthenticated access to private data attempted.
+- Branch isolation diff verified against base: changes only under integrations/omda-freellmapi-* and their dedicated .github workflows; no main/legacy OMDA/OMDA2 edits. Existing Render deploy was not triggered.
+- Pending next critical gate: owner-authenticated private API/perimeter and verified fresh dedicated task-backup/restore and D1 quota before migration. If blocked, implement safe session/worker code behind offline tests only.
