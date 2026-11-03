@@ -1,6 +1,6 @@
 # OMDA FreeLLMAPI Agents — Task OS candidate migration (offline CI only)
 
-This directory is a **security-validated schema candidate**, not a deployed queue or authenticated Task API. The user-uploaded V4 and V5 project security rules take priority. Absolutely no Cloudflare DB migration is run by the GitHub Actions job.
+This directory now contains a **CI-verified candidate Task API and security/recovery implementation**. It remains NOT DEPLOYED: no live owner-authenticated endpoint, durable cloud queue or approved D1 migration exists. The user-uploaded V4 and V5 project security rules take priority. Absolutely no Cloudflare DB migration is run by the GitHub Actions job.
 
 ## Existing authorized storage boundary
 - Only consider the FreeLLMAPI-owned D1 omda-freellmapi-agent-readiness-v1 after its own backup/restore and quota checks. Its current tables agent_checks, agent_quotas must not be modified or replaced. The new omda_task_* namespace avoids existing names.
@@ -17,7 +17,7 @@ This directory is a **security-validated schema candidate**, not a deployed queu
 - A browser-visible task request must never supply an authoritative owner ID; server derives owner scope from a verified protected session.
 
 ## Critically unimplemented
-- Cloudflare Access/session authentication, authorization middleware, CSRF/CORS, rate limits and actual API endpoints.
+- Live Cloudflare Access tenant verification, protected route, server-side owner onboarding and real staging; owner-scoped API and rate limiting exist in code only.
 - D1 migration, real owner sessions, D1 transactions/behavior verification, rollback, independent task backup/restore, queue leases, artifact blob storage, Android UI or downloads.
 - Approval semantic transition validation, actual provider-effect dispatch, uncertain-response reconciliation, true kill switch and provider quotas.
 - No proof of D1 billing, fault tolerance or availability. No paid inference or live model tests.
@@ -64,3 +64,23 @@ Mandatory *deployment* environment binding names (do not put values in GitHub/ch
 **Outstanding release security gates:** real Cloudflare Access application scoped solely to FreeLLMAPI Task OS, hidden/private Worker route and disabled public workers.dev/preview, owner onboarding without disclosing credentials, verified task-D1 backup/restore, D1 migration rehearsal and free usage evidence, a rollback, rate limiting, CSRF/CORS review, durable artifact store, end-to-end mobile testing and approval ledger implementation. No public publication without explicit owner authorization.
 
 Rollback: discard/close the isolated child-branch PR; no existing D1 tables, Render deployments, main, older OMDA systems or public Workers were changed.
+
+
+## Verified follow-on security/recovery slice (2026-11-03, isolated recovery branch)
+
+**Modules:**
+- recovery.mjs — genuinely encrypted **AES-256-GCM** snapshots of ONLY the exact \`omda_task_*\` SQLite tables, using a fresh random 96-bit nonce per backup, an **external 32-byte secret key**, authenticated AAD, exact archive-version/schema fingerprint checks, plaintext size ceiling (4 MiB), and a temporary read-only transaction for snapshot consistency. Non-Task tables such as \`agent_checks\` and \`agent_quotas\` are never copied. The in-memory buffer returned by this library contains ciphertext only; file storage, transport, retention, ACLs and actual platform key-management are NOT implemented.
+- restoreTaskBackup() authenticates/decrypts **before** touching the destination, requires a fresh empty isolated SQLite schema, refuses any unrelated tables, restores all task records in a SQL transaction, and checks \`foreign_key_check\` / \`integrity_check\`, rolling back on error. **Does not restore directly to Cloudflare D1** and must not be used for live Cloudflare without a separately audited integration and independent restore test.
+- worker.mjs uses an atomic one-row-per-verified-owner **30 requests/minute** D1-compatible conditional UPSERT, returning HTTP 429 and Retry-After 60 on excess. \`omda_task_request_limits\` is included in candidate schema, snapshot whitelist and restore fixture. Do not enable before the schema migration gate.
+
+**Verified test evidence:** https://github.com/imedbensalah99-cmd/APP-AI/actions/runs/41625375029 — **31/31 passing** (8 Python schema + 8 Node signed-JWT/SQL API + 11 encrypted backup/restore + 4 atomic throttling tests), with real disposable SQLite/Node 24, synthetic records, generated keys and no network. The tests reject corrupted ciphertext, wrong keys, owner-crossed records, cross-project tables and nonempty restore targets; validate multi-owner records and an idempotent rehearsal with existing readiness tables.
+
+**Live read-only Cloudflare observation:** FreeLLMAPI readiness D1 \`6b4f75e0-b6ee-40ea-bba7-8954329061e3\` currently holds exactly \`_cf_KV\`, \`agent_checks\` and \`agent_quotas\`. Its Time Travel bookmark endpoint returned a bookmark present (NOT an independently proven restore). Seven Access applications were observed, including an *existing* FreeLLMAPI Gateway with a single owner-email allow policy; **no dedicated Task OS Access app provisioned**, and no separate Task OS authenticated route has been verified.
+
+**Release blockers (must all be verified before any cloud write):**
+1. Create a standalone Cloudflare Access policy/issuer-audience with owner proof and *default deny*, bind **only** the isolated Task OS route. Validate signed application tokens against the real tenant in staging; fake-JWKS CI is insufficient. Configure secure same-origin UI and kill switch; no public bypass.
+2. Independently export task-owned data to a private encrypted, owner-controlled location and successfully restore it to a **fresh cloud-isolated instance** before any live D1 migration. The SQLite utility alone is not a cloud D1 restore proof. Verify storage limits/quota, rollback bookmark applicability, and owner authorization for migration.
+3. Validate schema compatibility with the existing D1 tables (especially native D1 JSON/CHECK/FK), real concurrent inserts/rate-limit claims, CORS/CSRF and quotas, mobile UI flow, private artifact retrieval.
+4. Do not create applications, run D1 \`ALTER/CREATE\`, change workers.dev, deploy services, merge, spend credits, send emails or publish content without the requisite owner authorization and a verified rollback.
+
+**Rollback:** close draft PRs; neither real D1 nor Render staging nor Cloudflare workers were altered in this slice. This is CI_VERIFIED *only*, not STAGING_VERIFIED.
