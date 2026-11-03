@@ -44,6 +44,19 @@ function parseCreate(data){
     throw Error('Invalid priority');
   return {command:data.command.trim(),priority:data.priority??3};
 }
+// Atomic, per-owner limit: 30 authenticated API calls per UTC minute.
+// One row per owner, not a growing per-request log; D1 conditional UPSERT is concurrency-safe.
+async function chargeRateLimit(db,owner,at=Date.now()){
+  const bucket=Math.floor(at/60000),now=new Date(at).toISOString();
+  const row=await db.prepare(
+    'INSERT INTO omda_task_request_limits(owner_scope,minute_bucket,consumed,updated_at) '+
+    'VALUES(?,?,1,?) ON CONFLICT(owner_scope) DO UPDATE SET '+
+    'consumed=CASE WHEN minute_bucket=excluded.minute_bucket THEN consumed+1 ELSE 1 END,'+
+    'minute_bucket=excluded.minute_bucket,updated_at=excluded.updated_at '+
+    'WHERE minute_bucket<>excluded.minute_bucket OR consumed<30 RETURNING consumed')
+    .bind(owner,bucket,now).first();
+  return Boolean(row);
+}
 const find=(db,id,owner)=>db.prepare(SELECT_TASK+' WHERE task_id=? AND owner_scope=? LIMIT 1').bind(id,owner).first();
 async function create(req,db,owner){
   const idem=req.headers.get('idempotency-key');
@@ -135,6 +148,9 @@ function createTaskApi({verifyAccess=createAccessVerifier()}={}){
     if(!auth.ok)return reply(auth.status,{error:auth.status===503?'access_not_configured':'unauthorized'});
     if(!env?.TASK_DB || typeof env.TASK_DB.prepare!=='function'||typeof env.TASK_DB.batch!=='function')
       return reply(503,{error:'database_not_configured'});
+    try{if(!await chargeRateLimit(env.TASK_DB,auth.owner))
+      return reply(429,{error:'rate_limited'}, {'Retry-After':'60'});
+    }catch{return reply(503,{error:'task_backend_unavailable'});}
     const url=new URL(req.url);
     if(url.search||url.hash)return reply(400,{error:'unsupported_query'});
     if(!['GET','POST'].includes(req.method))return reply(405,{error:'method_not_allowed'});
@@ -159,4 +175,4 @@ function createTaskApi({verifyAccess=createAccessVerifier()}={}){
   }};
 }
 export default createTaskApi();
-export {createTaskApi,parseCreate,parseIfMatch,readBoundedJson};
+export {createTaskApi,parseCreate,parseIfMatch,readBoundedJson,chargeRateLimit};

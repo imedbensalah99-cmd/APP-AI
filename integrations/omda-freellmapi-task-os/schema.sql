@@ -4,6 +4,15 @@
 -- This namespace is never installed in a legacy OMDA or OMDA 2 database.
 PRAGMA foreign_keys = ON;
 
+-- One bounded counter per authenticated owner (never an unbounded per-minute history).
+-- Must be in the owner-only isolated Task OS D1 namespace.
+CREATE TABLE IF NOT EXISTS omda_task_request_limits (
+  owner_scope TEXT PRIMARY KEY CHECK(length(owner_scope) BETWEEN 8 AND 128),
+  minute_bucket INTEGER NOT NULL CHECK(minute_bucket >= 0),
+  consumed INTEGER NOT NULL CHECK(consumed BETWEEN 1 AND 30),
+  updated_at TEXT NOT NULL
+);
+
 CREATE TABLE IF NOT EXISTS omda_task_schema_versions (
   version INTEGER PRIMARY KEY CHECK(version > 0),
   applied_at TEXT NOT NULL
