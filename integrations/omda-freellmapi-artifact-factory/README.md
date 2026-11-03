@@ -7,7 +7,7 @@ This is a **new, working offline capability**, independent from the protected Fr
 The engine routes commands into:
 - `website` → real responsive HTML/CSS **starter preview**, with input HTML-escaped.
 - `spreadsheet` → genuine **XLSX** Office Open XML workbook (Data + Summary sheets) with numeric/boolean types, styled headers, freeze panes, filters, and trusted summary formulas. User strings are always stored as literal inline strings, never executable formulas. Maximum 1,000 structured rows / 20 columns; optional rows supported. Formulas are recalculated by the spreadsheet app on open; cached formula results are not claimed.
-- `email` → real **unsent** `.eml` draft. No recipient is invented.
+- `email` → parser-compatible **unsent** RFC 5322 / MIME `.eml` draft with UTF-8 body transfer encoding and folded Arabic subject. No recipient is invented; no connector draft or sending is implied.
 - `document` → Markdown brief, **not** misleadingly labeled a PDF/DOCX.
 - `job_research` → honest research plan JSON; **not** a fabricated jobs search.
 - `general` → Markdown project brief.
@@ -58,3 +58,5 @@ Connect the client-side Command Center to a **private, authenticated, persistent
 The existing command engine and offline mobile browser UI now download a **real binary `spreadsheet/data.xlsx`**, not a renamed CSV. The GitHub Actions CLI writes it as binary and records actual bytes and SHA-256 in `manifest.json`; CI independently opens the ZIP, parses all XML parts, validates two sheets, freeze/filter, formulas, and hashes. A green CI workflow provides a real short-lived GitHub Actions artifact, **not** an authenticated durable task download. The browser remains offline-only; no owner login, persistent cloud task queue, Render deployment, server-side artifact registry, or Android device acceptance was proved. The XLSX has formulas but does not embed recalculated formula results. Only trusted formulas are generated. No model calls, sends or website publication occur.
 
 Verified state and backlog: `../omda-freellmapi-project/STATE.md` and `BACKLOG.md`. They are project-scoped copies, not root documents for other OMDA projects.
+
+Email drafts are checked by Python's independent standard-library MIME parser in CI; no recipient is inserted unless explicitly provided, and all external sending remains gated.
