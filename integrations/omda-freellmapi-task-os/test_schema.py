@@ -22,10 +22,10 @@ def new_connection(path=":memory:"):
 
 def task(c, tid, owner, idem="idempotency-123", state="PLANNED"):
     c.execute("""INSERT INTO omda_task_tasks(
-        task_id,owner_scope,idempotency_key,original_command,intent_json,
+        task_id,owner_scope,idempotency_key,request_digest_sha256,original_command,intent_json,
         status,created_at,updated_at
-    ) VALUES (?,?,?,?,?,?,?,?)""",
-    (tid, owner, idem, "Create a synthetic workbook", '["spreadsheet.generate"]', state, NOW, NOW))
+    ) VALUES (?,?,?,?,?,?,?,?,?)""",
+    (tid, owner, idem, DIGEST, "Create a synthetic workbook", '["spreadsheet.generate"]', state, NOW, NOW))
 
 def approval(c, aid, tid, owner, state="APPROVED", expire=AFTER):
     c.execute("""INSERT INTO omda_task_approvals(
