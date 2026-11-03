@@ -54,7 +54,7 @@ function validatePlan(plan){
   if(!plan||typeof plan!=='object'||Array.isArray(plan)||plan.schemaVersion!==1||
      plan.mode!=='PLAN_ONLY'||typeof plan.command!=='string'||plan.command.length>MAX_INPUT||
      !Array.isArray(plan.steps)||plan.steps.length<1||plan.steps.length>MAX_STEPS) throw new Error('Invalid plan');
-  const ids=new Set();
+  const ids=new Set(), statuses=new Map();
   for(const step of plan.steps){
     if(!step||typeof step!=='object'||typeof step.id!=='string'||ids.has(step.id)||
        !/^[a-z]+-[1-9][0-9]?$/.test(step.id)||!STATES.has(step.status)||
@@ -64,7 +64,10 @@ function validatePlan(plan){
     for(const dep of step.dependsOn){
       if(!ids.has(dep)) throw new Error('Dependencies must precede their tasks');
     }
-    ids.add(step.id);
+    if((step.status==='doing'||step.status==='done')&&
+       step.dependsOn.some(dep=>statuses.get(dep)!=='done'))
+      throw new Error('Active milestones require finished prerequisites');
+    ids.add(step.id);statuses.set(step.id,step.status);
     if(step.approvalRequired&&step.status==='done'&&!step.approved)
       throw new Error('Approval required for protected milestone');
   }
