@@ -23,21 +23,27 @@ test('XSS and HTML injection in user title and instruction are escaped',()=>{
  assert.ok(!html.includes('<script>'));assert.ok(!html.includes('<img src=x onerror='));
  assert.ok(html.includes('name="viewport"'));
 });
-test('CSV output exports rows and neutralizes spreadsheet formula injection',()=>{
+test('XLSX output has genuine ZIP/OOXML bytes, separate sheets and numeric cells',()=>{
  const res=execute({command:'Make excel tracker',rows:[{Item:'Product A',Price:10,Notes:'=HYPERLINK("bad","click")'},{Item:'Product B',Price:4,Notes:'\t+SUM(1,2)'}]});
- const s=res.artifacts[0].content;
- assert.equal(res.artifacts[0].mime,'text/csv');
- assert.ok(s.startsWith('\uFEFF'));
- assert.ok(s.includes('"Product A"'));
- assert.ok(s.includes("'\t+SUM"));
- assert.ok(s.includes("'=HYPERLINK"));
- assert.ok(s.includes('\r\n'));
- assert.equal(csvCell('-2'),'"\'-2"');
+ const sheet=res.artifacts[0];
+ assert.equal(sheet.path,'spreadsheet/data.xlsx');
+ assert.equal(sheet.mime,'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet');
+ assert.ok(sheet.content instanceof Uint8Array);
+ assert.deepEqual([...sheet.content.slice(0,4)],[80,75,3,4]);
+ const data=new TextDecoder().decode(sheet.content);
+ assert.ok(data.includes('<sheet name="Summary"'));
+ assert.ok(data.includes('Product A'));
+ assert.ok(data.includes('10</v>'));
+ assert.ok(data.includes('=HYPERLINK'));
+ assert.ok(data.includes('<f>COUNTA('));
+ assert.ok(!data.includes('<f>=HYPERLINK'));
+ assert.ok(csvCell('-2').includes("'-2"));
 });
-test('Data rows are not fabricated: empty input gives labeled editable template only',()=>{
- const csv=execute({command:'Create excel sheet'}).artifacts[0].content;
- assert.ok(csv.includes('Review generated template'));
- assert.ok(!csv.includes('Real job offer'));
+test('Empty input produces labeled synthetic XLSX template, not fabricated real data',()=>{
+ const sheet=execute({command:'Create excel sheet'}).artifacts[0];
+ const data=new TextDecoder().decode(sheet.content);
+ assert.ok(data.includes('Review generated template'));
+ assert.ok(!data.includes('Real job offer'));
 });
 test('Email stays a local draft and does not silently invent a recipient',()=>{
  const result=execute({command:'Draft an email to follow up'});
@@ -64,7 +70,7 @@ test('Doc requests are markdown drafts, not incorrectly labeled PDFs',()=>{
 test('Rejects unexpected properties, oversized command, excessive rows and unsafe types',()=>{
  for(const bad of [
   {command:'ok',model:'paid'},{command:'x'.repeat(2501)},
-  {command:'Create CSV',rows:Array.from({length:101},()=>({A:1}))},
+  {command:'Create CSV',rows:Array.from({length:1001},()=>({A:1}))},
   {command:'Create CSV',rows:[{A:{nested:true}}]},
   {command:'Create CSV',rows:[{A:'x'.repeat(2001)}]},
   {command:'hello',title:'x'.repeat(151)}

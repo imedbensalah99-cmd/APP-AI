@@ -7,7 +7,7 @@ const TYPES = Object.freeze([
   {kind:'website',label:'Website draft',match:/\b(website|web\s?site|landing page|webpage)\b|موقع|ويبسايت|صفحة ويب/i,
     steps:['Collect requirements','Generate local website draft','Review mobile and accessibility','Approval before public deployment'],gate:true},
   {kind:'spreadsheet',label:'Spreadsheet',match:/\b(excel|spreadsheet|csv|xlsx)\b|اكسل|إكسل|جدول|جداول/i,
-    steps:['Define sheet columns','Generate offline CSV draft','Validate formulas and exported data'],gate:false},
+    steps:['Define sheet columns','Generate offline XLSX draft','Validate workbook formulas and exported data'],gate:false},
   {kind:'document',label:'Document',match:/\b(word|document|pdf|report)\b|تقرير|مستند|وورد|بي دي اف/i,
     steps:['Outline document','Prepare draft','Check accuracy and formatting'],gate:false},
   {kind:'email',label:'Email draft',match:/\b(email|e-mail|outreach|message)\b|ايميل|إيميل|بريد|رسالة إلكترونية/i,
