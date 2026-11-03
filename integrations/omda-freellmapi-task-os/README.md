@@ -31,3 +31,36 @@ This directory is a **security-validated schema candidate**, not a deployed queu
 
 ## Validation
 CI: .github/workflows/omda-freellmapi-task-schema-ci.yml runs the Python standard-library sqlite3 tests against disposable in-memory and temporary file databases. No cloud endpoints, service secrets, model API calls or paid services are used. Validating local SQLite is *not* equivalent to a live D1 acceptance test. Schema remains CI_VERIFIED while Task OS as a user-facing feature is NOT_STARTED.
+
+
+## New verified implementation: Access-validated Task API (child branch, 2026-11-03)
+
+**Code:** access.mjs + worker.mjs + worker.test.mjs + sqlite-d1.test-helper.mjs.
+**Current status:** CI_VERIFIED implementation against genuine disposable SQLite; NOT deployed to Cloudflare, NOT migrated to live D1, NOT authenticated against the owner's actual Access tenant.
+
+Available routes (all require a **cryptographically verified** Cloudflare Access JWT in the Cf-Access-Jwt-Assertion header):
+- GET /api/me — owner scope metadata only, no PII or secrets.
+- POST /api/tasks — immutable validated command and deterministic intents; required Idempotency-Key; starts only in PLANNED, never executes.
+- GET /api/tasks — owner-scoped last 25 planned tasks.
+- GET /api/tasks/:uuid — details and ETag version.
+- GET /api/tasks/:uuid/events — owner-scoped audit events.
+- POST /api/tasks/:uuid/pause|resume|cancel — strict same-origin browser POST and If-Match: "vN". Running cancellation marks cancel_requested but never falsely reports stopped.
+
+Mandatory *deployment* environment binding names (do not put values in GitHub/chat):
+- OMDA_API_ENABLED=true (OFF until trusted Access route + backup/restore complete)
+- OMDA_ACCESS_ISSUER = exact HTTPS team issuer ending in .cloudflareaccess.com
+- OMDA_ACCESS_AUD = this application's dedicated audience (never reuse other OMDA applications' audience as an authorization substitute)
+- OMDA_OWNER_EMAIL = allowlisted verified owner email only
+- OMDA_OWNER_SUB (optional stronger identity binding)
+- OMDA_ALLOWED_ORIGIN = exact https:// owner-only front-end origin; cross-site mutation rejected
+- TASK_DB = explicit binding to the authorized dedicated FreeLLMAPI readiness D1, only AFTER isolated task backup and schema migration gates
+
+**Identity protocol:** A real RS256 signature is verified via the Access issuer JWKS, with issuer, audience, expiration, optional nbf/iat, email, sub, and optional owner-sub checks. JWKS is cached for 5 minutes. The application is fail-closed when disabled, missing configuration, unsigned, expired, or unmatched; no raw JWT or cert errors appear in responses. Credentials and CVs must never be inserted in public workflows, repos or logs. Cloudflare Access must additionally protect the routing layer; application-level JWT verification is defense in depth.
+
+**State and concurrency:** tasks are inserted with a request digest bound to owner + idempotency key; a reused key with a different payload gives 409. D1 batch transaction atomically stores tasks and audit records. Mutations require an exact ETag and an atomic conditional UPDATE with an event in the same batch, preventing stale overwrite. A RUNNING task cancellation is 202 pending runner acknowledgment, never a false CANCELED. This branch implements state management only: no execution engine, job queue consumer, external action dispatcher or approvals API.
+
+**Read-only/offline CI evidence:** https://github.com/imedbensalah99-cmd/APP-AI/actions/runs/41620688703 — 8 real SQLite schema security tests + 8 Node Task API tests with a real 2048-bit RS256-generated JWT, fake JWKS transport (no network), genuine SQLite-backed D1-compatible adapter, idempotent create, real reopen persistence, owner isolation, cross-origin/invalid body rejection, version conflict, and pending cancellation semantics. This is **CI_VERIFIED**, not **STAGING_VERIFIED**; no live Cloudflare/D1/Access or Android evidence exists.
+
+**Outstanding release security gates:** real Cloudflare Access application scoped solely to FreeLLMAPI Task OS, hidden/private Worker route and disabled public workers.dev/preview, owner onboarding without disclosing credentials, verified task-D1 backup/restore, D1 migration rehearsal and free usage evidence, a rollback, rate limiting, CSRF/CORS review, durable artifact store, end-to-end mobile testing and approval ledger implementation. No public publication without explicit owner authorization.
+
+Rollback: discard/close the isolated child-branch PR; no existing D1 tables, Render deployments, main, older OMDA systems or public Workers were changed.
