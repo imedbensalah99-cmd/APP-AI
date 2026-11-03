@@ -1,3 +1,4 @@
+import {xlsx} from './xlsx.mjs';
 // OMDA FreeLLMAPI: zero-credit, zero-network artifact factory.
 // Generates real, downloadable static outputs from a natural-language request.
 // It is an *offline tool*, not an LLM call or a promise of completed job research.
@@ -8,7 +9,7 @@ const ALIASES = [
   ['job_research',/\b(?:job|jobs|vacanc(?:y|ies)|career|employment)\b|وظائف|وظيفة|توظيف|شغل|فرص\s*عمل/i],
   ['document',/\b(?:word|document|pdf|report)\b|مستند|تقرير|ملف\s*وورد|وورد|بي\s*دي\s*اف/i]
 ];
-const MAX_COMMAND=2500, MAX_ROWS=100, MAX_COLUMNS=20;
+const MAX_COMMAND=2500, MAX_ROWS=1000, MAX_COLUMNS=20;
 const LIMITS={command:MAX_COMMAND,rows:MAX_ROWS,columns:MAX_COLUMNS};
 const esc=(s)=>String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;').replace(/'/g,'&#39;');
 function assertRequest(input){
@@ -66,7 +67,7 @@ function jobPlan(input){
 }
 const ARTIFACTS={
   website:{name:'website/index.html',mime:'text/html',build:website},
-  spreadsheet:{name:'spreadsheet/data.csv',mime:'text/csv',build:csv},
+  spreadsheet:{name:'spreadsheet/data.xlsx',mime:'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet',build:input=>xlsx(input.rows||[],input.title)},
   email:{name:'email/draft.eml',mime:'message/rfc822',build:email},
   document:{name:'document/brief.md',mime:'text/markdown',build:document},
   job_research:{name:'jobs/research-plan.json',mime:'application/json',build:jobPlan},
