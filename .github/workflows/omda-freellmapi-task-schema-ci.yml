@@ -1,0 +1,25 @@
+name: OMDA FreeLLMAPI Task OS — offline schema security CI
+on:
+  push:
+    branches:
+      - omda-freellmapi-xlsx-v1
+      - omda-freellmapi-secure-runtime-v1
+    paths:
+      - 'integrations/omda-freellmapi-task-os/**'
+      - '.github/workflows/omda-freellmapi-task-schema-ci.yml'
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  sqlite-schema-security:
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    steps:
+      - uses: actions/checkout@v4
+      - name: Run isolated SQLite data/approval security tests (no D1, no secrets)
+        run: python3 integrations/omda-freellmapi-task-os/test_schema.py
+      - name: Assert no live migration invoked
+        run: |
+          test -f integrations/omda-freellmapi-task-os/schema.sql
+          echo "OMDA_TASK_SCHEMA_OFFLINE_ONLY=true"
+          echo "OMDA_PAID_MODEL_CALLS=0"
