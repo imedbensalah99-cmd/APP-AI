@@ -15,6 +15,7 @@ const MAX_SEALED_BYTES=6*1024*1024;
 const TABLES=Object.freeze([
   'omda_task_schema_versions',
   'omda_task_sessions',
+  'omda_task_request_limits',
   'omda_task_tasks',
   'omda_task_steps',
   'omda_task_dependencies',
