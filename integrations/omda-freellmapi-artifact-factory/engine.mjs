@@ -52,11 +52,39 @@ function csv(input){
   for(const row of rows)lines.push(keys.map(k=>csvCell(row[k]??'')).join(','));
   return '\uFEFF'+lines.join('\r\n')+'\r\n';
 }
+// Base64 MIME transfer encoding keeps non-ASCII Arabic/English body text portable
+// without ever treating model/user content as headers or executable attachments.
+function mime64(value) {
+  const bytes=new TextEncoder().encode(value);
+  let raw='';
+  for(const byte of bytes) raw+=String.fromCharCode(byte);
+  return btoa(raw);
+}
+function mimeSubject(value) {
+  const clean=String(value).replace(/[\r\n\u0000-\u001f\u007f]/g,' ').trim();
+  if(/^[\x20-\x7e]*$/.test(clean))return clean;
+  const chunks=[];let part='';
+  for(const ch of clean){
+    if(part && new TextEncoder().encode(part+ch).length>36){
+      chunks.push(part);part='';
+    }
+    part+=ch;
+  }
+  if(part)chunks.push(part);
+  return chunks.map(x=>'=?UTF-8?B?'+mime64(x)+'?=').join('\r\n ');
+}
 function email(input){
   const subject=safeTitle(input.title,'Draft for review');
-  const heads=['Subject: '+subject.replace(/[\r\n]/g,' '),'X-OMDA-Draft: true'];
-  if(input.recipient)heads.unshift('To: '+input.recipient);
-  return heads.join('\r\n')+'\r\n\r\nHello,\r\n\r\nI am writing regarding the following request:\r\n'+input.command.replace(/[\r\n]+/g,' ')+'\r\n\r\nPlease review and customize this draft before sending.\r\n\r\nBest regards\r\n';
+  const heads=[];
+  if(input.recipient)heads.push('To: '+input.recipient);
+  heads.push('Subject: '+mimeSubject(subject));
+  heads.push('MIME-Version: 1.0','Content-Type: text/plain; charset=UTF-8',
+    'Content-Transfer-Encoding: base64','X-OMDA-Draft: true');
+  const body='Hello,\r\n\r\nI am writing regarding the following request:\r\n'+
+    input.command.replace(/[\u0000-\u0008\u000b\u000c\u000e-\u001f]/g,'').replace(/\r?\n/g,' ') +
+    '\r\n\r\nPlease review and customize this draft before sending.\r\n\r\nBest regards\r\n';
+  const encoded=mime64(body).match(/.{1,76}/g)||[];
+  return heads.join('\r\n')+'\r\n\r\n'+encoded.join('\r\n')+'\r\n';
 }
 function document(input){
   const title=safeTitle(input.title,'Project Brief');
