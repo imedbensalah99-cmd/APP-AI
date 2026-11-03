@@ -16,7 +16,7 @@ try{
   const target=new URL('./generated/'+entry.path,import.meta.url);
   if(!target.href.startsWith(outputRoot.href))throw Error('Invalid artifact path');
   await mkdir(dirname(target.pathname),{recursive:true});
-  await writeFile(target,entry.content,'utf8');
+  await writeFile(target,entry.content,typeof entry.content==='string'?'utf8':undefined);
  }
  await writeFile(new URL('./generated/manifest.json',import.meta.url),
    JSON.stringify({intents:result.intents,files:result.artifacts.map(a=>({kind:a.kind,path:a.path,mime:a.mime})),
