@@ -61,7 +61,7 @@ function mime64(value) {
   return btoa(raw);
 }
 function mimeSubject(value) {
-  const clean=String(value).replace(/[\r\n\u0000-\u001f\u007f]/g,' ').trim();
+  const clean=String(value).replace(/[\r\n\u0000-\u001f\u007f]+/g,' ').trim();
   if(/^[\x20-\x7e]*$/.test(clean))return clean;
   const chunks=[];let part='';
   for(const ch of clean){
