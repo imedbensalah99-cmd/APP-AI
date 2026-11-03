@@ -33,3 +33,11 @@ Owner-authorized staging **read-only** auth/perimeter evaluation and independent
 - [NOT_STARTED] Isolated backup of task tables, fresh-instance restore, reversible D1 migration and free quota proof.
 - [NOT_STARTED] Durable task runner, exact hashed approvals API, server-side rate limits, artifact persistence, authenticated mobile dashboard and restart acceptance in staging.
 - [BLOCKED_ACCESS] Live Groq only after validated free plan, hidden private caller, server quotas and one authorized smoke request.
+
+
+## Recovery and release gate — 2026-11-03
+- [CI_VERIFIED] Task OS *SQLite* encrypted archive and fresh-db recovery with AES-256-GCM, 32-byte external key, schema fingerprint, integrity/FK proof. 11 negative/positive cases. This is not live Cloudflare D1 backup/restore.
+- [CI_VERIFIED] Verified owner Task API 30/minute atomic conditional UPSERT cap, one row/owner, reject with 429 on excess; 4 real SQLite cases. Candidate D1 schema includes the limiter but live D1 has no Task OS tables.
+- [BLOCKED_ACCESS] Dedicated Cloudflare Access Task OS app, independent owner route, verified owner identity, nonpublic Worker binding and signed JWT probe.
+- [NOT_STARTED] Owner-authorized private **live task D1 export, isolated restore, migration/reconciliation, rollback rehearsal** and free quota audit. Cloudflare Time Travel bookmark existence only establishes a potential recovery point; not independent restore.
+- [NOT_STARTED] Authenticated private artifact storage and mobile dashboard, durable worker/approvals, staging E2E acceptance, verified external-task idempotency, and explicit promotion gate.
