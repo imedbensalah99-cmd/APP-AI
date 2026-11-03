@@ -47,3 +47,19 @@ with ZipFile(ROOT / xlsx[0]["path"]) as z:
     assert formula is not None and formula.text.startswith("COUNTA(")
     assert parsed["xl/styles.xml"].find("m:cellXfs",ns) is not None
 print("OMDA_XLSX_INDEPENDENT_ZIP_XML_MANIFEST_PASS")
+
+# EML is independently inspected through Python's MIME parser; never sent.
+from email import policy
+from email.parser import BytesParser
+eml_files = [item for item in manifest["files"] if item["path"].endswith(".eml")]
+assert len(eml_files) == 1
+email_bytes = (ROOT / eml_files[0]["path"]).read_bytes()
+msg = BytesParser(policy=policy.default).parsebytes(email_bytes)
+assert not msg.defects
+assert msg["X-OMDA-Draft"] == "true"
+assert msg["MIME-Version"] == "1.0"
+assert msg.get_content_type() == "text/plain"
+assert msg.get_content_charset().lower() == "utf-8"
+assert msg["To"] is None
+assert "Build website" in msg.get_content()
+print("OMDA_EML_INDEPENDENT_MIME_PARSER_PASS")
