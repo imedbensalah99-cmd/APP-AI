@@ -1,0 +1,20 @@
+name: OMDA Website Brief CI
+on:
+  push:
+    branches: [omda-freellmapi-secure-runtime-v1]
+    paths:
+      - 'integrations/omda-freellmapi-website-brief/**'
+      - '.github/workflows/omda-website-brief-ci.yml'
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+      - run: node --test integrations/omda-freellmapi-website-brief/engine.test.mjs
