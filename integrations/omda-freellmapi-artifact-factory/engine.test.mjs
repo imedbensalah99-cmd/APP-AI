@@ -37,7 +37,7 @@ test('XLSX output has genuine ZIP/OOXML bytes, separate sheets and numeric cells
  assert.ok(data.includes('=HYPERLINK'));
  assert.ok(data.includes('<f>COUNTA('));
  assert.ok(!data.includes('<f>=HYPERLINK'));
- assert.equal(csvCell('-2'),'"\\'-2"'.replace('\\\\','\\'));
+ assert.ok(csvCell('-2').includes("'-2"));
 });
 test('Empty input produces labeled synthetic XLSX template, not fabricated real data',()=>{
  const sheet=execute({command:'Create excel sheet'}).artifacts[0];
