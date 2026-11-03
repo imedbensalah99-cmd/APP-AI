@@ -18,3 +18,9 @@ This scoped roadmap accompanies the original owner-uploaded V4/STATE/BACKLOG and
 
 ## Immediate next slice
 Owner-authorized staging **read-only** auth/perimeter evaluation and independent backup restore rehearsal; if those remain blocked, build an offline Task OS schema/approval state-machine with mock-backed security tests without claiming persistence. Preserve verified XLSX module and do not deploy without scope-specific approval.
+
+
+## 2026-11-03 engineering checkpoint
+- [CI_VERIFIED / NOT DEPLOYED] MIME email generator accepts Arabic UTF-8 bodies and encoded subjects, emits parser-valid unsent draft, neutralizes header injection. CI 41615769838.
+- [CI_VERIFIED SCHEMA ONLY] Task OS namespaced relational schema, temporary SQLite replay/concurrency tests, actor scoping and one-time approval guard. CI 41616226493. **Not a running D1-backed service.**
+- [NOT_STARTED] Real API auth, D1 migration/recovery, persistent artifact delivery and mobile end-to-end remain gated. Do not confuse offline tests with a useful owner task system.
