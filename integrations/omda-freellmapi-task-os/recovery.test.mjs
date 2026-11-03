@@ -51,7 +51,7 @@ test('AES-256-GCM encrypted backup excludes existing agent readiness and project
   const doc=JSON.parse(raw);
   assert.equal(doc.format,'omda-freellmapi-task-snapshot-v1');
   assert.equal(doc.schemaSha256,SCHEMA_SHA);
-  assert.equal(TABLES.length,9);
+  assert.equal(TABLES.length,10);
   assert.equal(source.prepare('SELECT note FROM agent_checks').get().note,
     'existing readiness data: never export');
   source.close();
@@ -60,7 +60,7 @@ test('restore encrypted snapshot to genuinely fresh SQLite with owners and FKs p
   const source=seeded(),target=db(),secret=key();
   const archive=sealTaskBackup(source,secret);
   const out=restoreTaskBackup(target,archive,secret);
-  assert.deepEqual(out,{tables:9,rows:6,integrity:'PASS',encrypted:true});
+  assert.deepEqual(out,{tables:10,rows:6,integrity:'PASS',encrypted:true});
   assert.equal(target.prepare('SELECT count(*) n FROM omda_task_tasks').get().n,2);
   assert.equal(target.prepare('SELECT count(*) n FROM omda_task_steps').get().n,1);
   assert.equal(target.prepare('SELECT owner_scope FROM omda_task_approvals').get().owner_scope,
