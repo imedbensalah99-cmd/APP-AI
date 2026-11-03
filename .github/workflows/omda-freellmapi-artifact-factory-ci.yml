@@ -3,13 +3,14 @@ on:
   push:
     branches:
       - omda-freellmapi-secure-runtime-v1
+      - omda-freellmapi-xlsx-v1
     paths:
       - 'integrations/omda-freellmapi-artifact-factory/**'
       - '.github/workflows/omda-freellmapi-artifact-factory-ci.yml'
   workflow_dispatch:
     inputs:
       request:
-        description: "Natural-language request for offline drafts (website / Excel CSV / email / document / job plan)"
+        description: "Natural-language request for offline drafts (website / real Excel XLSX / email / document / job plan)"
         required: true
         type: string
       title:
@@ -29,10 +30,11 @@ jobs:
           node-version: '24'
       - name: Syntax
         run: |
+          node --check integrations/omda-freellmapi-artifact-factory/xlsx.mjs
           node --check integrations/omda-freellmapi-artifact-factory/engine.mjs
           node --check integrations/omda-freellmapi-artifact-factory/cli.mjs
       - name: Functional tests (no external APIs)
-        run: node --test integrations/omda-freellmapi-artifact-factory/engine.test.mjs
+        run: node --test integrations/omda-freellmapi-artifact-factory/engine.test.mjs integrations/omda-freellmapi-artifact-factory/xlsx.test.mjs
       - name: Execute natural-language request into actual files
         env:
           OMDA_TASK_TEXT: ${{ github.event.inputs.request || 'Build website and Excel tracker and draft an email' }}
@@ -42,6 +44,8 @@ jobs:
         run: |
           test -s integrations/omda-freellmapi-artifact-factory/generated/manifest.json
           node -e 'const fs=require("node:fs");const p="integrations/omda-freellmapi-artifact-factory/generated/manifest.json";const m=JSON.parse(fs.readFileSync(p));if(!m.files.length||m.paidApiCalls||m.publishing||m.externalActions.length)process.exit(1);for(const f of m.files)if(!fs.statSync("integrations/omda-freellmapi-artifact-factory/generated/"+f.path).size)process.exit(1);console.log("OMDA_ARTIFACTS_VERIFIED="+m.files.length)'
+      - name: Independently parse real XLSX, confirm workbook XML and manifest hashes
+        run: python3 integrations/omda-freellmapi-artifact-factory/verify_xlsx.py
       - name: Store real output as downloadable GitHub artifact
         uses: actions/upload-artifact@v4
         with:
