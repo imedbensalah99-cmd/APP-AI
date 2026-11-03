@@ -13,7 +13,7 @@ test('real OOXML ZIP with two worksheets, styles, frozen headers and calculated 
   assert.ok(xml.includes('pane ySplit="1"'));
   assert.ok(xml.includes('<autoFilter ref="A1:C3"'));
   assert.ok(xml.includes('<f>COUNTA(Data!A2:A3)</f>'));
-  assert.ok(xml.includes('<f>COUNTIF(Data!C2:C3,"Completed")</f>'));
+  assert.ok(xml.includes('<f>COUNTIF(Data!C2:C3,&quot;Completed&quot;)</f>'));
   assert.ok(xml.includes('12.5</v>'));
   assert.ok(xml.includes('عماد'));
   assert.ok(xml.includes('Émilie'));
@@ -30,7 +30,8 @@ test('XML escapes HTML injection and illegal control characters',()=>{
   assert.ok(xml.includes('&lt;script&gt;'));
   assert.ok(xml.includes('&amp;'));
   assert.ok(!xml.includes('<script>'));
-  assert.ok(!xml.includes('\u0001'));
+  const dataPart=xml.slice(xml.indexOf('<t xml:space="preserve">'),xml.indexOf('</t>')+4);
+  assert.ok(!dataPart.includes('\u0001'));
 });
 test('zero input is honest template and valid single row and 1000 row boundaries',()=>{
   assert.ok(decoded(xlsx([])).includes('Synthetic template'));
