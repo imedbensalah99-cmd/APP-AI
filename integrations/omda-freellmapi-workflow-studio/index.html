@@ -1,0 +1,131 @@
+<!doctype html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<meta name="color-scheme" content="dark"><title>OMDA | Workflow Studio</title>
+<style>
+:root{font:16px/1.6 system-ui,"Segoe UI",Tahoma,sans-serif;color-scheme:dark;color:#f1efff;background:#080810}
+*{box-sizing:border-box}body{margin:0;background:radial-gradient(ellipse at 80% 0,#49208357,transparent 42%),#080810;min-height:100vh}
+main{width:min(1100px,calc(100% - 32px));margin:auto;padding:30px 0 80px}
+header{display:flex;justify-content:space-between;align-items:center;gap:14px;flex-wrap:wrap;margin-bottom:42px}
+.brand{font-weight:900;font-size:1.4rem;letter-spacing:.04em}.brand b{color:#bca0ff}
+.pill{border:1px solid #51426c;border-radius:30px;padding:6px 12px;color:#cbb9ff;font-size:.75rem}
+h1{font-size:clamp(2rem,7vw,4rem);line-height:1.16;letter-spacing:-.04em;margin:0 0 12px}
+.lead,.muted{color:#a9a9c3}.lead{max-width:650px;margin-bottom:28px}
+.layout{display:grid;grid-template-columns:minmax(0,1fr) minmax(290px,.9fr);gap:18px;align-items:start}
+.panel{background:#14121fe8;border:1px solid #353148;border-radius:20px;padding:22px;box-shadow:0 18px 40px #0004}
+h2{font-size:1.2rem;margin:0 0 18px}.label{display:block;font-weight:700;margin-bottom:8px}
+textarea{width:100%;min-height:160px;resize:vertical;background:#080b15;border:1px solid #5b4e75;border-radius:12px;padding:14px;color:#f9f7ff;font:inherit;line-height:1.75}
+textarea:focus-visible,button:focus-visible,.file:focus-visible{outline:3px solid #b28cff;outline-offset:2px}
+.actions{display:flex;flex-wrap:wrap;gap:9px;margin-top:14px}
+button,.file{font:inherit;font-size:.91rem;font-weight:750;border-radius:10px;border:1px solid #4d456a;color:#eee6ff;background:#2b243c;padding:10px 13px;cursor:pointer}
+button:hover,.file:hover{border-color:#a97aff}
+.primary{background:linear-gradient(135deg,#9757ed,#602cc4);border-color:#8754d7;color:white}
+.subtle{background:#211d2c}.small{font-size:.78rem;padding:6px 9px}
+#board[hidden]{display:none}.board-head{display:flex;align-items:start;justify-content:space-between;gap:10px}
+.progress{height:8px;background:#342d46;overflow:hidden;border-radius:50px;margin:12px 0 19px}
+#bar{width:0%;height:100%;background:linear-gradient(90deg,#9466ff,#63d3be);transition:width .25s}
+.group{color:#cdb2ff;letter-spacing:.02em;font-size:.84rem;margin:20px 0 8px}
+.step{display:flex;align-items:center;justify-content:space-between;gap:10px;border:1px solid #363247;border-radius:11px;background:#191728;padding:12px;margin:9px 0}
+.step strong{display:block;font-size:.9rem;overflow-wrap:anywhere}.step small{display:block;color:#a9a1ba}
+.step.done{border-color:#2b6656}.step.blocked{border-color:#735043}
+.flag{font-size:.7rem;color:#ffcc85;margin-top:5px}
+.status{color:#bdb5da;font-size:.86rem;margin:12px 0}.alert{color:#f6aaa7}
+.note{font-size:.78rem;color:#9e99b7;line-height:1.8;margin-top:20px}
+.metrics{display:flex;gap:10px;flex-wrap:wrap;color:#c7bfda;font-size:.75rem}
+.metrics span{background:#211e2f;border-radius:8px;padding:4px 9px}
+#file{display:none}
+@media(max-width:780px){main{padding-top:18px}.layout{grid-template-columns:1fr}.panel{padding:17px}header{margin-bottom:27px}.step{align-items:flex-start;flex-direction:column}}
+</style>
+</head>
+<body><main>
+<header><div class="brand">OMDA <b>/ عمدة</b></div><span class="pill">WORKFLOW STUDIO · OFFLINE · FREE</span></header>
+<h1>من فكرة واحدة<br>إلى خطة تنفيذ واضحة.</h1>
+<p class="lead">قسّم مشروعك إلى مسارات عمل ومهام مترابطة، وراجع المراحل الحساسة، وصدّر لوحة العمل في ملف JSON. كل العمليات داخل هذا المتصفح فقط.</p>
+<div class="layout">
+<section class="panel" aria-labelledby="planner-title">
+<h2 id="planner-title">مهمة أو مشروع جديد</h2>
+<form id="plan-form">
+<label class="label" for="command">ماذا تريد أن تنجز؟</label>
+<textarea id="command" maxlength="2000" required minlength="3" placeholder="مثال: اصنع ويبسايت، ملف إكسل، ومسودة إيميل لمشروع جديد"></textarea>
+<div class="actions"><button type="submit" class="primary">إنشاء خطة العمل</button><button type="button" id="demo">مثال متعدد المهام</button></div>
+</form>
+<hr style="border:0;border-top:1px solid #363247;margin:25px 0">
+<h2>الملفات والحفظ</h2>
+<div class="actions">
+<button type="button" id="export" disabled>تصدير JSON</button>
+<label class="file" for="file">استيراد خطة</label><input id="file" type="file" accept=".json,application/json">
+<button type="button" id="clear" class="subtle">مسح الخطة</button>
+</div>
+<p class="note">تُحفظ الخطة تلقائيًا داخل هذا المتصفح فقط. لا يوجد مزامنة سحابية، ولا API، ولا إرسال أو نشر أو تطبيق وظيفة أو تنفيذ تلقائي للمهام. اعتماد مرحلة في اللوحة لا يرسل أي شيء للخارج.</p>
+</section>
+<section class="panel" id="board" aria-live="polite" hidden>
+<div class="board-head"><h2>خطة التنفيذ</h2><span class="pill" id="percentage">0%</span></div>
+<div class="metrics" id="metrics"></div><div class="progress" aria-label="نسبة الإنجاز"><div id="bar"></div></div>
+<div id="steps"></div>
+</section>
+</div>
+<p id="status" class="status" role="status">جهّز أول مشروع، أو حمّل خطة موجودة.</p>
+</main>
+<script type="module">
+import {makePlan,updateStep,summary,validatePlan,exportJSON} from './engine.mjs';
+const KEY='omda.workflow-studio.v1';
+const byId=id=>document.getElementById(id);
+const board=byId('board'),status=byId('status'),steps=byId('steps');
+let plan=null;
+function notice(message,isError=false){status.textContent=message;status.classList.toggle('alert',isError);}
+function save(){try{if(plan)localStorage.setItem(KEY,exportJSON(plan));else localStorage.removeItem(KEY);}catch{notice('تعذر الحفظ المحلي؛ استخدم تصدير JSON.',true);}}
+function cell(tag,text,className=''){const e=document.createElement(tag);e.textContent=text;if(className)e.className=className;return e;}
+function render(){
+  board.hidden=!plan;byId('export').disabled=!plan;steps.replaceChildren();
+  if(!plan)return;
+  const counts=summary(plan);
+  byId('percentage').textContent=counts.percent+'%';
+  byId('bar').style.width=counts.percent+'%';
+  byId('metrics').textContent='مكتمل: '+counts.done+' / '+counts.total+' · قيد العمل: '+counts.doing+' · بانتظار: '+counts.todo;
+  let lastKind='';
+  for(const step of plan.steps){
+    if(step.kind!==lastKind){steps.append(cell('h3',step.kind,'group'));lastKind=step.kind;}
+    const item=cell('div','','step '+step.status);
+    const content=cell('div','');
+    content.append(cell('strong',step.title),cell('small',step.status+' · '+step.id));
+    if(step.approvalRequired)content.append(cell('div','مراجعة صريحة مطلوبة قبل إغلاق المرحلة (داخل الخطة فقط)','flag'));
+    const btn=cell('button',step.status==='todo'?'بدء':step.status==='doing'?'إكمال':'إعادة فتح','small');
+    btn.type='button';
+    btn.addEventListener('click',()=>{
+      const next=step.status==='todo'?'doing':step.status==='doing'?'done':'todo';
+      const approve=next==='done'&&step.approvalRequired?confirm('هل راجعت هذه المرحلة؟ هذا توثيق داخلي فقط، ولا ينفذ أي إجراء خارجي.'):false;
+      if(next==='done'&&step.approvalRequired&&!approve)return;
+      try{plan=updateStep(plan,step.id,next,{approve});save();render();notice('تم تحديث تقدّم الخطة محليًا.');}
+      catch(e){notice(e.message,true);}
+    });
+    item.append(content,btn);steps.append(item);
+  }
+}
+byId('plan-form').addEventListener('submit',e=>{
+  e.preventDefault();
+  try{plan=makePlan(byId('command').value);save();render();notice('تم إنشاء خطة جديدة بدون اتصال خارجي.');}
+  catch(err){notice(err.message,true);}
+});
+byId('demo').addEventListener('click',()=>{byId('command').value='اعمل ويبسايت لمشروع جديد وجدول إكسل ومسودة إيميل';byId('command').focus();});
+byId('export').addEventListener('click',()=>{
+  if(!plan)return;
+  const url=URL.createObjectURL(new Blob([exportJSON(plan)],{type:'application/json'}));
+  const a=document.createElement('a');a.href=url;a.download='omda-workflow-plan.json';a.click();
+  setTimeout(()=>URL.revokeObjectURL(url),1000);
+});
+byId('clear').addEventListener('click',()=>{
+  if(plan&&!confirm('هل تريد حذف الخطة المخزنة في هذا المتصفح؟'))return;
+  plan=null;save();render();notice('تم مسح الخطة المحلية.');
+});
+byId('file').addEventListener('change',async e=>{
+  const file=e.target.files?.[0];e.target.value='';
+  if(!file)return;
+  if(file.size>32768){notice('حجم ملف JSON أكبر من الحد المسموح.',true);return;}
+  try{const input=JSON.parse(await file.text());plan=validatePlan(input);save();render();notice('تم استيراد الخطة محليًا.');}
+  catch(err){notice('ملف غير صالح: '+err.message,true);}
+});
+try{const saved=localStorage.getItem(KEY);if(saved)plan=validatePlan(JSON.parse(saved));}
+catch{plan=null;notice('لم تُستعد الخطة المحفوظة؛ استورد نسخة JSON موثوقة.',true);}
+render();
+</script></body></html>
