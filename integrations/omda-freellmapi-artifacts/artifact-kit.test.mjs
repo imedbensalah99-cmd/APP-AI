@@ -1,0 +1,13 @@
+import test from 'node:test';
+import assert from 'node:assert/strict';
+import {buildCsv,buildJobTrackerCsv} from './artifact-kit.mjs';
+test('UTF-8 BOM and CRLF',()=>{const r=buildCsv({columns:['Name'],rows:[['عماد']]});assert.equal(r.rowCount,1);assert.ok(r.content.startsWith('\uFEFF"Name"'));assert.ok(r.content.endsWith('\r\n'));});
+test('formula injection',()=>{const r=buildCsv({columns:['X'],rows:[['=1+1'],[' +cmd'],['\t@SUM(1)'],['-2']]});for(const s of ["'=1+1","' +cmd","'\t@SUM(1)","'-2"])assert.ok(r.content.includes(s));});
+test('escaped quotes',()=>assert.ok(buildCsv({columns:['A'],rows:[['a"b\nc']]}).content.includes('"a""b\nc"')));
+test('bad row',()=>assert.throws(()=>buildCsv({columns:['A'],rows:[['a','b']]})));
+test('row limit',()=>assert.throws(()=>buildCsv({columns:['A'],rows:Array.from({length:1001},()=>['x'])})));
+test('filename traversal',()=>assert.throws(()=>buildCsv({columns:['A'],rows:[],filename:'../evil.csv'})));
+test('duplicate headers',()=>assert.throws(()=>buildCsv({columns:['A','A'],rows:[]})));
+test('invalid cells',()=>{assert.throws(()=>buildCsv({columns:['A'],rows:[[Infinity]]}));assert.throws(()=>buildCsv({columns:['A'],rows:[[{a:1}]]}));});
+test('job tracker',()=>{const r=buildJobTrackerCsv([{company:'Gulf Exchange',role:'AML Analyst',url:'https://example.org/jobs/1'}]);assert.equal(r.rowCount,1);assert.ok(r.content.includes('Gulf Exchange'));});
+test('reject unsafe job URL',()=>assert.throws(()=>buildJobTrackerCsv([{url:'javascript:alert(1)'}])));
