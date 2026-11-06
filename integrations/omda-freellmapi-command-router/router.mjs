@@ -3,6 +3,7 @@
 import {makePlan} from '../omda-freellmapi-workflow-studio/engine.mjs';
 import {buildBrief} from '../omda-freellmapi-website-brief/engine.mjs';
 import {buildCsv,buildJobTrackerCsv} from '../omda-freellmapi-artifacts/artifact-kit.mjs';
+import {draftEmail,exportDraftText} from '../omda-freellmapi-email-drafts/email-draft.mjs';
 const MAX=2000;
 const reject=/[\u0000-\u001f]/u;
 function classify(command){
@@ -13,10 +14,12 @@ function classify(command){
  if(/(?:excel|spreadsheet|csv|xlsx|إكسل|اكسل|جدول|جداول)/i.test(s))return 'spreadsheet';
  return 'workflow';
 }
-function routeCommand(command,{jobs=[],columns,rows}={}){
+function routeCommand(command,{jobs=[],columns,rows,email={}}={}){
  const kind=classify(command),plan=makePlan(command);
  let artifact;
- if(kind==='website'){
+ if(kind==='email'){
+  artifact=exportDraftText(draftEmail({purpose:command,...email}));
+ }else if(kind==='website'){
   artifact={filename:'omda-website-brief.json',mimeType:'application/json; charset=utf-8',content:JSON.stringify(buildBrief(command),null,2)+'\n'};
  }else if(kind==='jobs'){
   artifact=buildJobTrackerCsv(jobs);
