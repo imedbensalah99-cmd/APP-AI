@@ -27,7 +27,11 @@ jobs:
           mkdir -p buildinput
           base64 -d one-take-aod/project-src.tar.gz.b64 | tar -xz -C buildinput
       - name: Install Android platform
-        run: sdkmanager 'platforms;android-35' 'build-tools;35.0.0'
+        run: |
+          SDK_HOME="${ANDROID_HOME:-${ANDROID_SDK_ROOT:-/usr/local/lib/android/sdk}}"
+          SDKMGR="$(find "$SDK_HOME/cmdline-tools" -name sdkmanager -type f -print -quit)"
+          test -n "$SDKMGR" || { echo "SDK manager unavailable at $SDK_HOME"; exit 1; }
+          "$SDKMGR" --sdk_root="$SDK_HOME" 'platforms;android-35' 'build-tools;35.0.0'
       - name: Assemble debug APK
         working-directory: buildinput
         run: gradle --no-daemon :app:assembleDebug
