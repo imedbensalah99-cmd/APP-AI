@@ -1,0 +1,21 @@
+name: OMDA Email Drafts Tests
+on:
+  push:
+    branches: [omda-freellmapi-secure-runtime-v1]
+    paths:
+      - 'integrations/omda-freellmapi-email-drafts/**'
+      - '.github/workflows/omda-email-drafts.yml'
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+      - name: Run offline draft tests
+        run: node --test integrations/omda-freellmapi-email-drafts/email-draft.test.mjs
