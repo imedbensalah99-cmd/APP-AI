@@ -9,6 +9,7 @@ const reject=/[\u0000-\u001f]/u;
 function classify(command){
  if(typeof command!=='string'||command.trim().length<3||command.length>MAX||reject.test(command))throw new TypeError('Invalid command');
  const s=command.trim();
+ if(/(?:email|e-mail|mail draft|بريد|إيميل|ايميل|رسالة إلكترونية)/i.test(s))return 'email';
  if(/(?:website|web\s?site|landing page|portfolio|restaurant site|موقع|ويبسايت|بورتفوليو)/i.test(s))return 'website';
  if(/(?:job|vacanc|career|وظيف|وظائف|توظيف)/i.test(s))return 'jobs';
  if(/(?:excel|spreadsheet|csv|xlsx|إكسل|اكسل|جدول|جداول)/i.test(s))return 'spreadsheet';
