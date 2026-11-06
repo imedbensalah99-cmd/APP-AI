@@ -21,7 +21,9 @@ export function draftEmail({purpose,recipient='',subject='',facts=[],tone='profe
  if(!Array.isArray(facts)||facts.length>12)throw new TypeError('Invalid facts');
  const verified=facts.map((f)=>required(f,'fact',400));
  const to=safeEmail(recipient);
- const title=optional(subject,'subject',160)||(language==='ar'?'بخصوص: ':'Regarding: ')+goal.slice(0,90);
+ const subjectInput=optional(subject,'subject',160);
+ if(/[\r\n]/u.test(subjectInput))throw new TypeError('Invalid subject');
+ const title=subjectInput||(language==='ar'?'بخصوص: ':'Regarding: ')+goal.replace(/[\r\n]+/gu,' ').slice(0,90);
  const sign=optional(signature,'signature',160);
  const greeting=language==='ar'?'السادة المحترمون،':tone==='friendly'?'Hello,':'Dear Hiring Team,';
  const opener=language==='ar'?'أتواصل معكم بخصوص '+goal+'.':tone==='concise'?'I am writing regarding '+goal+'.':'I am reaching out regarding '+goal+'.';
