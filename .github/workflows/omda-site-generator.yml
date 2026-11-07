@@ -1,0 +1,21 @@
+name: OMDA Site Generator
+on:
+  push:
+    branches: [omda-freellmapi-secure-runtime-v1]
+    paths:
+      - 'integrations/omda-freellmapi-site-generator/**'
+      - 'integrations/omda-freellmapi-website-brief/**'
+      - '.github/workflows/omda-site-generator.yml'
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+      - run: node --test integrations/omda-freellmapi-site-generator/site-generator.test.mjs
