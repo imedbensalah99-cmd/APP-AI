@@ -1,0 +1,14 @@
+import {buildBrief} from '../omda-freellmapi-website-brief/engine.mjs';
+const escapeHtml=s=>String(s).replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+export function generateSite(request,{name,description}={}){
+ const brief=buildBrief(request),ar=brief.languages.includes('ar');
+ const title=name??(ar?'مشروعك':'Your Project'),desc=description??brief.request;
+ if(typeof title!=='string'||!title.trim()||title.length>90||/[\u0000-\u001f]/.test(title))throw new TypeError('Invalid site name');
+ if(typeof desc!=='string'||desc.length>500||/[\u0000-\u001f]/.test(desc))throw new TypeError('Invalid description');
+ const t=escapeHtml(title),d=escapeHtml(desc),labels=ar?{about:'عن المشروع',placeholder:'أضف المحتوى المعتمد هنا',preview:'معاينة غير منشورة',home:'الرئيسية'}:{about:'About',placeholder:'Add approved content here',preview:'Unpublished preview',home:'Home'};
+ const names=ar?{home:'الرئيسية',menu:'القائمة',gallery:'المعرض',contact:'التواصل',blog:'المدونة'}:{};
+ const sections=brief.pages.filter(p=>p.slug!=='home').map(p=>'<section id="'+p.slug+'"><h2>'+escapeHtml(names[p.slug]??p.title)+'</h2><p>'+labels.placeholder+'</p></section>').join('');
+ const nav=brief.pages.map(p=>'<a href="#'+p.slug+'">'+escapeHtml(names[p.slug]??p.title)+'</a>').join(' ');
+ const html='<!doctype html><html lang="'+(ar?'ar':'en')+'" dir="'+(ar?'rtl':'ltr')+'"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><meta name="robots" content="noindex,nofollow"><meta name="description" content="'+d+'"><meta http-equiv="Content-Security-Policy" content="default-src \'none\'; style-src \'unsafe-inline\'; base-uri \'none\'; form-action \'none\'"><title>'+t+'</title><style>:root{color-scheme:dark}*{box-sizing:border-box}body{margin:0;background:#0b1221;color:#f3f6ff;font:16px/1.7 system-ui,sans-serif}header,main,footer{max-width:960px;margin:auto;padding:1.5rem}header{display:flex;justify-content:space-between;flex-wrap:wrap;gap:1rem}nav{display:flex;flex-wrap:wrap;gap:1rem}a{color:#b7c8ff}section{padding:3rem 0;border-bottom:1px solid #37445e}.hero{padding:5rem 0}.hero h1{font-size:clamp(2.4rem,7vw,5rem);line-height:1.1}p{max-width:65ch;color:#b4bfd6}small{border:1px solid #63708c;border-radius:2rem;padding:.3rem .8rem}@media(max-width:600px){header{flex-direction:column}}</style></head><body><header><strong>'+t+'</strong><nav aria-label="Navigation">'+nav+'</nav></header><main><section class="hero" id="home"><small>'+labels.preview+'</small><h1>'+t+'</h1><p>'+d+'</p></section><section id="about"><h2>'+labels.about+'</h2><p>'+d+'</p></section>'+sections+'</main><footer>'+labels.preview+' · '+t+'</footer></body></html>\n';
+ return {filename:'omda-site-preview.html',mimeType:'text/html; charset=utf-8',content:html,brief,mode:'OFFLINE_STATIC_PREVIEW',networkCalls:0,paidCalls:0,published:false,requiresExternalApproval:true};
+}
