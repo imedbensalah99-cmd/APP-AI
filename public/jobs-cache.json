@@ -1,5 +1,5 @@
 {
-  "generatedAt": "2026-11-07T11:49:27.119Z",
+  "generatedAt": "2026-11-08T12:01:43.295Z",
   "source": "Himalayas public API",
   "jobs": [
     {
@@ -16,6 +16,25 @@
       "applicationChannel": {
         "kind": "website_only",
         "sourceUrl": "https://himalayas.app/companies/micro1/jobs/federal-budget-analyst?utm_source=api",
+        "verified": false,
+        "evidence": "job_ad"
+      },
+      "eligibility": "Country filter only; verify employer requirements before applying."
+    },
+    {
+      "id": "himalayas:https://himalayas.app/companies/safetywing/jobs/ai-support-operations-specialist",
+      "company": "SafetyWing",
+      "role": "AI Support Operations Specialist",
+      "location": "Remote · worldwide listing",
+      "sourceUrl": "https://himalayas.app/companies/safetywing/jobs/ai-support-operations-specialist?utm_source=api",
+      "description": " At   SafetyWing  (YC W18) , we’re building a global social safety net for remote workers—simple health, insurance, and retirement products designed to replace national welfare systems. Our mission is to remove geographical borders as a barrier to equal opportunity and freedom for everyone. If we succeed, we believe this will be one of the most important tasks of our time.  🌎 About this Role   Somewhere in the world right now, a  SafetyWing  member is messaging us. Maybe they're stuck abroad and need help fast, or they're trying to understand what their plan covers. Often the first one to answer is our AI agent, built on Intercom Fin.   We're looking for an AI Support Operations Specialist to fully own the AI agent: to make it sharper, more helpful, more human, and to keep us at the front as AI support keeps changing. You’ll own how the AI Agent performs: what it resolves, how well it resolves it, and when it hands off. You’ll also measure the difference it makes for members.   👩‍💻 What you’ll do:  \n  Turn our AI agent into a top performer  \n \n Make sure our AI agent always has the most up to date information about our products, by checking with our internal policy experts \n Look at where it succeeds, hands off or misses, find the root cause and add it to our roadmap \n Test changes before and after launch, and keep record of what changed and what it achieved \n Spot the next opportunities to expand the AI agent into new products and more complex support journeys \n \n  Shape how it behaves  \n \n Write and refine the AI agent's guidance, tone, and handoff behavior so every answer sounds like  SafetyWing : warm, clear, and accurate \n Build, test, and maintain procedures and Intercom workflows, and partner with Engineering when you need integrations or technical work \n Make sure members reach a person smoothly whenever the AI agent isn't the right one to help \n \n  Stay ahead of AI support  \n \n Keep track of new Intercom capabilities and the wider AI support field \n Separate real breakthroughs from hype, run small pilots, and recommend what we should adopt next \n Share what you learn in a way the team can act on right away \n \n  Work with others  \n \n Turn your findings into clear, prioritized requests for knowledge owners, and coordinate the updates that improve the AI agent's answers \n Work with Product, Engineering, and Compliance on bugs, data questions, and new capabilities. \n Report on the AI agent's performance to Customer Care leadership \n Build a feedback loop so anyone in Customer Care can flag an issue and see how it was resolved \n \n \n 🧪  We are looking for someone who: \n \n \n Has configured and improved Intercom Fin, including Guidance, workflows, or Procedures, and can show the results \n Writes responses that are clear, accurate, and human, and can tell when one isn't \n Finds patterns in the data, gets to the root cause, tests a fix, and measures whether it worked \n Is comfortable with technical setup and can talk through integrations and configuration confidently with engineers \n Follows AI closely and tests new tools, but can tell hype from real value \n Brings teams together with clear evidence and simple explanations, and follows through \n Extra-shine if you have experience with data privacy, insurance or healthcare \n \n  😀 We like to work with people who:  \n \n Want to help build a global social safety net on the Internet \n Think for themselves instead of copying others \n Are willing to try new things, even with the risk of failure \n Are intellectually curious and open to new ideas \n Are creative and bold in the face of any problems \n Have strong integrity and do the right thing \n \n  🧘 Benefits beyond base pay:  \n \n Fully remote work environment – work from anywhere globally \n Our own global safety net, giving you worldwide health, income, and travel coverage \n A minimum of four weeks of vacation per year \n A new laptop \n Potential to unlock equity compensation, yearly home office allowance and more! \n \n 🚀 We look forward to hearing from you! \n  Originally posted on  Himalayas  ",
+      "source": "Himalayas",
+      "published": "2026-11-06",
+      "remote": true,
+      "sourceChecked": true,
+      "applicationChannel": {
+        "kind": "website_only",
+        "sourceUrl": "https://himalayas.app/companies/safetywing/jobs/ai-support-operations-specialist?utm_source=api",
         "verified": false,
         "evidence": "job_ad"
       },
@@ -54,63 +73,6 @@
       "applicationChannel": {
         "kind": "website_only",
         "sourceUrl": "https://himalayas.app/companies/spotter-labs/jobs/recruiting-operations-analyst?utm_source=api",
-        "verified": false,
-        "evidence": "job_ad"
-      },
-      "eligibility": "Country filter only; verify employer requirements before applying."
-    },
-    {
-      "id": "himalayas:https://himalayas.app/companies/micro1/jobs/military-operations-reporting-sme-8485805432",
-      "company": "micro1",
-      "role": "Military Operations & Reporting SME",
-      "location": "Remote · worldwide listing",
-      "sourceUrl": "https://himalayas.app/companies/micro1/jobs/military-operations-reporting-sme-8485805432?utm_source=api",
-      "description": "  Role Title:  Military Operations &amp; Reporting SME   Role Type:  Contractor   Location:  Remote   micro1  is engaging Military Operations &amp; Reporting SMEs to collaborate on a customer's project, leveraging deep subject matter expertise in military operations, staff processes, and recurring reporting. In this role, you'll apply your real-world DoD experience to help train next-generation AI systems. No prior experience in AI is required — your domain knowledge is what matters.  Scope of Work  \n Review and evaluate military and DoD reporting content for accuracy, clarity, and alignment with real-world procedures. \n Apply firsthand experience gathering information from multiple teams or staff sections and turning it into reports and executive updates for senior leadership. \n Provide high-quality written feedback on AI-generated reporting materials. \n Assess AI outputs for appropriate military terminology, reporting standards, and information synthesis. \n Develop and refine realistic reporting examples and scenarios for AI training. \n  Preferred Qualifications  \n 3+ years of experience within the U.S. Department of Defense as a uniformed service member, DoD civilian, or both. \n Experience personally preparing recurring reports or executive updates for senior military or DoD leadership. \n Experience with reports such as Weekly Activity Reports (WARs), Project/Program Status Reports, Performance/Accomplishment Reports, After-Action Reports (AARs), or Budget Execution Reports. \n Background in military operations, plans, headquarters/command staff, program management, executive support, or resource management. \n Strong written communication skills and experience synthesizing inputs from multiple teams into clear, concise reporting. \n Experience as an Operations Officer/NCO, Plans Officer, Action Officer, Staff Officer, Executive Officer, or similar headquarters role is a plus. \n  Originally posted on  Himalayas  ",
-      "source": "Himalayas",
-      "published": "2026-10-30",
-      "remote": true,
-      "sourceChecked": true,
-      "applicationChannel": {
-        "kind": "website_only",
-        "sourceUrl": "https://himalayas.app/companies/micro1/jobs/military-operations-reporting-sme-8485805432?utm_source=api",
-        "verified": false,
-        "evidence": "job_ad"
-      },
-      "eligibility": "Country filter only; verify employer requirements before applying."
-    },
-    {
-      "id": "himalayas:https://himalayas.app/companies/micro1/jobs/defense-analyst-4634296055",
-      "company": "micro1",
-      "role": "Defense Analyst",
-      "location": "Remote · worldwide listing",
-      "sourceUrl": "https://himalayas.app/companies/micro1/jobs/defense-analyst-4634296055?utm_source=api",
-      "description": " Role Title: Defense Analyst  Role Type: Contractor  Location: Remote  About the Role   micro1  is seeking experienced civilian defense analysts to contribute to an AI development project focused on military operations, armed conflict, and defense-related decision-making.You'll evaluate AI-generated military scenarios, identify factual or analytical inaccuracies, and provide expert feedback to improve AI reasoning and reliability.  Scope of Work  \n Evaluate AI-generated scenarios involving military operations, armed conflict, and defense planning. \n Assess the accuracy and realism of military capabilities, operational assumptions, and conflict-related analysis. \n Review scenarios involving civilian protection, operational constraints, and the application of international humanitarian law (IHL). \n  Identify factual errors, flawed reasoning, and unrealistic assumptions. \n Provide clear, structured written feedback to improve AI-generated content. \n  Qualifications  \n Professional experience as a defense analyst, military operations analyst, conflict analyst, or national security researcher. \n Background in defense research, military capabilities assessment, conflict analysis, or operational planning. \n Strong understanding of military operations, armed conflict, and defense-related decision-making. \n Ability to evaluate complex scenarios and communicate findings clearly in writing. \n Experience with defense organizations, government agencies, research institutes, think tanks, or international organizations is highly desirable. \n  Familiarity with international humanitarian law (IHL), Rules of Engagement (ROE), or civilian protection is a plus. \n  Originally posted on  Himalayas  ",
-      "source": "Himalayas",
-      "published": "2026-10-30",
-      "remote": true,
-      "sourceChecked": true,
-      "applicationChannel": {
-        "kind": "website_only",
-        "sourceUrl": "https://himalayas.app/companies/micro1/jobs/defense-analyst-4634296055?utm_source=api",
-        "verified": false,
-        "evidence": "job_ad"
-      },
-      "eligibility": "Country filter only; verify employer requirements before applying."
-    },
-    {
-      "id": "himalayas:https://himalayas.app/companies/micro1/jobs/military-operations-ihl-expert-8105348265",
-      "company": "micro1",
-      "role": "Military Operations & IHL Expert",
-      "location": "Remote · worldwide listing",
-      "sourceUrl": "https://himalayas.app/companies/micro1/jobs/military-operations-ihl-expert-8105348265?utm_source=api",
-      "description": "  Role Title:  Military Operations &amp; IHL Expert   Role Type:  Contractor   Location:  Remote   micro1  is engaging Military Operations &amp; IHL Experts to contribute to a prominent defense-policy and humanitarian-law project. In this role, you'll apply your expertise to help train next-generation AI systems. Your work will shape how models learn, reason, and perform through high-quality, real-world input. No prior experience in AI is required — your domain knowledge is what matters. You will leverage your deep understanding of warfighting, weapons targeting, defense operations, and international humanitarian law to support the development of frameworks that responsibly evaluate military and humanitarian scenarios. This is a unique opportunity to influence technology at the intersection of operational expertise and conflict ethics while working alongside other experts at the forefront of these domains.  Scope of Work  \n Develop comprehensive taxonomies for military-use and defense operations within diverse conflict contexts. \n Create dual-use triage frameworks that help distinguish between military and civilian applications of technology and knowledge. \n Establish clear boundaries for prohibited assistance under international humanitarian law, providing structured input for AI training and evaluation. \n Design conflict-risk rubrics and scenario-based evaluation tools to assess operational and ethical implications of defense activities. \n Evaluate and refine policy-relevant benchmarks to ensure responsible testing of AI models in defense and humanitarian contexts. \n Contribute written and verbal analyses articulating complex warfighting, targeting, and IHL concepts for interdisciplinary audiences. \n  Preferred Qualifications  \n 5+ years of relevant military, defense analysis, or IHL experience; ideally 8–20 years for senior contributors. \n Advanced degree (e.g., MA, LLM, PhD) or equivalent operational experience in military science, security studies, international law, or related fields. \n High credibility and established track record in warfighting, operational planning, targeting law, or humanitarian law application. \n Expertise in interpreting and applying conflict ethics, IHL, and defense policy frameworks in real-world scenarios. \n Exceptional written and verbal communication skills, with the ability to convey technical and ethical concepts clearly and concisely. \n Experience in research, policy analysis, or advisory roles within military, governmental, legal, or think-tank environments. \n Prior involvement with conflict analysis, war-crimes investigation, or weapons-policy development is a strong plus. \n  Originally posted on  Himalayas  ",
-      "source": "Himalayas",
-      "published": "2026-10-29",
-      "remote": true,
-      "sourceChecked": true,
-      "applicationChannel": {
-        "kind": "website_only",
-        "sourceUrl": "https://himalayas.app/companies/micro1/jobs/military-operations-ihl-expert-8105348265?utm_source=api",
         "verified": false,
         "evidence": "job_ad"
       },
@@ -231,6 +193,25 @@
       "eligibility": "Country filter only; verify employer requirements before applying."
     },
     {
+      "id": "himalayas:https://himalayas.app/companies/everhelp/jobs/customer-support-representative-english-desk",
+      "company": "Everhelp",
+      "role": "Customer Support Representative (English desk)",
+      "location": "Remote · worldwide listing",
+      "sourceUrl": "https://himalayas.app/companies/everhelp/jobs/customer-support-representative-english-desk?utm_source=api",
+      "description": "   EverHelp   is a team of professionals, that’s developing outsourcing support services for plenty of products all over the world at a dynamic tempo. The project launched in 2021, and last year we experienced a yearly growth rate of +82%. Since February 2022, we've managed to preserve all our workplaces and, most importantly, we continue to strengthen our team while maintaining an employee satisfaction rate of over 90%.  In 2026,   EverHelp   received 9 international workplace and employer awards. The company ranked #1 in the Top 30 Inspiring Workplaces in Europe, was named the #1 employer among European companies with 500-4,999 employees, and earned Best-in-Class recognition across 6 categories: Culture &amp; Purpose, Leadership, Inclusion &amp; Belonging, Wellbeing, Employee Voice, and Employee Experience.   EverHelp   was also named one of the 28 Best Places to Work by Business Intelligence Group - a global award recognizing companies with strong workplace cultures and outstanding employee experience.   Our statement:   \n  We’re against war and unjustified aggression,  \n  We evacuated all the teammates and their families from the frontline, helped them find a new place to live and provided financial support,  \n  We provided the team with charging stations,  \n  We continue to work together for the future of Ukraine.  \n  We’re kicking off the collaboration with a new client and we’re hiring an English-speaking Customer Support Representative to support their customers’ needs.   Your future responsibilities include:   \n  Resolve guest inquiries, most commonly  bookings and access  issues, plus other reservation and service-related questions as they arise - via inbound calls, OTA platforms, chats, calls, emails, WhatsApps,  \n  Communicate in true hospitality spirit - Perfect Host Principles, \"best for the guest\" mindset, genuine care for guests over process compliance,  \n  Escalate critical cases (refunds, legal, negative review threats) immediately, no attempt to resolve,  \n  Log/work in client's designated tools (TBC).  \n   Needed experience &amp; skills:   \n  At least  1 year of experience  in Customer Support or hospitality,  \n  English  B2/C1 ,  \n  Strong problem - solving skills,  \n  Excellent communication skills, with a professional, friendly and welcoming approach,  \n  Resilience and adaptability in a fast-pace environment with constantly evolving processes.  \n  Readiness to work  5 shifts per week (Monday-Sunday) with the following shift times 07:00 - 15:00; 11:00 - 19:00; 15:00 - 23:00; 23:00 - 03:00; 23:00 - 07:00 (EET time zone). Shifts rotate regularly, and the schedule is shared one week in advance.   \n   Nice to have skills:   \n  Experience in Hospitality, Travel, OTA, Hotel, or Property Management,  \n  Strong team player with a collaborative mindset,  \n  Previous experience working with international customers.  \n   Work with  EverHelp  is about:   \n  20+ vacation days and unlimited sick leaves,  \n  Ability to work fully remotely,  \n  A professional team of specialists, ready to share their expertise, along with internal communities and team activities, fosters continuous learning and development both within the team and on an individual level,  \n  Opportunity for a career growth. 32% of our teammates obtained a new role during their first year of work in our company. 86% of our Team Leads have been our Customer Support Agents in the past.  \n   Submit your resume and join our team!   Originally posted on  Himalayas  ",
+      "source": "Himalayas",
+      "published": "2026-11-08",
+      "remote": true,
+      "sourceChecked": true,
+      "applicationChannel": {
+        "kind": "website_only",
+        "sourceUrl": "https://himalayas.app/companies/everhelp/jobs/customer-support-representative-english-desk?utm_source=api",
+        "verified": false,
+        "evidence": "job_ad"
+      },
+      "eligibility": "Country filter only; verify employer requirements before applying."
+    },
+    {
       "id": "himalayas:https://himalayas.app/companies/everhelp/jobs/customer-support-specialist-german-and-english-2909298726",
       "company": "Everhelp",
       "role": "Customer Support Specialist | German and English",
@@ -244,25 +225,6 @@
       "applicationChannel": {
         "kind": "website_only",
         "sourceUrl": "https://himalayas.app/companies/everhelp/jobs/customer-support-specialist-german-and-english-2909298726?utm_source=api",
-        "verified": false,
-        "evidence": "job_ad"
-      },
-      "eligibility": "Country filter only; verify employer requirements before applying."
-    },
-    {
-      "id": "himalayas:https://himalayas.app/companies/safetywing/jobs/ai-support-operations-specialist",
-      "company": "SafetyWing",
-      "role": "AI Support Operations Specialist",
-      "location": "Remote · worldwide listing",
-      "sourceUrl": "https://himalayas.app/companies/safetywing/jobs/ai-support-operations-specialist?utm_source=api",
-      "description": " At   SafetyWing  (YC W18) , we’re building a global social safety net for remote workers—simple health, insurance, and retirement products designed to replace national welfare systems. Our mission is to remove geographical borders as a barrier to equal opportunity and freedom for everyone. If we succeed, we believe this will be one of the most important tasks of our time.  🌎 About this Role   Somewhere in the world right now, a  SafetyWing  member is messaging us. Maybe they're stuck abroad and need help fast, or they're trying to understand what their plan covers. Often the first one to answer is our AI agent, built on Intercom Fin.   We're looking for an AI Support Operations Specialist to fully own the AI agent: to make it sharper, more helpful, more human, and to keep us at the front as AI support keeps changing. You’ll own how the AI Agent performs: what it resolves, how well it resolves it, and when it hands off. You’ll also measure the difference it makes for members.   👩‍💻 What you’ll do:  \n  Turn our AI agent into a top performer  \n \n Make sure our AI agent always has the most up to date information about our products, by checking with our internal policy experts \n Look at where it succeeds, hands off or misses, find the root cause and add it to our roadmap \n Test changes before and after launch, and keep record of what changed and what it achieved \n Spot the next opportunities to expand the AI agent into new products and more complex support journeys \n \n  Shape how it behaves  \n \n Write and refine the AI agent's guidance, tone, and handoff behavior so every answer sounds like  SafetyWing : warm, clear, and accurate \n Build, test, and maintain procedures and Intercom workflows, and partner with Engineering when you need integrations or technical work \n Make sure members reach a person smoothly whenever the AI agent isn't the right one to help \n \n  Stay ahead of AI support  \n \n Keep track of new Intercom capabilities and the wider AI support field \n Separate real breakthroughs from hype, run small pilots, and recommend what we should adopt next \n Share what you learn in a way the team can act on right away \n \n  Work with others  \n \n Turn your findings into clear, prioritized requests for knowledge owners, and coordinate the updates that improve the AI agent's answers \n Work with Product, Engineering, and Compliance on bugs, data questions, and new capabilities. \n Report on the AI agent's performance to Customer Care leadership \n Build a feedback loop so anyone in Customer Care can flag an issue and see how it was resolved \n \n \n 🧪  We are looking for someone who: \n \n \n Has configured and improved Intercom Fin, including Guidance, workflows, or Procedures, and can show the results \n Writes responses that are clear, accurate, and human, and can tell when one isn't \n Finds patterns in the data, gets to the root cause, tests a fix, and measures whether it worked \n Is comfortable with technical setup and can talk through integrations and configuration confidently with engineers \n Follows AI closely and tests new tools, but can tell hype from real value \n Brings teams together with clear evidence and simple explanations, and follows through \n Extra-shine if you have experience with data privacy, insurance or healthcare \n \n  😀 We like to work with people who:  \n \n Want to help build a global social safety net on the Internet \n Think for themselves instead of copying others \n Are willing to try new things, even with the risk of failure \n Are intellectually curious and open to new ideas \n Are creative and bold in the face of any problems \n Have strong integrity and do the right thing \n \n  🧘 Benefits beyond base pay:  \n \n Fully remote work environment – work from anywhere globally \n Our own global safety net, giving you worldwide health, income, and travel coverage \n A minimum of four weeks of vacation per year \n A new laptop \n Potential to unlock equity compensation, yearly home office allowance and more! \n \n 🚀 We look forward to hearing from you! \n  Originally posted on  Himalayas  ",
-      "source": "Himalayas",
-      "published": "2026-11-06",
-      "remote": true,
-      "sourceChecked": true,
-      "applicationChannel": {
-        "kind": "website_only",
-        "sourceUrl": "https://himalayas.app/companies/safetywing/jobs/ai-support-operations-specialist?utm_source=api",
         "verified": false,
         "evidence": "job_ad"
       },
