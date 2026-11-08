@@ -7,6 +7,8 @@ on:
       - 'integrations/omda-freellmapi-workflow-studio/engine.mjs'
       - 'integrations/omda-freellmapi-website-brief/engine.mjs'
       - 'integrations/omda-freellmapi-artifacts/artifact-kit.mjs'
+      - 'integrations/omda-freellmapi-site-generator/**'
+      - 'integrations/omda-freellmapi-email-drafts/**'
       - '.github/workflows/omda-command-router.yml'
   workflow_dispatch:
 permissions:
@@ -20,4 +22,4 @@ jobs:
       - uses: actions/setup-node@v4
         with:
           node-version: '22'
-      - run: node --test integrations/omda-freellmapi-command-router/router.test.mjs
+      - run: node --test integrations/omda-freellmapi-command-router/*.test.mjs
