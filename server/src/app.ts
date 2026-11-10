@@ -38,6 +38,7 @@ import { urlTokenRouter } from './routes/url-tokens.js';
 import { updateRouter } from './routes/update.js';
 import { moderationRouter } from './routes/moderation.js';
 import { requireAuth } from './middleware/requireAuth.js';
+import { omdaArtifactsRouter } from './routes/omda-artifacts.js';
 import { createHostGuard } from './middleware/allowed-hosts.js';
 import { createProxyRateLimiter, createAdminRateLimiter } from './middleware/rateLimit.js';
 
@@ -306,6 +307,8 @@ export function createApp(config?: Config) {
   // must not open this surface.
   app.use('/api/backups', requireAuth, backupsRouter);
   app.use('/api/cache', requireAuth, cacheRouter);
+  // Generated OMDA artifacts are session-gated and never published automatically.
+  app.use('/api/omda/artifacts', requireAuth, omdaArtifactsRouter);
   app.use('/api/compression', requireAuth, compressionRouter);
   app.use('/api/update', requireAuth, updateRouter);
 
