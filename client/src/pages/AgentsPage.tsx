@@ -74,7 +74,7 @@ export default function AgentsPage() {
     setExportingJobTracker(true)
     try {
       const token = getToken()
-      const base = import.meta.env.BASE_URL.replace(/\\/$/, '')
+      const base = import.meta.env.BASE_URL.endsWith('/') ? import.meta.env.BASE_URL.slice(0, -1) : import.meta.env.BASE_URL
       const response = await fetch(`${base}/api/omda/artifacts/xlsx`, {
         method: 'POST',
         headers: {
