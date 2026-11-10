@@ -29,7 +29,7 @@ function xmlText(value: string): string {
 function sheetTitle(value: string): string {
   if (typeof value !== 'string') throw new TypeError('Invalid sheet name');
   let clean = value.trim();
-  for (const forbidden of ['\\\\', '/', '?', '*', ':', '[', ']']) {
+  for (const forbidden of [String.fromCharCode(92), '/', '?', '*', ':', '[', ']']) {
     clean = clean.replaceAll(forbidden, '_');
   }
   while (clean.startsWith("'")) clean = clean.slice(1);
