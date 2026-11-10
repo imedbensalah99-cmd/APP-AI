@@ -26,11 +26,12 @@ const workbookSchema = z.object({
       });
     }
   });
-  const textLength = value.columns.reduce((sum, column) => sum + column.length, 0)
-    + value.rows.reduce((sum, row) => sum + row.reduce(
-      (rowSum, cell) => rowSum + (typeof cell === 'string' ? cell.length : 0),
-      0,
-    ), 0);
+  let textLength = value.columns.reduce<number>((sum, column) => sum + column.length, 0);
+  for (const row of value.rows) {
+    for (const cell of row) {
+      if (typeof cell === 'string') textLength += cell.length;
+    }
+  }
   if (textLength > 250_000) {
     context.addIssue({ code: 'custom', path: ['rows'], message: 'Workbook text limit exceeded' });
   }
