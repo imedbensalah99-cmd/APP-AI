@@ -21,7 +21,7 @@ async function withServer<T>(run: (origin: string) => Promise<T>): Promise<T> {
   }
 }
 
-describe('OMDA authenticated XLSX artifact route handler', () => {
+describe('OMDA XLSX artifact route handler', () => {
   it('returns an actual XLSX attachment with safe download headers', async () => {
     await withServer(async origin => {
       const response = await fetch(`${origin}/api/omda/artifacts/xlsx`, {
