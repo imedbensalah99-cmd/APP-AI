@@ -94,7 +94,7 @@ form.addEventListener('submit',event=>{
     const label=document.createElement('strong');label.className='name';label.textContent=a.path;
     const kind=document.createElement('small');kind.className='kind';kind.textContent=a.kind;
     left.append(label,kind);
-    const bytes=new Blob([a.content],{type:a.mime+';charset=utf-8'});
+    const bytes=new Blob([a.content],{type:a.mime+(typeof a.content==='string'?';charset=utf-8':'')});
     const url=URL.createObjectURL(bytes);previousUrls.push(url);
     const link=document.createElement('a');link.className='download';
     link.href=url;link.download=a.path.split('/').pop();link.textContent='تحميل الملف';
