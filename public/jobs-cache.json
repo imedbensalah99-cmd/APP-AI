@@ -1,5 +1,5 @@
 {
-  "generatedAt": "2026-11-09T14:06:06.934Z",
+  "generatedAt": "2026-11-10T13:38:16.230Z",
   "source": "Himalayas public API",
   "jobs": [
     {
@@ -35,25 +35,6 @@
       "applicationChannel": {
         "kind": "website_only",
         "sourceUrl": "https://himalayas.app/companies/safetywing/jobs/ai-support-operations-specialist?utm_source=api",
-        "verified": false,
-        "evidence": "job_ad"
-      },
-      "eligibility": "Country filter only; verify employer requirements before applying."
-    },
-    {
-      "id": "himalayas:https://himalayas.app/companies/micro1/jobs/legal-compliance-expert",
-      "company": "micro1",
-      "role": "Legal & Compliance Expert",
-      "location": "Remote · worldwide listing",
-      "sourceUrl": "https://himalayas.app/companies/micro1/jobs/legal-compliance-expert?utm_source=api",
-      "description": "  Role Title:  Legal &amp; Compliance Expert   Role Type:  Contractor   Location:  Remote, global   Opportunity Snapshot    Pay:  Up to $90/hour equivalent.   Time per task:  ~10 hours per task   Engagement:  Project-based — paid per approved task   Location:  Fully remote — no geographic restrictions. Strong English required (B2 minimum, C1 preferred)   Next step:  Complete the role-specific AI interview — it’s how your expertise gets in front of the client   Your tasks:  Design realistic, multi-step legal and compliance tasks with objective criteria for grading the output   micro1  is engaging experienced legal and compliance practitioners to design the tasks that measure what AI systems can actually do. Your domain knowledge is what matters here — no prior AI experience required.  The work is to turn real legal workflows into benchmark tasks: realistic, difficult, and gradable against objective criteria. If you’ve built a review checklist, marked up a junior associate’s draft, or trained a team against a compliance standard, that’s the instinct this needs.  Scope of Work  \n Design multi-step tasks drawn from real legal and compliance work — contract review, due diligence, regulatory assessment, risk analysis — with realistic reference files and clear instructions. \n Define objective grading criteria so two qualified reviewers would reach the same verdict on the same output. \n Build tasks that require judgment rather than lookup: ones where the right answer depends on reading the materials correctly. \n Create or source the supporting materials each task needs: agreements, policy documents, regulatory texts, diligence files. \n Flag tasks that turn out to be ambiguous or ungradable instead of submitting them anyway. \n Deliver approved tasks on schedule and at the required quality level. \n  Preferred Qualifications  \n 5+ years of hands-on responsibility in contract review, due diligence, regulatory compliance, or risk — direct ownership of the work, not supervisory-only or adjacent exposure. \n Experience creating or applying structured review standards: review checklists, diligence protocols, compliance frameworks, playbooks, or training assessments. \n Comfortable reasoning across multiple documents at once and spotting inconsistencies between them. \n Law degree and bar admission, or equivalent compliance qualification, is a plus but not required — practitioner experience is what matters. \n Strong English, written and spoken — B2 minimum, C1 preferred. \n AI or LLM evaluation experience is a plus, but not required. \n  How the selection process works  \n Apply and complete the screening questions \n Complete the AI interview — this is how we showcase your expertise to the client \n Profile review \n Onboarding — our Talent Ops team will get you set up \n  Originally posted on  Himalayas  ",
-      "source": "Himalayas",
-      "published": "2026-10-24",
-      "remote": true,
-      "sourceChecked": true,
-      "applicationChannel": {
-        "kind": "website_only",
-        "sourceUrl": "https://himalayas.app/companies/micro1/jobs/legal-compliance-expert?utm_source=api",
         "verified": false,
         "evidence": "job_ad"
       },
@@ -200,7 +181,7 @@
       "sourceUrl": "https://himalayas.app/companies/everhelp/jobs/customer-support-representative-english-desk?utm_source=api",
       "description": "   EverHelp   is a team of professionals, that’s developing outsourcing support services for plenty of products all over the world at a dynamic tempo. The project launched in 2021, and last year we experienced a yearly growth rate of +82%. Since February 2022, we've managed to preserve all our workplaces and, most importantly, we continue to strengthen our team while maintaining an employee satisfaction rate of over 90%.  In 2026,   EverHelp   received 9 international workplace and employer awards. The company ranked #1 in the Top 30 Inspiring Workplaces in Europe, was named the #1 employer among European companies with 500-4,999 employees, and earned Best-in-Class recognition across 6 categories: Culture &amp; Purpose, Leadership, Inclusion &amp; Belonging, Wellbeing, Employee Voice, and Employee Experience.   EverHelp   was also named one of the 28 Best Places to Work by Business Intelligence Group - a global award recognizing companies with strong workplace cultures and outstanding employee experience.   Our statement:   \n  We’re against war and unjustified aggression,  \n  We evacuated all the teammates and their families from the frontline, helped them find a new place to live and provided financial support,  \n  We provided the team with charging stations,  \n  We continue to work together for the future of Ukraine.  \n  We’re kicking off the collaboration with a new client and we’re hiring an English-speaking Customer Support Representative to support their customers’ needs.   Your future responsibilities include:   \n  Resolve guest inquiries, most commonly  bookings and access  issues, plus other reservation and service-related questions as they arise - via inbound calls, OTA platforms, chats, calls, emails, WhatsApps,  \n  Communicate in true hospitality spirit - Perfect Host Principles, \"best for the guest\" mindset, genuine care for guests over process compliance,  \n  Escalate critical cases (refunds, legal, negative review threats) immediately, no attempt to resolve,  \n  Log/work in client's designated tools (TBC).  \n   Needed experience &amp; skills:   \n  At least  1 year of experience  in Customer Support or hospitality,  \n  English  B2/C1 ,  \n  Strong problem - solving skills,  \n  Excellent communication skills, with a professional, friendly and welcoming approach,  \n  Resilience and adaptability in a fast-pace environment with constantly evolving processes.  \n  Readiness to work  5 shifts per week (Monday-Sunday) with the following shift times 07:00 - 15:00; 11:00 - 19:00; 15:00 - 23:00; 23:00 - 03:00; 23:00 - 07:00 (EET time zone). Shifts rotate regularly, and the schedule is shared one week in advance.   \n   Nice to have skills:   \n  Experience in Hospitality, Travel, OTA, Hotel, or Property Management,  \n  Strong team player with a collaborative mindset,  \n  Previous experience working with international customers.  \n   Work with  EverHelp  is about:   \n  20+ vacation days and unlimited sick leaves,  \n  Ability to work fully remotely,  \n  A professional team of specialists, ready to share their expertise, along with internal communities and team activities, fosters continuous learning and development both within the team and on an individual level,  \n  Opportunity for a career growth. 32% of our teammates obtained a new role during their first year of work in our company. 86% of our Team Leads have been our Customer Support Agents in the past.  \n   Submit your resume and join our team!   Originally posted on  Himalayas  ",
       "source": "Himalayas",
-      "published": "2026-11-08",
+      "published": "2026-11-09",
       "remote": true,
       "sourceChecked": true,
       "applicationChannel": {
