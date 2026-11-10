@@ -1,8 +1,9 @@
 import { useState } from 'react'
 import { useQuery } from '@tanstack/react-query'
 import { CheckCircle2, ExternalLink, Globe } from 'lucide-react'
-import { apiFetch } from '@/lib/api'
+import { apiFetch, getToken } from '@/lib/api'
 import { useI18n } from '@/i18n'
+import { toast } from '@/lib/toast'
 import { PageHeader } from '@/components/page-header'
 import { CopyButton } from '@/components/copy-button'
 import { AgentIcon } from '@/components/agent-icons'
@@ -64,8 +65,54 @@ function masked(value: string): string {
 }
 
 export default function AgentsPage() {
-  const { t } = useI18n()
+  const { t, locale } = useI18n()
   const [revealKey, setRevealKey] = useState(false)
+  const [exportingJobTracker, setExportingJobTracker] = useState(false)
+  const isArabic = locale.toLowerCase().startsWith('ar')
+
+  async function downloadJobTracker() {
+    setExportingJobTracker(true)
+    try {
+      const token = getToken()
+      const base = import.meta.env.BASE_URL.replace(/\\/$/, '')
+      const response = await fetch(`${base}/api/omda/artifacts/xlsx`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          ...(token ? { Authorization: `Bearer ${token}` } : {}),
+        },
+        body: JSON.stringify({
+          sheetName: isArabic ? 'متابعة الوظائف' : 'Job Tracker',
+          columns: isArabic
+            ? ['الشركة', 'المسمى الوظيفي', 'الموقع', 'الرابط الرسمي', 'الحالة', 'تاريخ التحقق', 'ملاحظات']
+            : ['Company', 'Role', 'Location', 'Official URL', 'Status', 'Checked Date', 'Notes'],
+          rows: [],
+        }),
+      })
+      if (!response.ok) {
+        const body = await response.json().catch(() => null) as { error?: { message?: string } } | null
+        throw new Error(body?.error?.message || `HTTP ${response.status}`)
+      }
+      if (!response.headers.get('content-type')?.includes('spreadsheetml.sheet')) {
+        throw new Error('The server did not return an Excel workbook')
+      }
+      const blob = await response.blob()
+      if (blob.size < 1 || blob.size > 2_000_000) throw new Error('The generated workbook has an invalid size')
+      const objectUrl = URL.createObjectURL(blob)
+      const link = document.createElement('a')
+      link.href = objectUrl
+      link.download = 'omda-job-tracker.xlsx'
+      document.body.appendChild(link)
+      link.click()
+      link.remove()
+      window.setTimeout(() => URL.revokeObjectURL(objectUrl), 1000)
+      toast.success(isArabic ? 'تم إنشاء ملف متابعة الوظائف' : 'Job tracker workbook downloaded')
+    } catch (error) {
+      toast.error(error instanceof Error ? error.message : 'Unable to download the workbook')
+    } finally {
+      setExportingJobTracker(false)
+    }
+  }
   const { data: keyData } = useQuery<KeyResponse>({
     queryKey: ['api-key'],
     queryFn: () => apiFetch('/api/settings/api-key'),
@@ -115,6 +162,31 @@ export default function AgentsPage() {
         <div className="mt-2 flex flex-wrap items-center gap-x-2 gap-y-1 text-xs text-muted-foreground">
           <span>{t('agents.currentKey')}</span>
           <code className="font-mono break-all">{shownKey}</code>
+        </div>
+      </section>
+
+      <section className="mb-6 rounded-3xl border bg-card p-5">
+        <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
+          <div className="max-w-prose">
+            <h2 className="text-sm font-medium">
+              {isArabic ? 'أدوات OMDA — تصدير Excel' : 'OMDA tools — Excel export'}
+            </h2>
+            <p className="mt-1 text-xs text-muted-foreground">
+              {isArabic
+                ? 'أنشئ قالب متابعة وظائف بصيغة XLSX مباشرة من الخادم، دون إرسال بيانات أو نشر خارجي.'
+                : 'Generate a real XLSX job-tracking template on the server. Nothing is emailed or published.'}
+            </p>
+          </div>
+          <Button
+            size="sm"
+            className="shrink-0"
+            disabled={exportingJobTracker}
+            onClick={() => void downloadJobTracker()}
+          >
+            {exportingJobTracker
+              ? (isArabic ? 'جارٍ الإنشاء…' : 'Generating…')
+              : (isArabic ? 'تنزيل قالب الوظائف' : 'Download job tracker')}
+          </Button>
         </div>
       </section>
 
