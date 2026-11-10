@@ -10,9 +10,14 @@ const MAX_ARCHIVE_BYTES = 2_000_000;
 const XLSX_MIME = 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet';
 
 function xmlText(value: string): string {
-  if (/[\\u0000-\\u0008\\u000b\\u000c\\u000e-\\u001f\\ufffe\\uffff]/u.test(value)) {
-    throw new TypeError('Cell contains characters that are not valid in XML');
-  }
+  const invalid = Array.from(value).some(character => {
+    const code = character.codePointAt(0)!;
+    return code <= 0x08 || code === 0x0b || code === 0x0c ||
+      (code >= 0x0e && code <= 0x1f) ||
+      (code >= 0xd800 && code <= 0xdfff) ||
+      code === 0xfffe || code === 0xffff;
+  });
+  if (invalid) throw new TypeError('Cell contains characters that are not valid in XML');
   return value
     .replaceAll('&', '&amp;')
     .replaceAll('<', '&lt;')
@@ -23,8 +28,13 @@ function xmlText(value: string): string {
 
 function sheetTitle(value: string): string {
   if (typeof value !== 'string') throw new TypeError('Invalid sheet name');
-  const clean = value.trim().replace(/[\\\\/?*:[\\]]/gu, '_').replace(/^'+|'+$/gu, '').slice(0, 31);
-  return clean || 'OMDA';
+  let clean = value.trim();
+  for (const forbidden of ['\\\\', '/', '?', '*', ':', '[', ']']) {
+    clean = clean.replaceAll(forbidden, '_');
+  }
+  while (clean.startsWith("'")) clean = clean.slice(1);
+  while (clean.endsWith("'")) clean = clean.slice(0, -1);
+  return clean.slice(0, 31) || 'OMDA';
 }
 
 function columnName(index: number): string {
