@@ -1,0 +1,41 @@
+name: OMDA XLSX Artifact Tests
+on:
+  push:
+    branches: [omda-xlsx-export-20261110, omda-freellmapi-secure-runtime-v1]
+    paths:
+      - 'server/src/services/omda-xlsx.ts'
+      - 'server/src/services/omda-xlsx.test.ts'
+      - 'server/src/routes/omda-artifacts.ts'
+      - 'server/src/routes/omda-artifacts.test.ts'
+      - 'server/src/app.ts'
+      - 'client/src/pages/AgentsPage.tsx'
+      - '.github/workflows/omda-xlsx-export.yml'
+  pull_request:
+    paths:
+      - 'server/src/services/omda-xlsx.ts'
+      - 'server/src/services/omda-xlsx.test.ts'
+      - 'server/src/routes/omda-artifacts.ts'
+      - 'server/src/routes/omda-artifacts.test.ts'
+      - 'server/src/app.ts'
+      - 'client/src/pages/AgentsPage.tsx'
+      - '.github/workflows/omda-xlsx-export.yml'
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  build-and-test:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+          cache: npm
+      - run: npm ci
+      - name: Build server
+        run: npm run build -w server
+      - name: Run server tests
+        run: npm test -w server
+      - name: Build dashboard
+        run: npm run build -w client
