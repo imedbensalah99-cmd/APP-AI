@@ -2,11 +2,13 @@ import { createServer } from 'node:http';
 import express from 'express';
 import { describe, expect, it } from 'vitest';
 import { omdaTasksRouter } from './omda-tasks.js';
+import { requireAuth } from '../middleware/requireAuth.js';
 
-async function withServer<T>(run: (origin: string) => Promise<T>): Promise<T> {
+async function withServer<T>(run: (origin: string) => Promise<T>, protectedRoute = false): Promise<T> {
   const app = express();
   app.use(express.json({ limit: '32kb' }));
-  app.use('/api/omda/tasks', omdaTasksRouter);
+  if (protectedRoute) app.use('/api/omda/tasks', requireAuth, omdaTasksRouter);
+  else app.use('/api/omda/tasks', omdaTasksRouter);
   const server = createServer(app);
   await new Promise<void>((resolve, reject) => {
     server.once('error', reject);
@@ -60,5 +62,18 @@ describe('OMDA task planner route', () => {
       });
       expect(response.status).toBe(400);
     });
+  });
+
+  it('rejects unauthenticated requests when mounted behind the dashboard session gate', async () => {
+    await withServer(async origin => {
+      const response = await fetch(origin + '/api/omda/tasks/plan', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ request: 'Create a job tracker' }),
+      });
+      expect(response.status).toBe(401);
+      const body = await response.json() as { error: { type: string } };
+      expect(body.error.type).toBe('authentication_error');
+    }, true);
   });
 });
