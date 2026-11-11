@@ -1,5 +1,5 @@
 {
-  "generatedAt": "2026-11-10T13:38:16.230Z",
+  "generatedAt": "2026-11-11T12:50:07.278Z",
   "source": "Himalayas public API",
   "jobs": [
     {
@@ -54,6 +54,25 @@
       "applicationChannel": {
         "kind": "website_only",
         "sourceUrl": "https://himalayas.app/companies/spotter-labs/jobs/recruiting-operations-analyst?utm_source=api",
+        "verified": false,
+        "evidence": "job_ad"
+      },
+      "eligibility": "Country filter only; verify employer requirements before applying."
+    },
+    {
+      "id": "himalayas:https://himalayas.app/companies/micro1/jobs/independent-consultant-finance-data-engineering-domain-expert",
+      "company": "micro1",
+      "role": "Independent Consultant, Finance, Data & Engineering (Domain Expert)",
+      "location": "Remote · worldwide listing",
+      "sourceUrl": "https://himalayas.app/companies/micro1/jobs/independent-consultant-finance-data-engineering-domain-expert?utm_source=api",
+      "description": " Role Title: Independent Consultant, Finance, Data &amp; Engineering (Domain Expert)  Role Type: Contractor  Location: Remote   micro1  is engaging Independent Consultants, Finance, Data &amp; Engineering (Domain Experts) to participate in a unique project supporting a customer's AI initiatives. In this role, you'll apply your expertise to help train next-generation AI systems. Your work will shape how models learn, reason, and perform through high-quality, real-world input. No prior experience in AI is required — your domain knowledge is what matters.  Scope of Work  \n Leverage your hands-on experience in finance, data science, analytics, or engineering to review and evaluate real-world tasks, analyses, and deliverables. \n Assess AI-generated outputs, such as financial models, data analyses, code, technical documentation, and business reports for accuracy, rigor, and practical value. \n Develop authentic scenarios and problem sets inspired by actual client engagements and independent project work. \n Identify and articulate gaps, errors, or flawed assumptions in AI system outputs, delivering detailed, constructive feedback to guide improvements. \n Share professional insights on the effectiveness and usability of tools commonly utilized in your field — including spreadsheets, BI platforms, accounting software, and programming environments. \n Clearly document your findings, rationale, and actionable recommendations to inform the customer’s team and enhance AI system capabilities. \n Contribute your expertise to the creation and refinement of AI training datasets, ensuring real-world relevance and technical accuracy. \n  Preferred Qualifications  \n Demonstrated independent practice as a freelancer, consultant, fractional professional, or business owner. \n Established expertise in finance and accounting, data science, analytics, software or systems engineering, or closely related quantitative disciplines. \n Exceptional written and verbal communication skills, with emphasis on clarity, thoroughness, and actionable feedback. \n Prior experience managing client engagements end-to-end, including scoping, pricing, and delivery. \n Relevant credentials such as CPA, CFA, PE, or an advanced degree in a quantitative field. \n Exposure to automation, scripting, or process optimization within your domain. \n Awareness of emerging trends in AI, digital productivity, or automation technologies. \n  Originally posted on  Himalayas  ",
+      "source": "Himalayas",
+      "published": "2026-11-11",
+      "remote": true,
+      "sourceChecked": true,
+      "applicationChannel": {
+        "kind": "website_only",
+        "sourceUrl": "https://himalayas.app/companies/micro1/jobs/independent-consultant-finance-data-engineering-domain-expert?utm_source=api",
         "verified": false,
         "evidence": "job_ad"
       },
@@ -168,25 +187,6 @@
       "applicationChannel": {
         "kind": "website_only",
         "sourceUrl": "https://himalayas.app/companies/micro1/jobs/domain-researcher-finance-m-a?utm_source=api",
-        "verified": false,
-        "evidence": "job_ad"
-      },
-      "eligibility": "Country filter only; verify employer requirements before applying."
-    },
-    {
-      "id": "himalayas:https://himalayas.app/companies/everhelp/jobs/customer-support-representative-english-desk",
-      "company": "Everhelp",
-      "role": "Customer Support Representative (English desk)",
-      "location": "Remote · worldwide listing",
-      "sourceUrl": "https://himalayas.app/companies/everhelp/jobs/customer-support-representative-english-desk?utm_source=api",
-      "description": "   EverHelp   is a team of professionals, that’s developing outsourcing support services for plenty of products all over the world at a dynamic tempo. The project launched in 2021, and last year we experienced a yearly growth rate of +82%. Since February 2022, we've managed to preserve all our workplaces and, most importantly, we continue to strengthen our team while maintaining an employee satisfaction rate of over 90%.  In 2026,   EverHelp   received 9 international workplace and employer awards. The company ranked #1 in the Top 30 Inspiring Workplaces in Europe, was named the #1 employer among European companies with 500-4,999 employees, and earned Best-in-Class recognition across 6 categories: Culture &amp; Purpose, Leadership, Inclusion &amp; Belonging, Wellbeing, Employee Voice, and Employee Experience.   EverHelp   was also named one of the 28 Best Places to Work by Business Intelligence Group - a global award recognizing companies with strong workplace cultures and outstanding employee experience.   Our statement:   \n  We’re against war and unjustified aggression,  \n  We evacuated all the teammates and their families from the frontline, helped them find a new place to live and provided financial support,  \n  We provided the team with charging stations,  \n  We continue to work together for the future of Ukraine.  \n  We’re kicking off the collaboration with a new client and we’re hiring an English-speaking Customer Support Representative to support their customers’ needs.   Your future responsibilities include:   \n  Resolve guest inquiries, most commonly  bookings and access  issues, plus other reservation and service-related questions as they arise - via inbound calls, OTA platforms, chats, calls, emails, WhatsApps,  \n  Communicate in true hospitality spirit - Perfect Host Principles, \"best for the guest\" mindset, genuine care for guests over process compliance,  \n  Escalate critical cases (refunds, legal, negative review threats) immediately, no attempt to resolve,  \n  Log/work in client's designated tools (TBC).  \n   Needed experience &amp; skills:   \n  At least  1 year of experience  in Customer Support or hospitality,  \n  English  B2/C1 ,  \n  Strong problem - solving skills,  \n  Excellent communication skills, with a professional, friendly and welcoming approach,  \n  Resilience and adaptability in a fast-pace environment with constantly evolving processes.  \n  Readiness to work  5 shifts per week (Monday-Sunday) with the following shift times 07:00 - 15:00; 11:00 - 19:00; 15:00 - 23:00; 23:00 - 03:00; 23:00 - 07:00 (EET time zone). Shifts rotate regularly, and the schedule is shared one week in advance.   \n   Nice to have skills:   \n  Experience in Hospitality, Travel, OTA, Hotel, or Property Management,  \n  Strong team player with a collaborative mindset,  \n  Previous experience working with international customers.  \n   Work with  EverHelp  is about:   \n  20+ vacation days and unlimited sick leaves,  \n  Ability to work fully remotely,  \n  A professional team of specialists, ready to share their expertise, along with internal communities and team activities, fosters continuous learning and development both within the team and on an individual level,  \n  Opportunity for a career growth. 32% of our teammates obtained a new role during their first year of work in our company. 86% of our Team Leads have been our Customer Support Agents in the past.  \n   Submit your resume and join our team!   Originally posted on  Himalayas  ",
-      "source": "Himalayas",
-      "published": "2026-11-09",
-      "remote": true,
-      "sourceChecked": true,
-      "applicationChannel": {
-        "kind": "website_only",
-        "sourceUrl": "https://himalayas.app/companies/everhelp/jobs/customer-support-representative-english-desk?utm_source=api",
         "verified": false,
         "evidence": "job_ad"
       },
