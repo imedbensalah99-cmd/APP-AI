@@ -27,7 +27,7 @@ export interface OmdaTaskPlan {
 type StepCopy = Omit<OmdaPlanStep, 'id'>;
 type CategoryCopy = { label: string; steps: StepCopy[] };
 
-const COPY: Record<OmdaPlanCategory, CategoryCopy> = {
+const COPY: Record<OmdaTaskCategory, CategoryCopy> = {
   website: {
     label: 'Website',
     steps: [
@@ -95,7 +95,7 @@ export function planOmdaTask(request: string, locale: OmdaPlanLocale = 'en'): Om
   if (normalized.length < 5) throw new RangeError('Request must contain at least 5 characters');
   if (normalized.length > 4000) throw new RangeError('Request must not exceed 4000 characters');
 
-  const categories = RULES
+  const categories: OmdaTaskCategory[] = RULES
     .filter(rule => rule.pattern.test(normalized))
     .map(rule => rule.category);
   if (categories.length === 0) categories.push('general');
