@@ -28,6 +28,24 @@ interface KeyResponse {
   apiKey: string
 }
 
+interface TaskPlanResponse {
+  planId: string
+  mode: 'plan_only'
+  categories: string[]
+  steps: Array<{
+    id: string
+    title: string
+    detail: string
+    status: 'ready' | 'approval_required'
+    externalSideEffect: boolean
+  }>
+  guardrails: {
+    providerCalls: boolean
+    externalWrites: boolean
+    publicPublishing: boolean
+  }
+}
+
 const analyticsIds: Record<string, string> = {
   claude: 'claude-code',
   codex: 'codex',
@@ -66,6 +84,30 @@ function masked(value: string): string {
 export default function AgentsPage() {
   const { t } = useI18n()
   const [revealKey, setRevealKey] = useState(false)
+  const [taskRequest, setTaskRequest] = useState('')
+  const [taskPlan, setTaskPlan] = useState<TaskPlanResponse | null>(null)
+  const [planningTask, setPlanningTask] = useState(false)
+  const [taskPlanError, setTaskPlanError] = useState('')
+  const isArabic = typeof document !== 'undefined' && (
+    document.documentElement.lang.toLowerCase().startsWith('ar') || document.documentElement.dir === 'rtl'
+  )
+
+  async function createTaskPlan() {
+    setPlanningTask(true)
+    setTaskPlanError('')
+    setTaskPlan(null)
+    try {
+      const result = await apiFetch<TaskPlanResponse>('/api/omda/tasks/plan', {
+        method: 'POST',
+        body: JSON.stringify({ request: taskRequest, locale: isArabic ? 'ar' : 'en' }),
+      })
+      setTaskPlan(result)
+    } catch (error) {
+      setTaskPlanError(error instanceof Error ? error.message : 'Unable to create a task plan')
+    } finally {
+      setPlanningTask(false)
+    }
+  }
   const { data: keyData } = useQuery<KeyResponse>({
     queryKey: ['api-key'],
     queryFn: () => apiFetch('/api/settings/api-key'),
@@ -115,6 +157,70 @@ export default function AgentsPage() {
         <div className="mt-2 flex flex-wrap items-center gap-x-2 gap-y-1 text-xs text-muted-foreground">
           <span>{t('agents.currentKey')}</span>
           <code className="font-mono break-all">{shownKey}</code>
+        </div>
+      </section>
+
+      <section className="mb-6 rounded-3xl border bg-card p-5">
+        <div className="flex flex-col gap-3">
+          <div>
+            <h2 className="text-sm font-medium">
+              {isArabic ? 'مخطط مهام OMDA' : 'OMDA task planner'}
+            </h2>
+            <p className="mt-1 max-w-prose text-xs text-muted-foreground">
+              {isArabic
+                ? 'اكتب طلبك بالعربية أو الإنجليزية لتحويله إلى خطوات مرتبة مع بوابات موافقة. هذه معاينة خطة فقط ولا تنفذ إجراءات خارجية.'
+                : 'Describe a task in Arabic or English to create an ordered plan with approval gates. This is a plan preview; it does not perform external actions.'}
+            </p>
+          </div>
+          <textarea
+            value={taskRequest}
+            onChange={event => setTaskRequest(event.target.value)}
+            rows={3}
+            maxLength={4000}
+            aria-label={isArabic ? 'وصف المهمة' : 'Task request'}
+            placeholder={isArabic ? 'مثال: أنشئ جدول وظائف Excel وجهّز مسودة بريد...' : 'Example: Build a job tracker spreadsheet and draft an email...'}
+            className="w-full resize-y rounded-xl border bg-background px-3 py-2 text-sm outline-none focus-visible:ring-2 focus-visible:ring-ring"
+          />
+          <div className="flex flex-wrap items-center justify-between gap-2">
+            <span className="text-[11px] text-muted-foreground">{taskRequest.length}/4000</span>
+            <Button size="sm" disabled={planningTask || taskRequest.trim().length < 5} onClick={() => void createTaskPlan()}>
+              {planningTask
+                ? (isArabic ? 'جارٍ إعداد الخطة…' : 'Planning…')
+                : (isArabic ? 'إنشاء خطة آمنة' : 'Create safe plan')}
+            </Button>
+          </div>
+          {taskPlanError && <p role="alert" className="text-xs text-destructive">{taskPlanError}</p>}
+          {taskPlan && (
+            <div className="rounded-2xl border bg-muted/20 p-4" aria-live="polite">
+              <div className="mb-3 flex flex-wrap items-center gap-2">
+                <Badge variant="outline">{taskPlan.categories.join(' · ')}</Badge>
+                <Badge variant="secondary">{isArabic ? 'معاينة فقط' : 'Plan only'}</Badge>
+              </div>
+              <ol className="space-y-3">
+                {taskPlan.steps.map((step, index) => (
+                  <li key={step.id} className="flex gap-3">
+                    <span className="flex size-6 shrink-0 items-center justify-center rounded-full bg-muted text-[11px] font-medium">{index + 1}</span>
+                    <div className="min-w-0 flex-1">
+                      <div className="flex flex-wrap items-center gap-2">
+                        <p className="text-xs font-medium">{step.title}</p>
+                        {step.status === 'approval_required' && (
+                          <Badge variant="outline" className="border-amber-500/40 text-amber-700 dark:text-amber-300">
+                            {isArabic ? 'يتطلب موافقة' : 'Approval required'}
+                          </Badge>
+                        )}
+                      </div>
+                      <p className="mt-1 text-xs text-muted-foreground">{step.detail}</p>
+                    </div>
+                  </li>
+                ))}
+              </ol>
+              <p className="mt-4 border-t pt-3 text-[11px] text-muted-foreground">
+                {isArabic
+                  ? 'الحماية مفعّلة: لا استدعاءات مزودين، لا كتابة خارجية، ولا نشر عام.'
+                  : 'Guardrails active: no provider calls, no external writes and no public publishing.'}
+              </p>
+            </div>
+          )}
         </div>
       </section>
 
