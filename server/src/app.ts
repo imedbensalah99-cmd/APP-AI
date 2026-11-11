@@ -38,6 +38,7 @@ import { urlTokenRouter } from './routes/url-tokens.js';
 import { updateRouter } from './routes/update.js';
 import { moderationRouter } from './routes/moderation.js';
 import { requireAuth } from './middleware/requireAuth.js';
+import { omdaTasksRouter } from './routes/omda-tasks.js';
 import { createHostGuard } from './middleware/allowed-hosts.js';
 import { createProxyRateLimiter, createAdminRateLimiter } from './middleware/rateLimit.js';
 
@@ -296,6 +297,8 @@ export function createApp(config?: Config) {
   app.use('/api/media', requireAuth, mediaRouter);
   app.use('/api/search', requireAuth, searchRouter);
   app.use('/api/decisions', requireAuth, decisionsRouter);
+  // OMDA task plans are previews only; the route is protected by the dashboard session.
+  app.use('/api/omda/tasks', requireAuth, omdaTasksRouter);
   app.use('/api/analytics', requireAuth, analyticsRouter);
   app.use('/api/health', requireAuth, healthRouter);
   app.use('/api/free-tier', requireAuth, freeTierRouter);
