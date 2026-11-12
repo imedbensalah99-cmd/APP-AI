@@ -1,5 +1,5 @@
 {
-  "generatedAt": "2026-11-11T12:50:07.278Z",
+  "generatedAt": "2026-11-12T13:52:35.208Z",
   "source": "Himalayas public API",
   "jobs": [
     {
@@ -16,25 +16,6 @@
       "applicationChannel": {
         "kind": "website_only",
         "sourceUrl": "https://himalayas.app/companies/micro1/jobs/federal-budget-analyst?utm_source=api",
-        "verified": false,
-        "evidence": "job_ad"
-      },
-      "eligibility": "Country filter only; verify employer requirements before applying."
-    },
-    {
-      "id": "himalayas:https://himalayas.app/companies/safetywing/jobs/ai-support-operations-specialist",
-      "company": "SafetyWing",
-      "role": "AI Support Operations Specialist",
-      "location": "Remote · worldwide listing",
-      "sourceUrl": "https://himalayas.app/companies/safetywing/jobs/ai-support-operations-specialist?utm_source=api",
-      "description": " At   SafetyWing  (YC W18) , we’re building a global social safety net for remote workers—simple health, insurance, and retirement products designed to replace national welfare systems. Our mission is to remove geographical borders as a barrier to equal opportunity and freedom for everyone. If we succeed, we believe this will be one of the most important tasks of our time.  🌎 About this Role   Somewhere in the world right now, a  SafetyWing  member is messaging us. Maybe they're stuck abroad and need help fast, or they're trying to understand what their plan covers. Often the first one to answer is our AI agent, built on Intercom Fin.   We're looking for an AI Support Operations Specialist to fully own the AI agent: to make it sharper, more helpful, more human, and to keep us at the front as AI support keeps changing. You’ll own how the AI Agent performs: what it resolves, how well it resolves it, and when it hands off. You’ll also measure the difference it makes for members.   👩‍💻 What you’ll do:  \n  Turn our AI agent into a top performer  \n \n Make sure our AI agent always has the most up to date information about our products, by checking with our internal policy experts \n Look at where it succeeds, hands off or misses, find the root cause and add it to our roadmap \n Test changes before and after launch, and keep record of what changed and what it achieved \n Spot the next opportunities to expand the AI agent into new products and more complex support journeys \n \n  Shape how it behaves  \n \n Write and refine the AI agent's guidance, tone, and handoff behavior so every answer sounds like  SafetyWing : warm, clear, and accurate \n Build, test, and maintain procedures and Intercom workflows, and partner with Engineering when you need integrations or technical work \n Make sure members reach a person smoothly whenever the AI agent isn't the right one to help \n \n  Stay ahead of AI support  \n \n Keep track of new Intercom capabilities and the wider AI support field \n Separate real breakthroughs from hype, run small pilots, and recommend what we should adopt next \n Share what you learn in a way the team can act on right away \n \n  Work with others  \n \n Turn your findings into clear, prioritized requests for knowledge owners, and coordinate the updates that improve the AI agent's answers \n Work with Product, Engineering, and Compliance on bugs, data questions, and new capabilities. \n Report on the AI agent's performance to Customer Care leadership \n Build a feedback loop so anyone in Customer Care can flag an issue and see how it was resolved \n \n \n 🧪  We are looking for someone who: \n \n \n Has configured and improved Intercom Fin, including Guidance, workflows, or Procedures, and can show the results \n Writes responses that are clear, accurate, and human, and can tell when one isn't \n Finds patterns in the data, gets to the root cause, tests a fix, and measures whether it worked \n Is comfortable with technical setup and can talk through integrations and configuration confidently with engineers \n Follows AI closely and tests new tools, but can tell hype from real value \n Brings teams together with clear evidence and simple explanations, and follows through \n Extra-shine if you have experience with data privacy, insurance or healthcare \n \n  😀 We like to work with people who:  \n \n Want to help build a global social safety net on the Internet \n Think for themselves instead of copying others \n Are willing to try new things, even with the risk of failure \n Are intellectually curious and open to new ideas \n Are creative and bold in the face of any problems \n Have strong integrity and do the right thing \n \n  🧘 Benefits beyond base pay:  \n \n Fully remote work environment – work from anywhere globally \n Our own global safety net, giving you worldwide health, income, and travel coverage \n A minimum of four weeks of vacation per year \n A new laptop \n Potential to unlock equity compensation, yearly home office allowance and more! \n \n 🚀 We look forward to hearing from you! \n  Originally posted on  Himalayas  ",
-      "source": "Himalayas",
-      "published": "2026-11-06",
-      "remote": true,
-      "sourceChecked": true,
-      "applicationChannel": {
-        "kind": "website_only",
-        "sourceUrl": "https://himalayas.app/companies/safetywing/jobs/ai-support-operations-specialist?utm_source=api",
         "verified": false,
         "evidence": "job_ad"
       },
