@@ -63,7 +63,7 @@ const WEB_SEARCH_TOOL_KEYS: Record<string, string> = {
 
 function masked(value: string): string {
   if (value.length < 12) return '••••••••'
-  return \`\${value.slice(0, 8)}\${'•'.repeat(12)}\${value.slice(-4)}\`
+  return value.slice(0, 8) + '•'.repeat(12) + value.slice(-4)
 }
 
 export default function AgentsPage() {
@@ -108,7 +108,7 @@ export default function AgentsPage() {
     .filter(row => row.lastSeenAt && Date.parse(row.lastSeenAt) >= seenCutoff)
     .map(row => [row.clientAgent, row]))
   const origin = import.meta.env.DEV
-    ? \`http://\${window.location.hostname}:\${__SERVER_PORT__}\`
+    ? 'http://' + window.location.hostname + ':' + __SERVER_PORT__
     : window.location.origin
   const shownKey = keyData?.apiKey
     ? (revealKey ? keyData.apiKey : masked(keyData.apiKey))
@@ -134,7 +134,7 @@ export default function AgentsPage() {
             npx freellmapi setup-claude --url {origin}
           </code>
           <CopyButton
-            text={\`npx freellmapi setup-claude --url \${origin}\`}
+            text={'npx freellmapi setup-claude --url ' + origin}
             className="size-7 shrink-0"
             label={t('common.copy')}
           />
@@ -222,17 +222,17 @@ export default function AgentsPage() {
       <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
         {toolCatalog.map(tool => {
           const traffic = seen.get(analyticsIds[tool.id] ?? tool.id)
-          const command = \`npx freellmapi \${tool.command} --url \${origin}\`
-          const endpoint = tool.baseUrlSupport === 'root' ? origin : \`\${origin}/v1\`
+          const command = 'npx freellmapi ' + tool.command + ' --url ' + origin
+          const endpoint = tool.baseUrlSupport === 'root' ? origin : origin + '/v1'
           // The copied snippet is pasted into config files — keep it
           // locale-independent.
-          const realConnection = \`BASE_URL=\${endpoint}\nAPI_KEY=\${keyData?.apiKey ?? '<unified-key>'}\`
-          const shownConnection = \`BASE_URL=\${endpoint}\nAPI_KEY=\${shownKey}\`
-          // What the tool actually is, in one plain sentence. \`t\` echoes the
-          // key back when neither the active locale nor English defines it, so
+          const realConnection = 'BASE_URL=' + endpoint + '\nAPI_KEY=' + (keyData?.apiKey ?? '<unified-key>')
+          const shownConnection = 'BASE_URL=' + endpoint + '\nAPI_KEY=' + shownKey
+          // What the tool actually is, in one plain sentence. The t() helper echoes
+          // the key back when neither the active locale nor English defines it, so
           // a catalog entry added ahead of its copy falls back to the wire
           // details rather than printing a dotted key at the reader.
-          const descriptionKey = \`agents.descriptions.\${tool.id}\`
+          const descriptionKey = 'agents.descriptions.' + tool.id
           const description = t(descriptionKey)
           return (
             <Card key={tool.id} size="sm">
@@ -241,7 +241,7 @@ export default function AgentsPage() {
                 <CardTitle>{tool.name}</CardTitle>
                 <CardDescription className="text-xs">
                   {description === descriptionKey
-                    ? \`\${tool.protocol} · \${tool.baseUrlSupport}\`
+                    ? tool.protocol + ' · ' + tool.baseUrlSupport
                     : description}
                 </CardDescription>
                 <CardAction>
