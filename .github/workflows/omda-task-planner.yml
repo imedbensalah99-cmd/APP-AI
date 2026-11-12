@@ -1,7 +1,7 @@
 name: OMDA Task Planner
 on:
   push:
-    branches: [omda-task-planner-20261111, omda-freellmapi-secure-runtime-v1]
+    branches: [omda-task-planner-20261111, omda-plan-export-20261112, omda-freellmapi-secure-runtime-v1]
     paths:
       - 'server/src/services/omda-task-planner.ts'
       - 'server/src/services/omda-task-planner.test.ts'
@@ -9,6 +9,8 @@ on:
       - 'server/src/routes/omda-tasks.test.ts'
       - 'server/src/app.ts'
       - 'client/src/pages/AgentsPage.tsx'
+      - 'client/src/lib/omda-plan-export.ts'
+      - 'client/src/lib/omda-plan-export.test.ts'
       - '.github/workflows/omda-task-planner.yml'
   pull_request:
     paths:
@@ -18,6 +20,8 @@ on:
       - 'server/src/routes/omda-tasks.test.ts'
       - 'server/src/app.ts'
       - 'client/src/pages/AgentsPage.tsx'
+      - 'client/src/lib/omda-plan-export.ts'
+      - 'client/src/lib/omda-plan-export.test.ts'
       - '.github/workflows/omda-task-planner.yml'
   workflow_dispatch:
 permissions:
@@ -37,5 +41,7 @@ jobs:
         run: npm run build -w server
       - name: Run server tests
         run: npm test -w server
+      - name: Run dashboard tests
+        run: npm test -w client
       - name: Build dashboard
         run: npm run build -w client
