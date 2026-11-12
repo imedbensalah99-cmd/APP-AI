@@ -1,6 +1,6 @@
 import { useState } from 'react'
 import { useQuery } from '@tanstack/react-query'
-import { CheckCircle2, ExternalLink, Globe } from 'lucide-react'
+import { CheckCircle2, ExternalLink, FileJson, FileSpreadsheet, Globe } from 'lucide-react'
 import { apiFetch } from '@/lib/api'
 import { useI18n } from '@/i18n'
 import { PageHeader } from '@/components/page-header'
@@ -8,6 +8,7 @@ import { CopyButton } from '@/components/copy-button'
 import { AgentIcon } from '@/components/agent-icons'
 import { Button } from '@/components/ui/button'
 import { Badge } from '@/components/ui/badge'
+import { downloadTaskPlan, type OmdaTaskPlanExport } from '@/lib/omda-plan-export'
 import {
   Card,
   CardAction,
@@ -28,23 +29,7 @@ interface KeyResponse {
   apiKey: string
 }
 
-interface TaskPlanResponse {
-  planId: string
-  mode: 'plan_only'
-  categories: string[]
-  steps: Array<{
-    id: string
-    title: string
-    detail: string
-    status: 'ready' | 'approval_required'
-    externalSideEffect: boolean
-  }>
-  guardrails: {
-    providerCalls: boolean
-    externalWrites: boolean
-    publicPublishing: boolean
-  }
-}
+type TaskPlanResponse = OmdaTaskPlanExport
 
 const analyticsIds: Record<string, string> = {
   claude: 'claude-code',
@@ -78,7 +63,7 @@ const WEB_SEARCH_TOOL_KEYS: Record<string, string> = {
 
 function masked(value: string): string {
   if (value.length < 12) return '••••••••'
-  return `${value.slice(0, 8)}${'•'.repeat(12)}${value.slice(-4)}`
+  return \`\${value.slice(0, 8)}\${'•'.repeat(12)}\${value.slice(-4)}\`
 }
 
 export default function AgentsPage() {
@@ -123,7 +108,7 @@ export default function AgentsPage() {
     .filter(row => row.lastSeenAt && Date.parse(row.lastSeenAt) >= seenCutoff)
     .map(row => [row.clientAgent, row]))
   const origin = import.meta.env.DEV
-    ? `http://${window.location.hostname}:${__SERVER_PORT__}`
+    ? \`http://\${window.location.hostname}:\${__SERVER_PORT__}\`
     : window.location.origin
   const shownKey = keyData?.apiKey
     ? (revealKey ? keyData.apiKey : masked(keyData.apiKey))
@@ -149,7 +134,7 @@ export default function AgentsPage() {
             npx freellmapi setup-claude --url {origin}
           </code>
           <CopyButton
-            text={`npx freellmapi setup-claude --url ${origin}`}
+            text={\`npx freellmapi setup-claude --url \${origin}\`}
             className="size-7 shrink-0"
             label={t('common.copy')}
           />
@@ -219,6 +204,16 @@ export default function AgentsPage() {
                   ? 'الحماية مفعّلة: لا استدعاءات مزودين، لا كتابة خارجية، ولا نشر عام.'
                   : 'Guardrails active: no provider calls, no external writes and no public publishing.'}
               </p>
+              <div className="mt-3 flex flex-wrap gap-2">
+                <Button variant="outline" size="sm" onClick={() => downloadTaskPlan(taskPlan, 'json')}>
+                  <FileJson className="size-4" />
+                  {isArabic ? 'تنزيل JSON' : 'Download JSON'}
+                </Button>
+                <Button variant="outline" size="sm" onClick={() => downloadTaskPlan(taskPlan, 'csv')}>
+                  <FileSpreadsheet className="size-4" />
+                  {isArabic ? 'تنزيل CSV' : 'Download CSV'}
+                </Button>
+              </div>
             </div>
           )}
         </div>
@@ -227,17 +222,17 @@ export default function AgentsPage() {
       <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
         {toolCatalog.map(tool => {
           const traffic = seen.get(analyticsIds[tool.id] ?? tool.id)
-          const command = `npx freellmapi ${tool.command} --url ${origin}`
-          const endpoint = tool.baseUrlSupport === 'root' ? origin : `${origin}/v1`
+          const command = \`npx freellmapi \${tool.command} --url \${origin}\`
+          const endpoint = tool.baseUrlSupport === 'root' ? origin : \`\${origin}/v1\`
           // The copied snippet is pasted into config files — keep it
           // locale-independent.
-          const realConnection = `BASE_URL=${endpoint}\nAPI_KEY=${keyData?.apiKey ?? '<unified-key>'}`
-          const shownConnection = `BASE_URL=${endpoint}\nAPI_KEY=${shownKey}`
-          // What the tool actually is, in one plain sentence. `t` echoes the
+          const realConnection = \`BASE_URL=\${endpoint}\nAPI_KEY=\${keyData?.apiKey ?? '<unified-key>'}\`
+          const shownConnection = \`BASE_URL=\${endpoint}\nAPI_KEY=\${shownKey}\`
+          // What the tool actually is, in one plain sentence. \`t\` echoes the
           // key back when neither the active locale nor English defines it, so
           // a catalog entry added ahead of its copy falls back to the wire
           // details rather than printing a dotted key at the reader.
-          const descriptionKey = `agents.descriptions.${tool.id}`
+          const descriptionKey = \`agents.descriptions.\${tool.id}\`
           const description = t(descriptionKey)
           return (
             <Card key={tool.id} size="sm">
@@ -246,7 +241,7 @@ export default function AgentsPage() {
                 <CardTitle>{tool.name}</CardTitle>
                 <CardDescription className="text-xs">
                   {description === descriptionKey
-                    ? `${tool.protocol} · ${tool.baseUrlSupport}`
+                    ? \`\${tool.protocol} · \${tool.baseUrlSupport}\`
                     : description}
                 </CardDescription>
                 <CardAction>
