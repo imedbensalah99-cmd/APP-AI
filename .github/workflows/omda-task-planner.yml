@@ -1,7 +1,7 @@
 name: OMDA Task Planner
 on:
   push:
-    branches: [omda-task-planner-20261111, omda-plan-export-20261112, omda-freellmapi-secure-runtime-v1]
+    branches: [omda-task-planner-20261111, omda-plan-export-20261112, omda-plan-import-20261113, omda-freellmapi-secure-runtime-v1]
     paths:
       - 'server/src/services/omda-task-planner.ts'
       - 'server/src/services/omda-task-planner.test.ts'
@@ -11,6 +11,8 @@ on:
       - 'client/src/pages/AgentsPage.tsx'
       - 'client/src/lib/omda-plan-export.ts'
       - 'client/src/lib/omda-plan-export.test.ts'
+      - 'client/src/lib/omda-plan-import.ts'
+      - 'client/src/lib/omda-plan-import.test.ts'
       - '.github/workflows/omda-task-planner.yml'
   pull_request:
     paths:
