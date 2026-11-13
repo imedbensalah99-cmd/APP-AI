@@ -24,6 +24,8 @@ on:
       - 'client/src/pages/AgentsPage.tsx'
       - 'client/src/lib/omda-plan-export.ts'
       - 'client/src/lib/omda-plan-export.test.ts'
+      - 'client/src/lib/omda-plan-import.ts'
+      - 'client/src/lib/omda-plan-import.test.ts'
       - '.github/workflows/omda-task-planner.yml'
   workflow_dispatch:
 permissions:
