@@ -105,6 +105,10 @@ export default function AgentsPage() {
     setTaskPlanError('')
     setTaskPlanNotice('')
     try {
+      if (!file.name.toLowerCase().endsWith('.json')
+        && file.type.toLowerCase().split(';')[0] !== 'application/json') {
+        throw new TypeError(isArabic ? 'اختر ملف JSON صالحًا.' : 'Choose a JSON file.')
+      }
       if (file.size > MAX_TASK_PLAN_IMPORT_BYTES) {
         throw new RangeError(isArabic
           ? 'حجم الملف يتجاوز الحد المسموح (128 كيلوبايت).'
@@ -197,7 +201,7 @@ export default function AgentsPage() {
           />
           <div className="flex flex-wrap items-end justify-between gap-3">
             <label className="flex min-w-0 flex-1 flex-col gap-1 text-[11px] text-muted-foreground">
-              <span>{isArabic ? 'استيراد خطة JSON محفوظة (حد 128 كيلوبايت)' : 'Import a saved JSON plan (128 KiB max)'}</span>
+              <span className="inline-flex items-center gap-1"><FileUp className="size-3" />{isArabic ? 'استيراد خطة JSON محفوظة (حد 128 كيلوبايت)' : 'Import a saved JSON plan (128 KiB max)'}</span>
               <input
                 type="file"
                 accept=".json,application/json"
