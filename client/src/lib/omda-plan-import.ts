@@ -80,34 +80,9 @@ export function parseTaskPlanJson(raw: string): OmdaTaskPlanExport {
     if (!boundedText(stepId, 3, 64) || !boundedText(step.title, 1, 180) || !boundedText(step.detail, 1, 800)) {
       fail('invalid step text')
     }
-    if (!categories.some(category => stepId.startsWith(category + '-'))
-      || !new RegExp('^(' + categories.join('|') + ')-[1-9][0-9]?
-    if (step.status !== 'ready' && step.status !== 'approval_required') fail('invalid step status')
-    if (typeof step.externalSideEffect !== 'boolean') fail('invalid side-effect flag')
-    if ((step.status === 'approval_required') !== step.externalSideEffect) {
-      fail('external side effects must remain approval-gated')
-    }
-  }
-
-  if (!isRecord(parsed.guardrails) || !hasExactKeys(parsed.guardrails, GUARDRAIL_KEYS)) {
-    fail('invalid guardrail structure')
-  }
-  if (parsed.guardrails.providerCalls !== false
-    || parsed.guardrails.externalWrites !== false
-    || parsed.guardrails.publicPublishing !== false) {
-    fail('imported plans cannot enable provider calls, external writes or public publishing')
-  }
-  const approvals = parsed.guardrails.approvalRequiredFor
-  if (!Array.isArray(approvals)
-    || approvals.length !== REQUIRED_APPROVALS.length
-    || !approvals.every(value => typeof value === 'string' && REQUIRED_APPROVALS.includes(value as typeof REQUIRED_APPROVALS[number]))
-    || new Set(approvals).size !== REQUIRED_APPROVALS.length) {
-    fail('required approval gates are missing or invalid')
-  }
-
-  return parsed as unknown as OmdaTaskPlanExport
-}
-).test(stepId)) {
+    const validCategory = categories.some(category => stepId.startsWith(category + '-'))
+    const stepSuffix = stepId.slice(stepId.lastIndexOf('-') + 1)
+    if (!validCategory || !/^[1-9][0-9]?$/.test(stepSuffix)) {
       fail('step does not belong to a declared category')
     }
     if (seenIds.has(stepId)) fail('duplicate step identifier')
