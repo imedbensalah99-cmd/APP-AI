@@ -1,5 +1,5 @@
 {
-  "generatedAt": "2026-11-12T13:52:35.208Z",
+  "generatedAt": "2026-11-13T13:16:25.528Z",
   "source": "Himalayas public API",
   "jobs": [
     {
@@ -16,6 +16,25 @@
       "applicationChannel": {
         "kind": "website_only",
         "sourceUrl": "https://himalayas.app/companies/micro1/jobs/federal-budget-analyst?utm_source=api",
+        "verified": false,
+        "evidence": "job_ad"
+      },
+      "eligibility": "Country filter only; verify employer requirements before applying."
+    },
+    {
+      "id": "himalayas:https://himalayas.app/companies/micro1/jobs/go-to-market-and-revenue-operations-specialist",
+      "company": "micro1",
+      "role": "Go-to-Market and Revenue Operations Specialist",
+      "location": "Remote · worldwide listing",
+      "sourceUrl": "https://himalayas.app/companies/micro1/jobs/go-to-market-and-revenue-operations-specialist?utm_source=api",
+      "description": " Role Title: Go-to-Market and Revenue Operations Specialist  Role Type: Contractor  Location: Remote   micro1  is engaging Go-to-Market and Revenue Operations Specialists to contribute to a dynamic customer project. In this role, you'll apply your expertise to help train next-generation AI systems. Your work will shape how models learn, reason, and perform through high-quality, real-world input. No prior experience in AI is required — your domain knowledge is what matters. This is an expert-level opportunity for contributors passionate about optimizing go-to-market strategies and revenue operations, with a strong focus on both written and verbal communication.  Scope of Work  \n Analyze, review, and provide expert feedback on go-to-market strategies, sales processes, and revenue operations frameworks. \n Create and refine documentation, guides, and operational playbooks based on real-world scenarios. \n Evaluate and suggest improvements for lead generation, sales enablement, pipeline management, and customer success processes. \n Collaborate with project facilitators to simulate and inform decision-making in common GTM and RevOps scenarios. \n Assess the effectiveness of data-driven dashboards and reporting mechanisms, ensuring actionable insights. \n Contribute insights regarding cross-functional alignment between marketing, sales, and operations functions. \n Deliver clear, constructive written and verbal feedback on project assignments to support AI system training objectives. \n  Preferred Qualifications  \n Extensive experience in go-to-market, sales operations, or revenue operations roles in B2B or SaaS environments. \n Strong proficiency in analyzing and improving commercial strategies and operational workflows. \n Exceptional written and verbal communication skills, with a demonstrated ability to convey complex concepts succinctly. \n Proven track record of developing or implementing sales enablement tools, CRM systems, or reporting solutions. \n Familiarity with current GTM tech stacks and best practices for cross-functional collaboration. \n Comfort working asynchronously and adapting to dynamic project requirements in a remote engagement. \n Experience providing consultative feedback, training, or knowledge transfer within revenue or operations-focused contexts. \n  Originally posted on  Himalayas  ",
+      "source": "Himalayas",
+      "published": "2026-11-12",
+      "remote": true,
+      "sourceChecked": true,
+      "applicationChannel": {
+        "kind": "website_only",
+        "sourceUrl": "https://himalayas.app/companies/micro1/jobs/go-to-market-and-revenue-operations-specialist?utm_source=api",
         "verified": false,
         "evidence": "job_ad"
       },
