@@ -1,6 +1,6 @@
-import { useState } from 'react'
+import { useState, type ChangeEvent } from 'react'
 import { useQuery } from '@tanstack/react-query'
-import { CheckCircle2, ExternalLink, FileJson, FileSpreadsheet, Globe } from 'lucide-react'
+import { CheckCircle2, ExternalLink, FileJson, FileSpreadsheet, FileUp, Globe } from 'lucide-react'
 import { apiFetch } from '@/lib/api'
 import { useI18n } from '@/i18n'
 import { PageHeader } from '@/components/page-header'
@@ -9,6 +9,7 @@ import { AgentIcon } from '@/components/agent-icons'
 import { Button } from '@/components/ui/button'
 import { Badge } from '@/components/ui/badge'
 import { downloadTaskPlan, type OmdaTaskPlanExport } from '@/lib/omda-plan-export'
+import { MAX_TASK_PLAN_IMPORT_BYTES, parseTaskPlanJson } from '@/lib/omda-plan-import'
 import {
   Card,
   CardAction,
@@ -73,6 +74,7 @@ export default function AgentsPage() {
   const [taskPlan, setTaskPlan] = useState<TaskPlanResponse | null>(null)
   const [planningTask, setPlanningTask] = useState(false)
   const [taskPlanError, setTaskPlanError] = useState('')
+  const [taskPlanNotice, setTaskPlanNotice] = useState('')
   const isArabic = typeof document !== 'undefined' && (
     document.documentElement.lang.toLowerCase().startsWith('ar') || document.documentElement.dir === 'rtl'
   )
@@ -80,6 +82,7 @@ export default function AgentsPage() {
   async function createTaskPlan() {
     setPlanningTask(true)
     setTaskPlanError('')
+    setTaskPlanNotice('')
     setTaskPlan(null)
     try {
       const result = await apiFetch<TaskPlanResponse>('/api/omda/tasks/plan', {
@@ -93,6 +96,36 @@ export default function AgentsPage() {
       setPlanningTask(false)
     }
   }
+  async function importTaskPlanFile(event: ChangeEvent<HTMLInputElement>) {
+    const input = event.currentTarget
+    const file = input.files?.[0]
+    input.value = ''
+    if (!file) return
+
+    setTaskPlanError('')
+    setTaskPlanNotice('')
+    try {
+      if (!file.name.toLowerCase().endsWith('.json')
+        && file.type.toLowerCase().split(';')[0] !== 'application/json') {
+        throw new TypeError(isArabic ? 'اختر ملف JSON صالحًا.' : 'Choose a JSON file.')
+      }
+      if (file.size > MAX_TASK_PLAN_IMPORT_BYTES) {
+        throw new RangeError(isArabic
+          ? 'حجم الملف يتجاوز الحد المسموح (128 كيلوبايت).'
+          : 'The file exceeds the 128 KiB import limit.')
+      }
+      const imported = parseTaskPlanJson(await file.text())
+      setTaskPlan(imported)
+      setTaskRequest(imported.requestSummary)
+      setTaskPlanNotice(isArabic
+        ? 'تم استيراد الخطة والتحقق من سلامة بنيتها. لم يتم رفع الملف إلى الخادم.'
+        : 'Plan imported and validated. The file was not uploaded to the server.')
+    } catch (error) {
+      setTaskPlan(null)
+      setTaskPlanError(error instanceof Error ? error.message : 'Unable to import this task plan')
+    }
+  }
+
   const { data: keyData } = useQuery<KeyResponse>({
     queryKey: ['api-key'],
     queryFn: () => apiFetch('/api/settings/api-key'),
@@ -166,15 +199,27 @@ export default function AgentsPage() {
             placeholder={isArabic ? 'مثال: أنشئ جدول وظائف Excel وجهّز مسودة بريد...' : 'Example: Build a job tracker spreadsheet and draft an email...'}
             className="w-full resize-y rounded-xl border bg-background px-3 py-2 text-sm outline-none focus-visible:ring-2 focus-visible:ring-ring"
           />
-          <div className="flex flex-wrap items-center justify-between gap-2">
-            <span className="text-[11px] text-muted-foreground">{taskRequest.length}/4000</span>
-            <Button size="sm" disabled={planningTask || taskRequest.trim().length < 5} onClick={() => void createTaskPlan()}>
-              {planningTask
-                ? (isArabic ? 'جارٍ إعداد الخطة…' : 'Planning…')
-                : (isArabic ? 'إنشاء خطة آمنة' : 'Create safe plan')}
-            </Button>
+          <div className="flex flex-wrap items-end justify-between gap-3">
+            <label className="flex min-w-0 flex-1 flex-col gap-1 text-[11px] text-muted-foreground">
+              <span className="inline-flex items-center gap-1"><FileUp className="size-3" />{isArabic ? 'استيراد خطة JSON محفوظة (حد 128 كيلوبايت)' : 'Import a saved JSON plan (128 KiB max)'}</span>
+              <input
+                type="file"
+                accept=".json,application/json"
+                onChange={event => void importTaskPlanFile(event)}
+                className="block w-full min-w-0 text-xs file:mr-2 file:rounded-lg file:border-0 file:bg-muted file:px-3 file:py-2 file:text-xs file:font-medium"
+              />
+            </label>
+            <div className="flex items-center gap-2">
+              <span className="text-[11px] text-muted-foreground">{taskRequest.length}/4000</span>
+              <Button size="sm" disabled={planningTask || taskRequest.trim().length < 5} onClick={() => void createTaskPlan()}>
+                {planningTask
+                  ? (isArabic ? 'جارٍ إعداد الخطة…' : 'Planning…')
+                  : (isArabic ? 'إنشاء خطة آمنة' : 'Create safe plan')}
+              </Button>
+            </div>
           </div>
           {taskPlanError && <p role="alert" className="text-xs text-destructive">{taskPlanError}</p>}
+          {taskPlanNotice && <p role="status" className="text-xs text-emerald-700 dark:text-emerald-300">{taskPlanNotice}</p>}
           {taskPlan && (
             <div className="rounded-2xl border bg-muted/20 p-4" aria-live="polite">
               <div className="mb-3 flex flex-wrap items-center gap-2">
