@@ -76,15 +76,42 @@ export function parseTaskPlanJson(raw: string): OmdaTaskPlanExport {
   const seenIds = new Set<string>()
   for (const step of parsed.steps) {
     if (!isRecord(step) || !hasExactKeys(step, STEP_KEYS)) fail('invalid step structure')
-    if (!boundedText(step.id, 3, 64) || !boundedText(step.title, 1, 180) || !boundedText(step.detail, 1, 800)) {
+    const stepId = step.id
+    if (!boundedText(stepId, 3, 64) || !boundedText(step.title, 1, 180) || !boundedText(step.detail, 1, 800)) {
       fail('invalid step text')
     }
-    if (!categories.some(category => step.id.startsWith(category + '-'))
-      || !new RegExp('^(' + categories.join('|') + ')-[1-9][0-9]?$').test(step.id)) {
+    if (!categories.some(category => stepId.startsWith(category + '-'))
+      || !new RegExp('^(' + categories.join('|') + ')-[1-9][0-9]?
+    if (step.status !== 'ready' && step.status !== 'approval_required') fail('invalid step status')
+    if (typeof step.externalSideEffect !== 'boolean') fail('invalid side-effect flag')
+    if ((step.status === 'approval_required') !== step.externalSideEffect) {
+      fail('external side effects must remain approval-gated')
+    }
+  }
+
+  if (!isRecord(parsed.guardrails) || !hasExactKeys(parsed.guardrails, GUARDRAIL_KEYS)) {
+    fail('invalid guardrail structure')
+  }
+  if (parsed.guardrails.providerCalls !== false
+    || parsed.guardrails.externalWrites !== false
+    || parsed.guardrails.publicPublishing !== false) {
+    fail('imported plans cannot enable provider calls, external writes or public publishing')
+  }
+  const approvals = parsed.guardrails.approvalRequiredFor
+  if (!Array.isArray(approvals)
+    || approvals.length !== REQUIRED_APPROVALS.length
+    || !approvals.every(value => typeof value === 'string' && REQUIRED_APPROVALS.includes(value as typeof REQUIRED_APPROVALS[number]))
+    || new Set(approvals).size !== REQUIRED_APPROVALS.length) {
+    fail('required approval gates are missing or invalid')
+  }
+
+  return parsed as unknown as OmdaTaskPlanExport
+}
+).test(stepId)) {
       fail('step does not belong to a declared category')
     }
-    if (seenIds.has(step.id)) fail('duplicate step identifier')
-    seenIds.add(step.id)
+    if (seenIds.has(stepId)) fail('duplicate step identifier')
+    seenIds.add(stepId)
     if (step.status !== 'ready' && step.status !== 'approval_required') fail('invalid step status')
     if (typeof step.externalSideEffect !== 'boolean') fail('invalid side-effect flag')
     if ((step.status === 'approval_required') !== step.externalSideEffect) {
