@@ -1,0 +1,35 @@
+name: OMDA FreeLLMAPI dependency patch simulation (no deployment)
+on:
+  pull_request:
+    paths:
+      - '.github/workflows/omda-freellmapi-patch-simulation.yml'
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  simulate-patch:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          repository: tashfeenahmed/freellmapi
+          ref: eae1a4038d5908c7a9a6ad771df96d324731c78a
+          persist-credentials: false
+      - uses: actions/setup-node@v4
+        with:
+          node-version: "24"
+      - name: Simulate nonbreaking lockfile fixes without dependency install or scripts
+        shell: bash
+        run: |
+          npm audit fix --omit=dev --package-lock-only --ignore-scripts --no-fund > "$RUNNER_TEMP/attempt.txt" 2>&1 || true
+          npm audit --omit=dev --json --audit-level=low > "$RUNNER_TEMP/after.json" || true
+          node -e '
+          const fs=require("fs"),d=JSON.parse(fs.readFileSync(process.env.RUNNER_TEMP+"/after.json"));
+          if(d.error){console.error("AUDIT_FAILED",d.error.code);process.exit(1)}
+          console.log("AFTER_FIX",JSON.stringify(d.metadata?.vulnerabilities));
+          console.log("REMAINING",Object.entries(d.vulnerabilities||{}).map(([k,v])=>({name:k,severity:v.severity,fixAvailable:v.fixAvailable})))
+          '
+          git diff --numstat package-lock.json || true
+      - name: No changes persist
+        run: echo "Simulation in temporary Actions workspace only; production and branch remain untouched."
