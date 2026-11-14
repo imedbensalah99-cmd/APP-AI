@@ -1,5 +1,5 @@
 {
-  "generatedAt": "2026-11-13T13:16:25.528Z",
+  "generatedAt": "2026-11-14T12:20:05.680Z",
   "source": "Himalayas public API",
   "jobs": [
     {
@@ -35,25 +35,6 @@
       "applicationChannel": {
         "kind": "website_only",
         "sourceUrl": "https://himalayas.app/companies/micro1/jobs/go-to-market-and-revenue-operations-specialist?utm_source=api",
-        "verified": false,
-        "evidence": "job_ad"
-      },
-      "eligibility": "Country filter only; verify employer requirements before applying."
-    },
-    {
-      "id": "himalayas:https://himalayas.app/companies/spotter-labs/jobs/recruiting-operations-analyst",
-      "company": "Spotter Labs",
-      "role": "Recruiting Operations Analyst",
-      "location": "Remote · worldwide listing",
-      "sourceUrl": "https://himalayas.app/companies/spotter-labs/jobs/recruiting-operations-analyst?utm_source=api",
-      "description": " The  Recruiting Operations Analyst  will be responsible for keeping our driver recruiting process accurate and on track.  This role checks our recruiting system daily, makes sure every applicant is at the right step and that recruiters follow up on time, and prepares simple daily and weekly reports for management.   Key Responsibilities  \n  Review applicant records every day to make sure they are accurate and up to date  \n  Make sure applicants are moving through each step of the hiring process on time  \n  Spot applicants who have not moved forward and follow up with the recruiter  \n  Catch and report records that were updated incorrectly  \n  Message recruiters in Slack about applicants who need attention, and let their manager know if there is no response  \n  Reporting  \n  Daily report on applicants that need follow up and records that need fixing  \n  Weekly report on recruiting progress and hiring numbers  \n  Requirements  \n  1+ year in recruiting, operations, data entry or a similar role  \n  Experience with a CRM or applicant tracking system, and Google Sheets or Excel  \n  Strong attention to detail and clear written communication  \n  Bachelor's degree in a related field is preferred  \n  Coursework or training in business, data or operations is required  \n  Trucking or logistics experience is a plus  \n  KPIs  \n  Review all applicant records every working day  \n  Raise any issue with the recruiter within 1 business day  \n  Send daily and weekly reports on time  \n  Keep applicant records accurate and up to date  \n  Compensation    $200 Weekly    Other Requirements  \n  Reliable internet and computer (remote role)  \n  Available during US Central business hours  \n  Working hours: 8 AM to 5 PM Chicago time (Central), Monday to Friday  \n  Originally posted on  Himalayas  ",
-      "source": "Himalayas",
-      "published": "2026-11-04",
-      "remote": true,
-      "sourceChecked": true,
-      "applicationChannel": {
-        "kind": "website_only",
-        "sourceUrl": "https://himalayas.app/companies/spotter-labs/jobs/recruiting-operations-analyst?utm_source=api",
         "verified": false,
         "evidence": "job_ad"
       },
