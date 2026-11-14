@@ -1,0 +1,235 @@
+<!doctype html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<meta name="color-scheme" content="dark">
+<meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' 'unsafe-inline'; style-src 'self' 'unsafe-inline'; connect-src 'none'; img-src 'self' data:; object-src 'none'; base-uri 'none'; form-action 'none'">
+<title>OMDA | CV Match Evidence Workbench</title>
+<style>
+:root{font-family:system-ui,"Segoe UI",Tahoma,sans-serif;color:#eff2ff;background:#080b13;color-scheme:dark}
+*{box-sizing:border-box}body{margin:0;min-height:100vh;background:radial-gradient(circle at 85% 5%,#56317b45,transparent 34%),#080b13}
+.shell{max-width:1100px;margin:auto;padding:24px 16px 70px}
+header{display:flex;align-items:center;justify-content:space-between;gap:12px;margin-bottom:34px}
+.brand{font-weight:850;font-size:1.15rem}.brand span{color:#b99aff}
+a{color:#c8b2ff}a:focus-visible,button:focus-visible,textarea:focus-visible,input:focus-visible{outline:2px solid #c5a8ff;outline-offset:3px}
+.tag{border:1px solid #7255a5;border-radius:99px;padding:7px 12px;color:#d7c8ff;font-size:.72rem}
+.hero{max-width:850px;margin:0 auto 22px}.eyebrow{color:#c2a2ff;font-size:.8rem;font-weight:750}
+h1{font-size:clamp(2rem,6vw,3.8rem);line-height:1.15;letter-spacing:-.04em;margin:10px 0}
+.lead{color:#aab5cc;line-height:1.9;max-width:780px}
+.panel{border:1px solid #30364d;background:#111625e8;border-radius:22px;padding:20px;margin:16px auto;max-width:900px;box-shadow:0 18px 48px #0004}
+.fields{display:grid;grid-template-columns:1fr 1fr;gap:15px}
+label{display:block;font-size:.9rem;font-weight:700;margin-bottom:8px}
+input[type=text],textarea{width:100%;border:1px solid #46506a;background:#0b1020;color:#f5f3ff;border-radius:12px;padding:13px;font:inherit;line-height:1.8}
+textarea{min-height:230px;resize:vertical}
+small,.muted{color:#9eabc4;line-height:1.8}
+.check{display:flex;gap:10px;align-items:flex-start;margin:17px 0;color:#d8dcef;font-size:.88rem;line-height:1.7}
+.check input{margin-top:5px;accent-color:#a77cff}
+.actions{display:flex;flex-wrap:wrap;gap:10px;margin-top:14px}
+button{border:1px solid #51416f;background:#25213a;color:#f4edff;border-radius:11px;padding:11px 15px;font:inherit;font-weight:700;cursor:pointer}
+button.primary{background:linear-gradient(125deg,#9662ee,#603bc1);border-color:#9a72e7}
+button:disabled{opacity:.45;cursor:not-allowed}
+.summary{display:grid;grid-template-columns:repeat(4,1fr);gap:10px;margin:14px 0}
+.metric{background:#0d1322;border:1px solid #343d56;border-radius:13px;padding:13px}
+.metric strong{display:block;font-size:1.35rem}.metric span{font-size:.75rem;color:#a9b5ce}
+.result{border:1px solid #37415b;border-radius:14px;padding:14px;margin-top:10px;background:#0d1322}
+.result h3{margin:0 0 8px;font-size:1rem;line-height:1.7}
+.meta{display:flex;flex-wrap:wrap;gap:7px;align-items:center}
+.badge{border-radius:99px;padding:4px 9px;background:#29314a;color:#d9e0f7;font-size:.72rem}
+.badge.supported{background:#123d36;color:#a9f2d6}.badge.partial{background:#4b3917;color:#ffe0a1}.badge.unverified{background:#49321d;color:#ffd0a1}.badge.gap{background:#49262f;color:#ffc1cb}
+.status{color:#d8e0f5;line-height:1.8}.error{color:#ffb7c0}
+footer{text-align:center;color:#8591aa;font-size:.8rem;margin-top:30px;line-height:1.8}
+@media(max-width:700px){.fields{grid-template-columns:1fr}.summary{grid-template-columns:1fr 1fr}.shell{padding:16px 12px 50px}.panel{padding:15px}header{margin-bottom:24px}}
+</style>
+</head>
+<body>
+<div class="shell">
+<header>
+  <div class="brand">OMDA <span>/ عمدة</span></div>
+  <div class="tag">CV EVIDENCE • OFFLINE</div>
+</header>
+<main>
+  <section class="hero">
+    <div class="eyebrow">CAREER TOOLS / أدوات التوظيف</div>
+    <h1>طابق متطلبات الوظيفة مع أدلة سيرتك الذاتية.</h1>
+    <p class="lead">أدخل نقاط خبرتك ومتطلبات الإعلان. يحسب OMDA تغطية الكلمات والأدلة التي أكدت صحتها، ويُظهر النواقص بوضوح. لا يخترع مؤهلات ولا يحوّل الكلمات المتشابهة إلى خبرة غير موجودة.</p>
+  </section>
+
+  <section class="panel">
+    <form id="match-form">
+      <div style="margin-bottom:15px">
+        <label for="role-title">المسمى الوظيفي (اختياري)</label>
+        <input id="role-title" type="text" maxlength="300" placeholder="مثال: AML Analyst">
+      </div>
+      <div class="fields">
+        <div>
+          <label for="candidate-evidence">أدلة السيرة الذاتية — نقطة واحدة في كل سطر</label>
+          <textarea id="candidate-evidence" maxlength="30000" required placeholder="راقبت معاملات مالية واكتشفت الأنشطة المشبوهة&#10;أجريت مراجعات CDD و EDD&#10;أعددت تقارير AML"></textarea>
+          <small>أدخل فقط ما ورد فعلًا في السيرة الذاتية أو مستنداتك.</small>
+        </div>
+        <div>
+          <label for="job-requirements">متطلبات الوظيفة — نقطة واحدة في كل سطر</label>
+          <textarea id="job-requirements" maxlength="30000" required placeholder="REQUIRED: Transaction monitoring&#10;REQUIRED: CDD / EDD reviews&#10;PREFERRED: SQL reporting&#10;OPTIONAL: Arabic and English communication"></textarea>
+          <small>استخدم REQUIRED أو PREFERRED أو OPTIONAL قبل السطر. الافتراضي PREFERRED.</small>
+        </div>
+      </div>
+      <label class="check">
+        <input id="confirm-evidence" type="checkbox">
+        <span>أؤكد أن عبارات الخبرة التي أدخلتها صحيحة وتمثل أدلة موجودة في سيرتي الذاتية. هذا تأكيد مني وليس تحققًا مستقلًا من المستندات.</span>
+      </label>
+      <div class="actions">
+        <button class="primary" type="submit">تحليل تغطية الأدلة</button>
+        <button type="button" id="sample">تحميل مثال توضيحي</button>
+        <button type="button" id="clear">مسح الحقول</button>
+      </div>
+    </form>
+  </section>
+
+  <section class="panel" id="output" hidden aria-live="polite">
+    <h2 style="margin-top:0">نتيجة تحليل الأدلة</h2>
+    <p id="notice" class="status"></p>
+    <div id="summary" class="summary"></div>
+    <div id="results"></div>
+    <div class="actions">
+      <button id="download-json" type="button">تنزيل تقرير JSON</button>
+      <button id="download-csv" type="button">تنزيل جدول CSV</button>
+    </div>
+    <p class="muted">لا يحتوي التقرير المُصدّر على نصوص السيرة الذاتية الخام؛ يحتوي على متطلبات الوظيفة والحالات ومعرّفات الأدلة فقط.</p>
+  </section>
+</main>
+<footer>
+  لا يوجد اتصال شبكة أو استدعاء AI أو رفع ملفات أو حفظ تلقائي. تبقى المدخلات في ذاكرة الصفحة الحالية فقط.<br>
+  <a href="../omda-freellmapi-command-center/index.html">العودة إلى OMDA Command Center</a>
+</footer>
+</div>
+<script type="module">
+import {analyzeCvMatch, buildMatchCsv, buildMatchJson} from "./engine.mjs";
+const form = document.querySelector("#match-form");
+const roleTitle = document.querySelector("#role-title");
+const evidenceInput = document.querySelector("#candidate-evidence");
+const requirementsInput = document.querySelector("#job-requirements");
+const confirmEvidence = document.querySelector("#confirm-evidence");
+const output = document.querySelector("#output");
+const notice = document.querySelector("#notice");
+const summary = document.querySelector("#summary");
+const results = document.querySelector("#results");
+let currentReport = null;
+
+function lines(value) {
+  return value.split(/\r?\n/u).map(line => line.trim().replace(/^[-*•]\s*/u, "")).filter(Boolean);
+}
+function parseEvidence(value, confirmed) {
+  return lines(value).map((text, index) => ({id: "E" + (index + 1), text, confirmed}));
+}
+function parseRequirements(value) {
+  return lines(value).map((line, index) => {
+    const match = line.match(/^(REQUIRED|MUST|PREFERRED|NICE|OPTIONAL|مطلوب|أساسي|مفضل|اختياري)\s*[:：-]\s*(.+)$/iu);
+    let weight = "preferred";
+    let text = line;
+    if (match) {
+      const prefix = match[1].toLocaleLowerCase();
+      text = match[2].trim();
+      if (["required","must","مطلوب","أساسي"].includes(prefix)) weight = "required";
+      else if (["optional","اختياري"].includes(prefix)) weight = "optional";
+    }
+    return {id: "R" + (index + 1), text, weight};
+  });
+}
+function addMetric(value, label) {
+  const box = document.createElement("div");
+  box.className = "metric";
+  const strong = document.createElement("strong");
+  strong.textContent = String(value);
+  const small = document.createElement("span");
+  small.textContent = label;
+  box.append(strong, small);
+  summary.append(box);
+}
+function renderReport(report, confirmed) {
+  currentReport = report;
+  output.hidden = false;
+  notice.className = "status";
+  notice.textContent = confirmed
+    ? "تم احتساب العبارات التي أكدت صحتها فقط. التأكيد ذاتي وليس تدقيقًا مستقلًا."
+    : "لم يتم تأكيد الأدلة؛ لذلك لن تُحتسب في نسبة التغطية. يمكنك إعادة التحليل بعد مراجعتها.";
+  summary.replaceChildren();
+  addMetric(report.summary.confirmedEvidenceCoveragePercent + "%", "تغطية الأدلة المؤكدة");
+  addMetric(report.summary.supportedCount, "متطلبات مدعومة");
+  addMetric(report.summary.partialCount, "متطلبات مدعومة جزئيًا");
+  addMetric(report.summary.requiredGaps, "فجوات أساسية");
+  results.replaceChildren();
+  for (const item of report.results) {
+    const card = document.createElement("article");
+    card.className = "result";
+    const heading = document.createElement("h3");
+    heading.textContent = item.requirement;
+    const meta = document.createElement("div");
+    meta.className = "meta";
+    const status = document.createElement("span");
+    status.className = "badge " + item.status.toLowerCase();
+    status.textContent = item.status;
+    const priority = document.createElement("span");
+    priority.className = "badge";
+    priority.textContent = item.priority.toUpperCase();
+    const coverage = document.createElement("span");
+    coverage.className = "badge";
+    coverage.textContent = "Confirmed: " + item.confirmedCoveragePercent + "%";
+    meta.append(status, priority, coverage);
+    const ids = document.createElement("p");
+    ids.className = "muted";
+    ids.textContent = "Evidence IDs: " + (item.confirmedEvidenceIds.join(", ") || "none")
+      + (item.unconfirmedEvidenceIds.length ? " · Unconfirmed: " + item.unconfirmedEvidenceIds.join(", ") : "");
+    card.append(heading, meta, ids);
+    results.append(card);
+  }
+}
+function download(name, mime, content) {
+  const blob = new Blob([content], {type: mime + ";charset=utf-8"});
+  const url = URL.createObjectURL(blob);
+  const link = document.createElement("a");
+  link.href = url;
+  link.download = name;
+  document.body.append(link);
+  link.click();
+  link.remove();
+  window.setTimeout(() => URL.revokeObjectURL(url), 1000);
+}
+form.addEventListener("submit", event => {
+  event.preventDefault();
+  try {
+    const candidateEvidence = parseEvidence(evidenceInput.value, confirmEvidence.checked);
+    const jobRequirements = parseRequirements(requirementsInput.value);
+    const report = analyzeCvMatch({roleTitle: roleTitle.value.trim(), candidateEvidence, jobRequirements});
+    renderReport(report, confirmEvidence.checked);
+  } catch (error) {
+    output.hidden = false;
+    notice.className = "status error";
+    notice.textContent = error instanceof Error ? error.message : "Unable to analyze this input";
+    summary.replaceChildren();
+    results.replaceChildren();
+    currentReport = null;
+  }
+});
+document.querySelector("#sample").addEventListener("click", () => {
+  roleTitle.value = "AML Analyst — SAMPLE";
+  evidenceInput.value = "Performed transaction monitoring for AML alerts\nCompleted customer due diligence (CDD) and enhanced due diligence (EDD)\nPrepared AML compliance reports and escalated alerts";
+  requirementsInput.value = "REQUIRED: Transaction monitoring\nREQUIRED: CDD and EDD reviews\nPREFERRED: SQL query writing\nOPTIONAL: Arabic and English communication";
+  confirmEvidence.checked = false;
+  evidenceInput.focus();
+});
+document.querySelector("#clear").addEventListener("click", () => {
+  form.reset();
+  output.hidden = true;
+  summary.replaceChildren();
+  results.replaceChildren();
+  currentReport = null;
+});
+document.querySelector("#download-json").addEventListener("click", () => {
+  if (currentReport) download("omda-cv-match-report.json", "application/json", buildMatchJson(currentReport));
+});
+document.querySelector("#download-csv").addEventListener("click", () => {
+  if (currentReport) download("omda-cv-match-report.csv", "text/csv", buildMatchCsv(currentReport));
+});
+</script>
+</body>
+</html>

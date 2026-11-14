@@ -1,0 +1,60 @@
+name: OMDA CV Match Evidence Workbench
+on:
+  push:
+    branches:
+      - omda-cv-evidence-match-20261114
+      - omda-freellmapi-secure-runtime-v1
+    paths:
+      - 'integrations/omda-freellmapi-cv-match/**'
+      - 'integrations/omda-freellmapi-command-center/index.html'
+      - '.github/workflows/omda-freellmapi-cv-match-ci.yml'
+  pull_request:
+    paths:
+      - 'integrations/omda-freellmapi-cv-match/**'
+      - 'integrations/omda-freellmapi-command-center/index.html'
+      - '.github/workflows/omda-freellmapi-cv-match-ci.yml'
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  validate:
+    runs-on: ubuntu-latest
+    timeout-minutes: 8
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '24'
+      - name: Syntax check
+        run: node --check integrations/omda-freellmapi-cv-match/engine.mjs
+      - name: Deterministic evidence and export tests
+        run: node --test integrations/omda-freellmapi-cv-match/engine.test.mjs
+      - name: UI privacy and wiring contract
+        run: |
+          node --input-type=module <<'NODE'
+          import fs from 'node:fs';
+          const page = fs.readFileSync('integrations/omda-freellmapi-cv-match/index.html', 'utf8');
+          const center = fs.readFileSync('integrations/omda-freellmapi-command-center/index.html', 'utf8');
+          for (const marker of ['id="candidate-evidence"', 'id="job-requirements"', 'id="confirm-evidence"', 'buildMatchCsv', 'buildMatchJson']) {
+            if (!page.includes(marker)) throw new Error('Missing UI contract: ' + marker);
+          }
+          for (const forbidden of ['fetch(', 'XMLHttpRequest', 'WebSocket(', 'sendBeacon(', 'localStorage', 'sessionStorage']) {
+            if (page.includes(forbidden)) throw new Error('Unexpected network/storage API: ' + forbidden);
+          }
+          if (!center.includes('../omda-freellmapi-cv-match/index.html')) throw new Error('Command Center link missing');
+          if (!fs.existsSync('integrations/omda-freellmapi-cv-match/engine.mjs')) throw new Error('Engine import target missing');
+          console.log('OMDA_CV_MATCH_UI_PRIVACY=PASS');
+          NODE
+      - name: Static HTTP smoke
+        shell: bash
+        run: |
+          set -euo pipefail
+          python3 -m http.server 18766 --bind 127.0.0.1 --directory integrations >/tmp/omda-cv-ui.log 2>&1 &
+          pid=$!
+          trap 'kill "$pid" 2>/dev/null || true' EXIT
+          sleep 2
+          curl -fsS http://127.0.0.1:18766/omda-freellmapi-cv-match/index.html -o /tmp/omda-cv.html
+          curl -fsS http://127.0.0.1:18766/omda-freellmapi-cv-match/engine.mjs -o /tmp/omda-cv-engine.mjs
+          grep -q 'طابق متطلبات الوظيفة' /tmp/omda-cv.html
+          grep -q 'analyzeCvMatch' /tmp/omda-cv-engine.mjs
+          echo 'OMDA_CV_MATCH_STATIC_HTTP=PASS'
