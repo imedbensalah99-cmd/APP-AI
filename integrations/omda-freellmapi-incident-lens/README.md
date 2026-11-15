@@ -24,6 +24,10 @@ No log text is uploaded. The raw input is cleared from the textarea after succes
 
 Redaction is pattern-based and cannot guarantee discovery of every secret or personal detail. Always inspect the exported report before sharing it. Classification is heuristic triage, not proof of root cause or a live service health check.
 
+## Synthetic fixture
+
+The fixtures/synthetic-staging.log file contains fabricated 502, 403, 429, timeout and memory examples for a safe UI demonstration. It contains no live service data or credentials.
+
 ## Tests
 
 Run with Node.js 20 or later:
