@@ -1,0 +1,53 @@
+name: OMDA Incident Lens — offline security and UI CI
+on:
+  push:
+    branches:
+      - omda-incident-lens-20261115
+    paths:
+      - 'integrations/omda-freellmapi-incident-lens/**'
+      - 'integrations/omda-freellmapi-command-center/index.html'
+      - '.github/workflows/omda-freellmapi-incident-lens-ci.yml'
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  verify:
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '24'
+      - name: Syntax check
+        run: node --check integrations/omda-freellmapi-incident-lens/engine.mjs
+      - name: Deterministic security and parser tests
+        run: node --test integrations/omda-freellmapi-incident-lens/engine.test.mjs
+      - name: Verify local-only UI contract
+        shell: bash
+        run: |
+          node --input-type=module <<'NODE'
+          import fs from 'node:fs';
+          const ui = fs.readFileSync('integrations/omda-freellmapi-incident-lens/index.html', 'utf8');
+          const engine = fs.readFileSync('integrations/omda-freellmapi-incident-lens/engine.mjs', 'utf8');
+          if (!ui.includes("import {analyzeLogs,exportJSON,exportCSV} from './engine.mjs'")) throw new Error('Engine import missing');
+          if (!ui.includes('textContent') || ui.includes('innerHTML')) throw new Error('Unsafe rendering contract');
+          if (/fetch\s*\(|XMLHttpRequest|localStorage|document\.cookie|sendBeacon/.test(ui + engine)) throw new Error('Unexpected network or persistence API');
+          if (!ui.includes('256 KiB') || !ui.includes('SANITIZED ONLY')) throw new Error('Privacy bounds missing');
+          const center = fs.readFileSync('integrations/omda-freellmapi-command-center/index.html', 'utf8');
+          if (!center.includes('../omda-freellmapi-incident-lens/index.html')) throw new Error('Command Center link missing');
+          console.log('OMDA_INCIDENT_LENS_UI_CONTRACT=PASS');
+          NODE
+      - name: Loopback-only static HTTP smoke test
+        shell: bash
+        run: |
+          set -euo pipefail
+          python3 -m http.server 18766 --bind 127.0.0.1 --directory integrations >/tmp/omda-incident-lens-http.log 2>&1 &
+          pid=$!
+          trap 'kill "$pid" 2>/dev/null || true' EXIT
+          sleep 2
+          curl -fsS http://127.0.0.1:18766/omda-freellmapi-incident-lens/index.html -o /tmp/incident-lens.html
+          curl -fsS http://127.0.0.1:18766/omda-freellmapi-incident-lens/engine.mjs -o /tmp/incident-engine.mjs
+          grep -q 'INCIDENT LENS' /tmp/incident-lens.html
+          grep -q 'export {analyzeLogs,exportJSON,exportCSV' /tmp/incident-engine.mjs
+          echo 'OMDA_INCIDENT_LENS_HTTP_SMOKE=PASS'
