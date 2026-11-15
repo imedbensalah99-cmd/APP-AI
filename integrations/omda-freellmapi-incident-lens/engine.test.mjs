@@ -110,3 +110,14 @@ test('rejects forged export envelopes and does not expose browser or network API
   const source=fs.readFileSync(new URL('./engine.mjs',import.meta.url),'utf8');
   assert.doesNotMatch(source,/\bfetch\s*\(|XMLHttpRequest|localStorage|document\.cookie|sendBeacon/);
 });
+
+test('analyzes the committed synthetic staging fixture without external data',async()=>{
+  const fs=await import('node:fs');
+  const fixture=fs.readFileSync(new URL('./fixtures/synthetic-staging.log',import.meta.url),'utf8');
+  const report=analyzeLogs(fixture);
+  assert.equal(report.summary.analyzedLines,6);
+  assert.equal(report.summary.incidentGroups,5);
+  assert.ok(report.incidents.some(x=>x.category==='upstream'));
+  assert.ok(report.incidents.some(x=>x.category==='authorization'));
+  assert.ok(report.incidents.some(x=>x.category==='memory'));
+});
