@@ -22,7 +22,7 @@ const SECRET_RULES = Object.freeze([
   [/\bBearer\s+[A-Za-z0-9._~+/-]+=*/gi, 'Bearer [REDACTED]'],
   [/\b(?:gh[pousr]_[A-Za-z0-9_]{16,}|github_pat_[A-Za-z0-9_]{16,}|sk-[A-Za-z0-9_-]{16,}|AKIA[0-9A-Z]{16}|AIza[0-9A-Za-z_-]{30,})\b/g, '[REDACTED_TOKEN]'],
   [/\beyJ[A-Za-z0-9_-]{8,}\.[A-Za-z0-9_-]{8,}\.[A-Za-z0-9_-]{8,}\b/g, '[REDACTED_JWT]'],
-  [/(\b(?:api[_-]?key|access[_-]?token|refresh[_-]?token|client[_-]?secret|password|passwd|secret|cf_access_token|x-auth-token)\s*[:=]\s*)["']?[^"'\\s,;&]+/gi, '$1[REDACTED]'],
+  [/(\b(?:api[_-]?key|access[_-]?token|refresh[_-]?token|client[_-]?secret|password|passwd|secret|cf_access_token|x-auth-token)\s*[:=]\s*)["']?[^"'\s,;&]+/gi, '$1[REDACTED]'],
   [/([?&](?:token|key|secret|password|signature|code|authorization|access_token)=)[^&#\s]+/gi, '$1[REDACTED]'],
   [/\b(set-cookie|cookie)\s*[:=]\s*[^\r\n]+/gi, '$1: [REDACTED]'],
   [/\b(https?:\/\/)[^/@\s:]+:[^/@\s]+@/gi, '$1[REDACTED]@'],
@@ -34,9 +34,9 @@ function assertInput(input) {
   if (bytes > MAX_BYTES) throw new RangeError('Log input exceeds 256 KiB');
   const originalLines = input.split(/\r\n|\n|\r/);
   if (originalLines.length > MAX_LINES) throw new RangeError('Log input exceeds 2,500 lines');
-  const privateKeyBlocks = (input.match(/-----BEGIN (?:RSA |EC |OPENSSH )?PRIVATE KEY-----[\\s\\S]*?-----END (?:RSA |EC |OPENSSH )?PRIVATE KEY-----/g) ?? []).length;
-  const protectedInput = input.replace(/-----BEGIN (?:RSA |EC |OPENSSH )?PRIVATE KEY-----[\\s\\S]*?-----END (?:RSA |EC |OPENSSH )?PRIVATE KEY-----/g, '[REDACTED_PRIVATE_KEY_BLOCK]');
-  return {lines:protectedInput.split(/\\r\\n|\\n|\\r/),totalLines:originalLines.length,privateKeyBlocks};
+  const privateKeyBlocks = (input.match(/-----BEGIN (?:RSA |EC |OPENSSH )?PRIVATE KEY-----[\s\S]*?-----END (?:RSA |EC |OPENSSH )?PRIVATE KEY-----/g) ?? []).length;
+  const protectedInput = input.replace(/-----BEGIN (?:RSA |EC |OPENSSH )?PRIVATE KEY-----[\s\S]*?-----END (?:RSA |EC |OPENSSH )?PRIVATE KEY-----/g, '[REDACTED_PRIVATE_KEY_BLOCK]');
+  return {lines:protectedInput.split(/\r\n|\n|\r/),totalLines:originalLines.length,privateKeyBlocks};
 }
 function sanitizeLine(value) {
   let text = value.replace(/[\u0000-\u0008\u000b\u000c\u000e-\u001f\u007f]/g, ' ');
