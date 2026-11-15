@@ -1,0 +1,170 @@
+<!doctype html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<meta name="color-scheme" content="dark">
+<meta name="referrer" content="no-referrer">
+<title>OMDA | Incident Lens</title>
+<style>
+:root{font:16px/1.65 system-ui,"Segoe UI",Tahoma,sans-serif;color:#f1efff;background:#080810;color-scheme:dark}
+*{box-sizing:border-box}body{margin:0;min-height:100vh;background:radial-gradient(ellipse at 82% 0,#49208350,transparent 42%),#080810}
+main{width:min(1120px,calc(100% - 28px));margin:auto;padding:22px 0 70px}
+header{display:flex;align-items:center;justify-content:space-between;gap:12px;flex-wrap:wrap;margin-bottom:32px}
+.brand{font-weight:900;font-size:1.25rem}.brand b{color:#bca0ff}
+.pill{border:1px solid #51426c;border-radius:30px;padding:6px 12px;color:#cbb9ff;font-size:.72rem}
+a{color:#cbb9ff;text-decoration:none}a:focus-visible,button:focus-visible,input:focus-visible,textarea:focus-visible{outline:3px solid #b28cff;outline-offset:3px}
+h1{font-size:clamp(2.1rem,7vw,3.8rem);line-height:1.14;letter-spacing:-.04em;margin:0 0 12px}
+.lead,.muted{color:#a9a9c3}.lead{max-width:760px;margin:0 0 25px}
+.layout{display:grid;grid-template-columns:minmax(0,1fr) minmax(300px,.9fr);gap:16px;align-items:start}
+.panel{background:#14121fe8;border:1px solid #353148;border-radius:19px;padding:20px;box-shadow:0 18px 40px #0004}
+h2{font-size:1.1rem;margin:0 0 14px}
+label{display:block;font-weight:750;margin-bottom:8px}
+textarea{width:100%;min-height:250px;resize:vertical;background:#080b15;border:1px solid #5b4e75;border-radius:12px;padding:14px;color:#f9f7ff;font:13px/1.65 ui-monospace,Consolas,monospace;direction:ltr;text-align:left}
+input[type=file]{display:block;width:100%;max-width:100%;font:inherit;color:#bcb4d5;margin:8px 0 14px}
+.actions{display:flex;flex-wrap:wrap;gap:9px;margin-top:14px}
+button,.linkbtn{font:inherit;font-size:.88rem;font-weight:750;border-radius:10px;border:1px solid #4d456a;color:#eee6ff;background:#2b243c;padding:10px 13px;cursor:pointer}
+button:hover,.linkbtn:hover{border-color:#a97aff}.primary{background:linear-gradient(135deg,#9757ed,#602cc4);border-color:#8754d7;color:white}
+.danger{background:#3b202c;border-color:#6e3b4b}.note{font-size:.78rem;color:#9e99b7;line-height:1.8;margin-top:15px}
+#results[hidden]{display:none}.status{color:#c8bddf;font-size:.86rem;margin:13px 0}.status.error{color:#ffaaa8}
+.summary{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:9px;margin:12px 0 17px}
+.metric{background:#211e2f;border:1px solid #39324d;border-radius:12px;padding:12px;min-width:0}
+.metric strong{display:block;font-size:1.35rem;line-height:1.2}.metric span{font-size:.72rem;color:#aaa3bf}
+.incident{border:1px solid #38334b;border-radius:13px;padding:13px;margin:10px 0;background:#191728}
+.incident-top{display:flex;align-items:center;justify-content:space-between;gap:8px;flex-wrap:wrap}
+.incident h3{font-size:.95rem;margin:0}.severity{font-size:.7rem;border-radius:20px;padding:3px 9px;background:#31283e;color:#d9c8ff}
+.severity.critical,.severity.high{background:#492633;color:#ffb7bd}.severity.medium{background:#4b3b24;color:#ffd99b}
+.sample{font:12px/1.7 ui-monospace,Consolas,monospace;direction:ltr;text-align:left;white-space:pre-wrap;overflow-wrap:anywhere;color:#c9c4da;background:#0c0b14;border-radius:8px;padding:9px;margin:10px 0}
+.action{font-size:.8rem;color:#b6d6cb;line-height:1.7}
+details{margin-top:15px;border-top:1px solid #39324d;padding-top:12px}
+details summary{cursor:pointer;color:#cbb9ff;font-weight:700}
+.logline{font:11px/1.6 ui-monospace,Consolas,monospace;direction:ltr;text-align:left;white-space:pre-wrap;overflow-wrap:anywhere;border-bottom:1px solid #302b40;padding:7px 0;color:#bdb7cf}
+footer{color:#79738f;text-align:center;font-size:.76rem;margin-top:30px}
+@media(max-width:760px){main{padding-top:15px}.layout{grid-template-columns:1fr}.panel{padding:16px}.summary{grid-template-columns:repeat(3,minmax(0,1fr))}.metric{padding:9px}.metric strong{font-size:1.15rem}}
+</style>
+</head>
+<body>
+<main>
+<header>
+  <div class="brand">OMDA <b>/ عمدة</b></div>
+  <span class="pill">INCIDENT LENS · OFFLINE · FREE</span>
+</header>
+<h1>افهم الخطأ،<br>بدون تسريب السجلات.</h1>
+<p class="lead">الصق سجلات Render أو Cloudflare أو GitHub Actions، أو اختر ملفًا محليًا. يحلل OMDA الأخطاء الشائعة ويخفي أنماطًا معروفة من الأسرار قبل عرض النتائج أو تصديرها.</p>
+<div class="layout">
+<section class="panel" aria-labelledby="input-title">
+  <h2 id="input-title">مصدر السجلات</h2>
+  <label for="log-input">نص السجل</label>
+  <textarea id="log-input" maxlength="262144" spellcheck="false" autocomplete="off" placeholder="2026-11-15T04:00:00Z GET /api/ping 502 Bad Gateway&#10;2026-11-15T04:00:01Z status=429 quota exhausted"></textarea>
+  <label for="log-file">أو اختر ملف TXT / LOG / JSONL</label>
+  <input id="log-file" type="file" accept=".txt,.log,.json,.jsonl,text/plain,application/json">
+  <div class="actions">
+    <button type="button" class="primary" id="analyze">تحليل محلي</button>
+    <button type="button" id="clear" class="danger">مسح المدخلات والنتائج</button>
+  </div>
+  <p class="note">التحليل داخل المتصفح فقط. لا fetch ولا رفع ملفات ولا API ولا localStorage. الحد الأقصى 256 KiB و2,500 سطر. بعد نجاح التحليل يُمسح النص الخام من مربع الإدخال وتبقى النسخة المنقّحة في ذاكرة الصفحة حتى تمسحها أو تغلقها.</p>
+  <p class="note">التنقيح يعتمد على أنماط معروفة مثل Bearer/JWT ومفاتيح شائعة والبريد الإلكتروني؛ لا يضمن اكتشاف كل سر أو معلومة شخصية. راجع التقرير المنقّح قبل مشاركته.</p>
+</section>
+<section class="panel" id="results" aria-live="polite" hidden>
+  <div style="display:flex;align-items:center;justify-content:space-between;gap:10px;flex-wrap:wrap">
+    <h2 style="margin:0">نتيجة التحليل</h2>
+    <span class="pill">SANITIZED ONLY</span>
+  </div>
+  <p id="status" class="status" role="status"></p>
+  <div id="summary" class="summary"></div>
+  <div class="actions">
+    <button type="button" id="export-json">تنزيل JSON</button>
+    <button type="button" id="export-csv">تنزيل CSV</button>
+  </div>
+  <div id="incidents"></div>
+  <details>
+    <summary>عرض السطور المنقّحة</summary>
+    <div id="lines"></div>
+  </details>
+</section>
+</div>
+<p id="global-status" class="status" role="status">جاهز للتحليل المحلي. لا تُرسل سجلات تحتوي أسرارًا إذا لم تكن مرتاحًا لمعالجتها في المتصفح.</p>
+<footer><a href="../omda-freellmapi-command-center/index.html">العودة إلى OMDA Command Center</a> · No network · No persistence · No automatic remediation</footer>
+</main>
+<script type="module">
+import {analyzeLogs,exportJSON,exportCSV} from './engine.mjs';
+const byId=id=>document.getElementById(id);
+const input=byId('log-input'),file=byId('log-file'),results=byId('results');
+const globalStatus=byId('global-status'),status=byId('status');
+let report=null,objectUrls=[];
+function message(target,text,isError=false){target.textContent=text;target.classList.toggle('error',isError);}
+function node(tag,text,className){const element=document.createElement(tag);element.textContent=text;if(className)element.className=className;return element;}
+function clearUrls(){for(const url of objectUrls)URL.revokeObjectURL(url);objectUrls=[];}
+function download(name,content,type){
+  const url=URL.createObjectURL(new Blob([content],{type}));
+  objectUrls.push(url);
+  const link=document.createElement('a');link.href=url;link.download=name;
+  document.body.append(link);link.click();link.remove();
+  setTimeout(()=>{URL.revokeObjectURL(url);objectUrls=objectUrls.filter(x=>x!==url);},1000);
+}
+function render(){
+  byId('summary').replaceChildren();
+  byId('incidents').replaceChildren();
+  byId('lines').replaceChildren();
+  if(!report){results.hidden=true;return;}
+  results.hidden=false;
+  const s=report.summary;
+  message(status,'تم تحليل '+s.analyzedLines+' سطرًا. تم تنقيح '+s.redactedLines+' سطرًا؛ راجع العينات قبل مشاركتها.');
+  const metrics=[
+    ['السطور',s.analyzedLines],
+    ['تنقيح',s.redactedLines],
+    ['مجموعات الحوادث',s.incidentGroups],
+    ['حرج',s.bySeverity.critical],
+    ['مرتفع',s.bySeverity.high],
+    ['متوسط',s.bySeverity.medium]
+  ];
+  for(const [label,value] of metrics){
+    const card=node('div','', 'metric');card.append(node('strong',String(value)),node('span',label));byId('summary').append(card);
+  }
+  if(!report.incidents.length)byId('incidents').append(node('p','لم يتم العثور على نمط خطأ معروف. هذا لا يثبت خلو السجلات من المشكلات.','note'));
+  for(const incident of report.incidents){
+    const card=node('article','','incident');
+    const top=node('div','','incident-top');
+    top.append(node('h3',incident.id+' · '+incident.category+(incident.statusCode?' · HTTP '+incident.statusCode:'')));
+    top.append(node('span',incident.severity.toUpperCase()+' · '+incident.count+'×','severity '+incident.severity));
+    card.append(top,node('pre',incident.sample,'sample'),node('p',incident.recommendedAction,'action'));
+    byId('incidents').append(card);
+  }
+  for(const line of report.lines.slice(0,200)){
+    byId('lines').append(node('div','L'+line.line+' · '+line.severity+' · '+line.text,'logline'));
+  }
+}
+byId('analyze').addEventListener('click',()=>{
+  clearUrls();
+  try{
+    const raw=input.value;
+    report=analyzeLogs(raw);
+    input.value='';
+    file.value='';
+    render();
+    message(globalStatus,'نجح التحليل. تم مسح النص الخام من مربع الإدخال؛ النتائج المعروضة منقّحة فقط.');
+  }catch(error){
+    report=null;render();
+    message(globalStatus,error.message||'تعذر تحليل السجلات.',true);
+  }
+});
+file.addEventListener('change',async()=>{
+  const selected=file.files&&file.files[0];
+  if(!selected)return;
+  if(selected.size>262144){file.value='';message(globalStatus,'الملف أكبر من 256 KiB.',true);return;}
+  try{
+    input.value=await selected.text();
+    message(globalStatus,'تمت قراءة الملف محليًا. اضغط تحليل محلي لمتابعة الفحص.');
+  }catch{
+    message(globalStatus,'تعذر قراءة الملف المحدد.',true);
+  }
+});
+byId('export-json').addEventListener('click',()=>{if(report)download('omda-incident-report.json',exportJSON(report),'application/json;charset=utf-8');});
+byId('export-csv').addEventListener('click',()=>{if(report)download('omda-incident-report.csv',exportCSV(report),'text/csv;charset=utf-8');});
+byId('clear').addEventListener('click',()=>{
+  clearUrls();input.value='';file.value='';report=null;render();
+  message(globalStatus,'تم مسح المدخلات والنتائج من الصفحة.');
+});
+</script>
+</body>
+</html>
