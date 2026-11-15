@@ -1,0 +1,6 @@
+2026-11-15T04:10:00Z GET /api/ping 502 Bad Gateway upstream connect error
+2026-11-15T04:10:02Z GET /v1/models status=403 Forbidden origin gate
+2026-11-15T04:10:04Z POST /api/tasks status=429 quota exhausted
+2026-11-15T04:10:06Z worker request timed out after bounded deadline
+2026-11-15T04:10:08Z process killed: memory limit exceeded
+2026-11-15T04:10:10Z server started and health probe completed
