@@ -7,6 +7,13 @@ on:
       - 'integrations/omda-freellmapi-incident-lens/**'
       - 'integrations/omda-freellmapi-command-center/index.html'
       - '.github/workflows/omda-freellmapi-incident-lens-ci.yml'
+  pull_request:
+    branches:
+      - omda-freellmapi-secure-runtime-v1
+    paths:
+      - 'integrations/omda-freellmapi-incident-lens/**'
+      - 'integrations/omda-freellmapi-command-center/index.html'
+      - '.github/workflows/omda-freellmapi-incident-lens-ci.yml'
   workflow_dispatch:
 permissions:
   contents: read
