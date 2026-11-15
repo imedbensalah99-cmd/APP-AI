@@ -78,7 +78,7 @@ test('rejects empty and non-string input',()=>{
 });
 
 test('neutralizes spreadsheet formulas and quotes CSV cells',()=>{
-  const report=analyzeLogs('error =HYPERLINK(\"https://evil.invalid\",\"click\")');
+  const report=analyzeLogs('=HYPERLINK(\"https://evil.invalid\",\"click\") error status=500');
   const csv=exportCSV(report);
   assert.ok(csv.includes(\"'=HYPERLINK(\"));
   assert.ok(csv.includes('\"\"https://evil.invalid\"\"'));
