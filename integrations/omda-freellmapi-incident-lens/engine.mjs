@@ -32,9 +32,11 @@ function assertInput(input) {
   if (typeof input !== 'string' || input.trim().length === 0) throw new TypeError('Provide non-empty log text');
   const bytes = new TextEncoder().encode(input).byteLength;
   if (bytes > MAX_BYTES) throw new RangeError('Log input exceeds 256 KiB');
-  const lines = input.split(/\r\n|\n|\r/);
-  if (lines.length > MAX_LINES) throw new RangeError('Log input exceeds 2,500 lines');
-  return lines;
+  const originalLines = input.split(/\r\n|\n|\r/);
+  if (originalLines.length > MAX_LINES) throw new RangeError('Log input exceeds 2,500 lines');
+  const privateKeyBlocks = (input.match(/-----BEGIN (?:RSA |EC |OPENSSH )?PRIVATE KEY-----[\\s\\S]*?-----END (?:RSA |EC |OPENSSH )?PRIVATE KEY-----/g) ?? []).length;
+  const protectedInput = input.replace(/-----BEGIN (?:RSA |EC |OPENSSH )?PRIVATE KEY-----[\\s\\S]*?-----END (?:RSA |EC |OPENSSH )?PRIVATE KEY-----/g, '[REDACTED_PRIVATE_KEY_BLOCK]');
+  return {lines:protectedInput.split(/\\r\\n|\\n|\\r/),totalLines:originalLines.length,privateKeyBlocks};
 }
 function sanitizeLine(value) {
   let text = value.replace(/[\u0000-\u0008\u000b\u000c\u000e-\u001f\u007f]/g, ' ');
@@ -95,9 +97,10 @@ function fingerprint(text, category, statusCode) {
   return category + '|' + (statusCode ?? '') + '|' + normalized;
 }
 function analyzeLogs(input) {
-  const sourceLines = assertInput(input);
+  const parsedInput = assertInput(input);
+  const sourceLines = parsedInput.lines;
   const lines = [];
-  let redactedLines = 0;
+  let redactedLines = parsedInput.privateKeyBlocks;
   let truncatedLines = 0;
   for (let i = 0; i < sourceLines.length; i++) {
     if (!sourceLines[i].trim()) continue;
@@ -127,7 +130,7 @@ function analyzeLogs(input) {
   return {
     schemaVersion:1,
     source:'local-sanitized-log-analysis',
-    summary:{totalLines:sourceLines.length,analyzedLines:lines.length,redactedLines,truncatedLines,incidentGroups:incidents.length,bySeverity},
+    summary:{totalLines:parsedInput.totalLines,analyzedLines:lines.length,redactedLines,truncatedLines,incidentGroups:incidents.length,bySeverity},
     incidents,
     lines
   };
