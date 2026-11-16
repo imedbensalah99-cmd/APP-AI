@@ -1,0 +1,73 @@
+<!doctype html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<meta name="color-scheme" content="dark">
+<meta name="referrer" content="no-referrer">
+<title>OMDA | Release Gate</title>
+<style>
+:root{font-family:system-ui,"Segoe UI",Tahoma,sans-serif;color:#eef1ff;background:#080b13;color-scheme:dark}*{box-sizing:border-box}body{margin:0;background:radial-gradient(circle at 82% 0%,#482b7955,transparent 34%),#080b13;min-height:100vh}.shell{max-width:1000px;margin:auto;padding:22px 16px 64px}header{display:flex;justify-content:space-between;align-items:center;gap:12px;margin-bottom:30px}.brand{display:flex;align-items:center;gap:11px;font-weight:850;font-size:1.1rem}.logo{width:42px;height:42px;border-radius:14px;display:grid;place-items:center;background:linear-gradient(140deg,#9257ff,#45309b)}.tag{font-size:.72rem;color:#c7b5ff;border:1px solid #735ba0;border-radius:99px;padding:8px 12px}.hero{max-width:780px;margin:0 auto 22px}.eyebrow{color:#b99aff;font-size:.8rem;font-weight:750}h1{font-size:clamp(2rem,5vw,3.4rem);line-height:1.16;letter-spacing:-.04em;margin:10px 0}.lead{color:#a5afc7;line-height:1.9;max-width:720px}.panel{max-width:780px;margin:16px auto;padding:21px;border:1px solid #343951;border-radius:21px;background:#111625e8;box-shadow:0 20px 50px #0005}.panel h2{font-size:1.1rem;margin:0 0 12px}.muted{color:#9da8c1;font-size:.84rem;line-height:1.8}.drop{display:grid;gap:12px;padding:18px;border:1px dashed #7562a5;border-radius:15px;background:#171a2b}.drop input{width:100%;font:inherit;color:#dfe4fa}button,.link{font:inherit;font-weight:700;border:0;border-radius:11px;padding:12px 15px;cursor:pointer;text-decoration:none;display:inline-flex;align-items:center;justify-content:center;gap:8px}.primary{background:linear-gradient(125deg,#9660ff,#6c40d2);color:white}.secondary{background:#242a3d;color:#e9eaff;border:1px solid #454b66}.actions{display:flex;gap:9px;flex-wrap:wrap;margin-top:13px}.status{padding:12px 14px;border-inline-start:3px solid #8e71e4;background:#171b2b;color:#cbd4ee;border-radius:8px;line-height:1.7}.status.error{border-color:#ed7676;color:#ffc0c0}.result-head{display:flex;align-items:center;justify-content:space-between;gap:12px;flex-wrap:wrap}.decision{font-size:.78rem;font-weight:800;border-radius:99px;padding:7px 11px;border:1px solid #7b5cae;color:#d5c3ff}.decision.blocked{border-color:#b94b60;color:#ffb9c5}.decision.conditional{border-color:#b18b45;color:#f4d18e}.decision.ready{border-color:#478f73;color:#a4e4c2}.counts{display:grid;grid-template-columns:repeat(4,1fr);gap:9px;margin:15px 0}.count{background:#1a2031;border:1px solid #363d56;border-radius:12px;padding:12px}.count strong{display:block;font-size:1.35rem}.count span{font-size:.74rem;color:#a9b3cb}.finding-list{display:grid;gap:9px;margin-top:14px}.finding{border:1px solid #343b54;background:#171d2d;border-radius:12px;padding:13px}.finding-top{display:flex;justify-content:space-between;align-items:flex-start;gap:10px}.finding h3{font-size:.92rem;margin:0}.severity{font-size:.68rem;font-weight:800;white-space:nowrap;border-radius:99px;padding:5px 8px}.BLOCKER{color:#ffb7c3;background:#5a2534}.WARN{color:#f3d08c;background:#514021}.PASS{color:#9de2bb;background:#1d4b3b}.INFO{color:#b8c4e8;background:#283654}.disclaimer{border:1px solid #5c4a2a;background:#241e14;color:#e9d4a4;border-radius:12px;padding:13px;font-size:.82rem;line-height:1.8;margin-top:13px}.hidden{display:none!important}footer{text-align:center;color:#7887a5;font-size:.78rem;margin:35px auto 0}@media(max-width:580px){.shell{padding:16px 12px 45px}.panel{padding:16px}.counts{grid-template-columns:repeat(2,1fr)}header{margin-bottom:24px}.tag{font-size:.65rem;padding:7px 9px}}
+</style>
+</head>
+<body>
+<div class="shell">
+<header><div class="brand"><div class="logo" aria-hidden="true">O</div><span>OMDA <span style="color:#b99aff">/ Release Gate</span></span></div><span class="tag">OFFLINE • READ ONLY</span></header>
+<main>
+<section class="hero"><div class="eyebrow">SECURE STAGING / RELEASE EVIDENCE</div><h1>لا تعتمد على الانطباع.<br>افحص أدلة الإصدار.</h1><p class="lead">استورد لقطة JSON من GitHub Actions وRender وCloudflare. يحلل OMDA تطابق الفرع ونتيجة CI وإعدادات Staging وسعة الموارد، ثم يصدر تقرير Go/No-Go للمراجعة البشرية.</p></section>
+<section class="panel">
+<h2>1 — استيراد لقطة الموارد</h2>
+<p class="muted">اختر ملف JSON وفق المخطط الموثق. تتم القراءة والتحليل داخل المتصفح فقط؛ لا رفع ولا API ولا تخزين دائم. الحد الأقصى 64 KiB.</p>
+<div class="drop"><label for="snapshot">ملف Snapshot JSON</label><input id="snapshot" type="file" accept=".json,application/json"><div class="actions"><button id="analyze" class="primary" type="button">تحليل الجاهزية</button><a class="link secondary" href="./fixtures/current-staging-snapshot.json" download>تنزيل عينة 16 نوفمبر</a><button id="clear" class="secondary" type="button">مسح</button></div></div>
+<p id="status" class="status" role="status" aria-live="polite">لم يتم استيراد أي لقطة بعد.</p>
+<div class="disclaimer">هذه الأداة تحلل Snapshot يقدمه المستخدم، ولا تتصل بالخدمات مباشرة ولا تثبت الحالة الحية. حتى نتيجة REVIEW_READY لا تمنح إذنًا بالنشر أو تشغيل المهام الخارجية.</div>
+</section>
+<section id="report" class="panel hidden" aria-live="polite">
+<div class="result-head"><h2>2 — تقرير التقييم</h2><span id="decision" class="decision">—</span></div>
+<div class="counts"><div class="count"><strong id="blockers">0</strong><span>حواجز BLOCKER</span></div><div class="count"><strong id="warnings">0</strong><span>تحذيرات WARN</span></div><div class="count"><strong id="passes">0</strong><span>فحوص PASS</span></div><div class="count"><strong id="workers">0</strong><span>Workers ظاهرة</span></div></div>
+<p id="summary" class="muted"></p><div id="findings" class="finding-list"></div>
+<div class="actions"><button id="json" class="primary" type="button">تنزيل JSON</button><button id="csv" class="secondary" type="button">تنزيل CSV</button></div>
+</section>
+</main>
+<footer>OMDA FreeLLMAPI · Imported evidence only · No deployment · No external actions</footer>
+</div>
+<script type="module">
+import {analyzeSnapshotText,exportReportJson,exportReportCsv,MAX_INPUT_BYTES} from './engine.mjs';
+const fileInput=document.querySelector('#snapshot');
+const status=document.querySelector('#status');
+const reportBox=document.querySelector('#report');
+const findingsBox=document.querySelector('#findings');
+let currentReport=null;
+function say(message,error=false){status.textContent=message;status.classList.toggle('error',error);}
+function download(name,content,type){const blob=new Blob([content],{type});const url=URL.createObjectURL(blob);const a=document.createElement('a');a.href=url;a.download=name;a.click();URL.revokeObjectURL(url);}
+function render(report){
+ currentReport=report;reportBox.classList.remove('hidden');
+ const decision=document.querySelector('#decision');decision.textContent=report.readiness;decision.className='decision '+(report.readiness==='BLOCKED'?'blocked':report.readiness==='CONDITIONAL'?'conditional':'ready');
+ document.querySelector('#blockers').textContent=report.counts.BLOCKER;
+ document.querySelector('#warnings').textContent=report.counts.WARN;
+ document.querySelector('#passes').textContent=report.counts.PASS;
+ document.querySelector('#workers').textContent=report.facts.workerCount;
+ document.querySelector('#summary').textContent='تم التحليل من لقطة مستوردة في '+report.assessedAt+'. المصدر ليس اتصالًا حيًا. لم يتم أي نشر أو إجراء خارجي.';
+ findingsBox.replaceChildren();
+ for(const item of report.findings){
+  const article=document.createElement('article');article.className='finding';
+  const top=document.createElement('div');top.className='finding-top';
+  const heading=document.createElement('h3');heading.textContent=item.title;
+  const badge=document.createElement('span');badge.className='severity '+item.severity;badge.textContent=item.severity;
+  const detail=document.createElement('p');detail.textContent=item.detail;
+  top.append(heading,badge);article.append(top,detail);findingsBox.append(article);
+ }
+}
+document.querySelector('#analyze').addEventListener('click',async()=>{
+ const file=fileInput.files?.[0];
+ if(!file){say('اختر ملف JSON أولًا.',true);return;}
+ if(file.size>MAX_INPUT_BYTES){say('حجم الملف يتجاوز 64 KiB.',true);return;}
+ try{const text=await file.text();const result=analyzeSnapshotText(text);render(result);say('اكتمل التحليل محليًا. راجع الحواجز قبل أي قرار.');}
+ catch(error){currentReport=null;reportBox.classList.add('hidden');say(error instanceof Error?error.message:'تعذّر تحليل الملف.',true);}
+});
+document.querySelector('#clear').addEventListener('click',()=>{fileInput.value='';currentReport=null;reportBox.classList.add('hidden');findingsBox.replaceChildren();say('تم مسح الملف والتقرير من ذاكرة الصفحة.');});
+document.querySelector('#json').addEventListener('click',()=>{if(currentReport)download('omda-release-gate-report.json',exportReportJson(currentReport),'application/json;charset=utf-8');});
+document.querySelector('#csv').addEventListener('click',()=>{if(currentReport)download('omda-release-gate-report.csv',exportReportCsv(currentReport),'text/csv;charset=utf-8');});
+</script>
+</body>
+</html>
