@@ -1,5 +1,5 @@
 {
-  "generatedAt": "2026-11-15T12:51:27.401Z",
+  "generatedAt": "2026-11-16T13:50:50.424Z",
   "source": "Himalayas public API",
   "jobs": [
     {
@@ -16,6 +16,44 @@
       "applicationChannel": {
         "kind": "website_only",
         "sourceUrl": "https://himalayas.app/companies/micro1/jobs/federal-budget-analyst?utm_source=api",
+        "verified": false,
+        "evidence": "job_ad"
+      },
+      "eligibility": "Country filter only; verify employer requirements before applying."
+    },
+    {
+      "id": "himalayas:https://himalayas.app/companies/clera/jobs/data-operations-associate-expert-talent-pool",
+      "company": "Clera",
+      "role": "Data Operations Associate, Expert Talent Pool",
+      "location": "Remote · worldwide listing",
+      "sourceUrl": "https://himalayas.app/companies/clera/jobs/data-operations-associate-expert-talent-pool?utm_source=api",
+      "description": " About the Role  Join a network of data operations specialists supporting human-data projects for AI research. You will source, curate, and validate datasets that help improve the quality of AI systems, with projects matched to your background.  What You'll Do  \n  Source and collect documents, images, audio, or video according to project specifications, including capturing new media when needed.  \n  Sort, de-duplicate, tag, and filter datasets against quality standards.  \n  Generate synthetic examples to specification and validate them against labeling guidelines.  \n  Review and adjudicate annotations, identifying work as correct, incorrect, or unclear.  \n  Run calibration and audit rounds to support consistency across annotators.  \n  Help write and refine labeling guidelines with clear, practical examples.  \n  What We're Looking For  \n  Under five years of hands-on experience in data operations, annotation quality assurance, dataset work, or a related detail-focused role.  \n  Experience in data, quality assurance, research assistance, operations, or content review, or a degree in a data-related field such as statistics, linguistics, information science, computer science, library science, or GIS.  \n  Experience sourcing, collecting, cleaning, or curating datasets and checking work against written guidelines or specifications.  \n  Comfortable using Excel or Google Sheets and web-based tools.  \n  Experience with annotation or data platforms such as Label Studio, Labelbox, CVAT, Scale, Remotasks, or Appen is a plus.  \n  AI data project experience, including labeling, evaluations, synthetic data, or guideline writing, is valued. Additional language fluency is also a plus.  \n  Strong attention to detail and clear written English.  \n  Compensation &amp; Benefits  Compensation is $20 to $40 per hour, depending on project, field, and experience level. Payment is for hours worked.  Location  Fully remote. Projects may last from one week to several months.  Compensation Range: $41.6K - $83.2K  Originally posted on  Himalayas  ",
+      "source": "Himalayas",
+      "published": "2026-11-16",
+      "remote": true,
+      "sourceChecked": true,
+      "applicationChannel": {
+        "kind": "website_only",
+        "sourceUrl": "https://himalayas.app/companies/clera/jobs/data-operations-associate-expert-talent-pool?utm_source=api",
+        "verified": false,
+        "evidence": "job_ad"
+      },
+      "eligibility": "Country filter only; verify employer requirements before applying."
+    },
+    {
+      "id": "himalayas:https://himalayas.app/companies/clera/jobs/expert-talent-pool-data-operations-expert-5-years",
+      "company": "Clera",
+      "role": "Expert Talent Pool, Data Operations (Expert, 5+ Years)",
+      "location": "Remote · worldwide listing",
+      "sourceUrl": "https://himalayas.app/companies/clera/jobs/expert-talent-pool-data-operations-expert-5-years?utm_source=api",
+      "description": " About the Role  Lead data operations for teams developing advanced AI models, owning the quality of datasets used for training and evaluation. This flexible expert network matches experienced data operations professionals with project work based on their backgrounds.  What You'll Do  \n  Lead data sourcing and collection programs by writing specifications, setting acceptance criteria, and tracking yield and quality.  \n  Manage media capture and document contribution at scale, then curate and validate the resulting datasets.  \n  Design synthetic data generation pipelines and validation checks to assess data quality.  \n  Review annotations, adjudicate disagreements, and run calibration and audit rounds with annotator teams.  \n  Write and maintain labelling guidelines, identifying gaps and incorporating new edge cases.  \n  Coach annotators and reviewers, and report agreement rates, error rates, and other quality metrics to project teams.  \n  What We're Looking For  \n  At least 5 years of experience in data operations, annotation QA, data quality, dataset management, or a relevant domain with hands-on human-data work.  \n  Experience leading or reviewing others' work as a QA lead, guideline owner, adjudicator, team lead, or data project manager.  \n  Experience running data sourcing or collection programs, including setting specifications, acceptance criteria, and quality measures.  \n  Proficiency with annotation tools such as Label Studio, Labelbox, CVAT, Scale, Remotasks, or Appen, and spreadsheets or SQL for quality analysis.  \n  Experience owning labelling guidelines and conducting annotation reviews, calibration, or audits while measuring agreement or error rates.  \n  Clear written communication for explaining data quality issues and solutions. Experience with synthetic data validation, large-scale media capture, document contribution, dataset curation, or coaching annotators is also relevant.  \n  Compensation &amp; Benefits  Compensation is $45 to $90 per hour, depending on the project, field, and level. Payment is based on hours worked.  Location  Fully remote. Projects range from one week to several months.  Compensation Range: $93.6K - $187.2K  Originally posted on  Himalayas  ",
+      "source": "Himalayas",
+      "published": "2026-11-16",
+      "remote": true,
+      "sourceChecked": true,
+      "applicationChannel": {
+        "kind": "website_only",
+        "sourceUrl": "https://himalayas.app/companies/clera/jobs/expert-talent-pool-data-operations-expert-5-years?utm_source=api",
         "verified": false,
         "evidence": "job_ad"
       },
