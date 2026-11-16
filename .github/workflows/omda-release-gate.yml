@@ -1,0 +1,45 @@
+name: OMDA Release Gate — offline snapshot auditor
+on:
+  push:
+    branches:
+      - omda-release-gate-20261116
+    paths:
+      - 'integrations/omda-freellmapi-release-gate/**'
+      - '.github/workflows/omda-release-gate.yml'
+  pull_request:
+    branches:
+      - omda-freellmapi-secure-runtime-v1
+    paths:
+      - 'integrations/omda-freellmapi-release-gate/**'
+      - '.github/workflows/omda-release-gate.yml'
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  verify:
+    runs-on: ubuntu-latest
+    timeout-minutes: 6
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '24'
+      - name: Syntax checks
+        run: node --check integrations/omda-freellmapi-release-gate/engine.mjs
+      - name: Engine and UI tests
+        run: node --test integrations/omda-freellmapi-release-gate/engine.test.mjs integrations/omda-freellmapi-release-gate/ui.test.mjs
+      - name: Static HTTP smoke — loopback only
+        shell: bash
+        run: |
+          set -euo pipefail
+          python3 -m http.server 18766 --bind 127.0.0.1 --directory integrations/omda-freellmapi-release-gate >/tmp/omda-release-gate.log 2>&1 &
+          pid=$!
+          trap 'kill "$pid" 2>/dev/null || true' EXIT
+          sleep 2
+          curl -fsS http://127.0.0.1:18766/index.html -o /tmp/omda-release-gate.html
+          curl -fsS http://127.0.0.1:18766/engine.mjs -o /tmp/omda-release-gate-engine.mjs
+          curl -fsS http://127.0.0.1:18766/fixtures/current-staging-snapshot.json -o /tmp/omda-release-gate-snapshot.json
+          grep -q 'Release Gate' /tmp/omda-release-gate.html
+          grep -q 'analyzeSnapshotText' /tmp/omda-release-gate-engine.mjs
+          node -e "JSON.parse(require('fs').readFileSync('/tmp/omda-release-gate-snapshot.json','utf8'))"
+          echo 'OMDA_RELEASE_GATE_HTTP_SMOKE=PASS'

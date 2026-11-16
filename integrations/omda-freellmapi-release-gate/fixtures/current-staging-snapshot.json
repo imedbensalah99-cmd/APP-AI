@@ -1,0 +1,41 @@
+{
+  "schemaVersion": 1,
+  "capturedAt": "2026-11-16T04:55:43Z",
+  "github": {
+    "repository": "imedbensalah99-cmd/APP-AI",
+    "branch": "omda-freellmapi-secure-runtime-v1",
+    "headSha": "25f0b7d32392d30170409eefb9b4451f2268ec2c",
+    "branchProtected": false,
+    "requiredChecks": [],
+    "runs": [
+      {
+        "id": 42564954992,
+        "branch": "omda-freellmapi-secure-runtime-v1",
+        "headSha": "25f0b7d32392d30170409eefb9b4451f2268ec2c",
+        "status": "completed",
+        "conclusion": "success",
+        "updatedAt": "2026-11-09T05:02:05Z"
+      }
+    ]
+  },
+  "render": {
+    "serviceName": "omda-freellmapi-secure-staging-v1",
+    "branch": "omda-freellmapi-secure-runtime-v1",
+    "plan": "free",
+    "autoDeployEnabled": false,
+    "suspended": false,
+    "ipAllowList": ["0.0.0.0/0"],
+    "latestDeploySha": "e8d3731c25f78599f04d645f2603244902636023",
+    "latestDeployStatus": "live"
+  },
+  "cloudflare": {
+    "workerNames": [
+      "omda-freellmapi-agent-bridge-staging-v1",
+      "omda-freellmapi-agent-private-console-staging-v1",
+      "omda-freellmapi-agent-watch-staging-v1",
+      "omda-freellmapi-secure-gateway-v1"
+    ],
+    "d1DatabaseCount": 10,
+    "d1Capacity": 10
+  }
+}
