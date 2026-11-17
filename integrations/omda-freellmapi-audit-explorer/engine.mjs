@@ -104,8 +104,13 @@ function csvCell(value) {
   return '"' + text.replace(/"/g, '""') + '"';
 }
 
-function exportAuditCsv(events) {
+function exportAuditCsv(events, verifiedSource = events) {
+  assertVerifiedEvents(verifiedSource);
   assertEventShape(events);
+  const sourceByHash = new Map(verifiedSource.map(event => [event.hash, JSON.stringify(event)]));
+  if (events.some(event => sourceByHash.get(event.hash) !== JSON.stringify(event))) {
+    throw new TypeError('CSV rows must come from the verified source chain');
+  }
   const columns = ['seq', 'at', 'type', 'taskId', 'detail', 'previousHash', 'hash'];
   const rows = [columns, ...events.map(event => columns.map(column => event[column]))];
   return rows.map(row => row.map(csvCell).join(',')).join('\r\n') + '\r\n';

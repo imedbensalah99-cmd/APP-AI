@@ -66,6 +66,8 @@ test('CSV export quotes cells and neutralizes spreadsheet formulas', () => {
   const csv = exportAuditCsv(ledger.snapshot());
   assert.match(csv, /'=HYPERLINK\(""https:\/\/example\.invalid"",""open""\)/);
   assert.match(csv, /\r\n/);
+  const forged = ledger.snapshot().map(event => ({ ...event, detail: 'changed' }));
+  assert.throws(() => exportAuditCsv(forged, ledger.snapshot()), /verified source chain/);
 });
 
 test('display redaction masks common tokens and credential assignments', () => {

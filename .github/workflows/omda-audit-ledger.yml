@@ -27,7 +27,7 @@ jobs:
           node-version: '22'
       - run: node --test integrations/omda-freellmapi-audit/audit.test.mjs
 
-      - name: Audit Explorer syntax and unit tests
+      - name: Audit Explorer syntax checks
         run: |
           node --check integrations/omda-freellmapi-audit-explorer/engine.mjs
           node --check integrations/omda-freellmapi-audit-explorer/app.mjs

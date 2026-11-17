@@ -140,7 +140,7 @@ typeFilter.addEventListener('change', render);
 searchInput.addEventListener('input', render);
 csvButton.addEventListener('click', () => {
   if (!ledger) return;
-  download('omda-audit-filtered.csv', exportAuditCsv(currentEvents()), 'text/csv');
+  download('omda-audit-filtered.csv', exportAuditCsv(currentEvents(), ledger.events), 'text/csv');
 });
 jsonButton.addEventListener('click', () => {
   if (!ledger) return;
