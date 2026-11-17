@@ -1,0 +1,43 @@
+<!doctype html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<meta name="color-scheme" content="dark">
+<meta name="referrer" content="no-referrer">
+<meta http-equiv="Content-Security-Policy" content="default-src 'none'; script-src 'self'; style-src 'unsafe-inline'; connect-src 'none'; img-src 'none'; object-src 'none'; base-uri 'none'; form-action 'none'">
+<title>OMDA | Audit Explorer</title>
+<style>
+:root{font-family:system-ui,"Segoe UI",Tahoma,sans-serif;color:#eff2ff;background:#080b13;color-scheme:dark}
+*{box-sizing:border-box}body{margin:0;min-height:100vh;background:radial-gradient(circle at 82% 5%,#49247750,transparent 32%),#080b13}
+.shell{max-width:1120px;margin:auto;padding:24px 16px 64px}header{display:flex;align-items:center;justify-content:space-between;gap:12px;margin-bottom:34px}
+.brand{display:flex;align-items:center;gap:12px;font-weight:850;font-size:1.2rem}.logo{display:grid;place-items:center;width:42px;height:42px;border-radius:13px;background:linear-gradient(140deg,#8954ff,#45308e)}
+.tag{border:1px solid #705aa5;color:#cdbaff;border-radius:99px;padding:8px 12px;font-size:.72rem}
+.hero{max-width:780px;margin:0 auto 22px}.eyebrow{color:#b997ff;font-size:.8rem;font-weight:750}h1{font-size:clamp(2rem,5vw,3.5rem);line-height:1.15;margin:10px 0}.lead{color:#a7b2ca;line-height:1.85;max-width:720px}
+.panel{max-width:1000px;margin:16px auto;padding:20px;border:1px solid #30364c;background:#111624e8;border-radius:20px;box-shadow:0 18px 45px #0004}
+.panel h2{font-size:1.08rem;margin:0 0 14px}.row{display:flex;flex-wrap:wrap;gap:10px;align-items:end}.field{flex:1 1 240px;min-width:0}label{display:block;font-size:.86rem;font-weight:700;margin-bottom:8px}
+input,select{width:100%;min-height:46px;border:1px solid #49516d;border-radius:11px;background:#0a1020;color:#f5f2ff;padding:10px 12px;font:inherit}
+input:focus-visible,select:focus-visible,button:focus-visible{outline:2px solid #b995ff;outline-offset:3px}
+button{border:0;border-radius:11px;padding:12px 16px;min-height:46px;font:inherit;font-weight:700;cursor:pointer}
+button:disabled{opacity:.4;cursor:not-allowed}.primary{background:linear-gradient(125deg,#945dff,#6737ca);color:white}.secondary{background:#20283d;border:1px solid #46506d;color:#eef0ff}
+.status{margin:14px 0 0;padding:12px 14px;border-inline-start:3px solid #8b70c9;border-radius:8px;background:#171d2d;color:#c6cce0;line-height:1.7;overflow-wrap:anywhere}.status[data-kind="success"]{border-color:#4ade80;color:#bbf7d0}.status[data-kind="error"]{border-color:#fb7185;color:#fecdd3}
+.metrics{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:10px}.metric{border:1px solid #343d55;border-radius:13px;padding:14px;background:#171d2c;display:flex;flex-direction:column;gap:6px;min-width:0}.metric strong{font-size:1.25rem;overflow-wrap:anywhere}.metric span{font-size:.77rem;color:#aab6cf}
+.table-wrap{overflow:auto;border:1px solid #343d55;border-radius:13px}table{width:100%;border-collapse:collapse;min-width:760px}th,td{text-align:right;padding:12px 10px;border-bottom:1px solid #2b3348;vertical-align:top;font-size:.82rem}th{background:#1a2235;color:#cdbaff;position:sticky;top:0}td{color:#e4e9f7}tbody tr:last-child td{border-bottom:0}.mono{font-family:ui-monospace,monospace;white-space:nowrap}.detail-cell{min-width:260px;max-width:440px;overflow-wrap:anywhere}
+.small{color:#9ba8c2;font-size:.79rem;line-height:1.8}.actions{display:flex;gap:9px;flex-wrap:wrap;margin-top:14px}.footer{margin:28px auto 0;max-width:900px;text-align:center;color:#8491ac;font-size:.78rem;line-height:1.8}
+@media(max-width:680px){.shell{padding:17px 12px 48px}.panel{padding:15px}.metrics{grid-template-columns:repeat(2,minmax(0,1fr))}header{margin-bottom:27px}.tag{font-size:.65rem;padding:7px 9px}.row>*{flex-basis:100%}}
+</style>
+</head>
+<body>
+<div class="shell">
+<header><div class="brand"><div class="logo" aria-hidden="true">O</div><span>OMDA <span style="color:#b99bff">/ عمدة</span></span></div><div class="tag">AUDIT • LOCAL ONLY</div></header>
+<main>
+<section class="hero"><div class="eyebrow">SECURITY / AUDIT LEDGER</div><h1>تحقّق من سجل التنفيذ<br>قبل الاعتماد عليه.</h1><p class="lead">استورد ملف JSON صادرًا من OMDA Audit Ledger، وتحقق من سلسلة SHA-256، ثم ابحث في الأحداث ونزّل تقريرًا. لا يتم رفع الملف أو حفظه في التخزين الدائم.</p></section>
+<section class="panel" aria-labelledby="import-title"><h2 id="import-title">استيراد سجل التدقيق</h2><div class="row"><div class="field"><label for="audit-file">ملف JSON — الحد الأقصى 512 KB</label><input id="audit-file" type="file" accept=".json,application/json"></div><button id="import-audit" class="primary" type="button">تحقق واستيراد</button><button id="clear-audit" class="secondary" type="button" disabled>مسح الجلسة</button></div><p id="status" class="status" role="status" aria-live="polite">لم يتم تحميل أي ملف بعد.</p><p class="small">التحقق يثبت اتساق سلسلة التجزئة بالنسبة إلى الملف المستورد، ولا يثبت هوية مصدر الملف أو أن الأحداث حدثت فعلًا على خادم موثوق.</p></section>
+<section class="panel" aria-labelledby="summary-title"><h2 id="summary-title">ملخص السجل</h2><div id="summary" class="metrics"><div class="metric"><strong>—</strong><span>بانتظار ملف موثّق</span></div></div></section>
+<section class="panel" aria-labelledby="events-title"><h2 id="events-title">الأحداث</h2><div class="row"><div class="field"><label for="type-filter">نوع الحدث</label><select id="type-filter" disabled><option value="all">كل الأنواع</option></select></div><div class="field"><label for="search">بحث في الحدث والمهمة</label><input id="search" type="search" maxlength="120" placeholder="اكتب كلمة للبحث..." disabled></div></div><p id="visible-count" class="small">لا توجد بيانات محمّلة</p><div class="table-wrap"><table><thead><tr><th>التسلسل</th><th>الوقت</th><th>النوع</th><th>المهمة</th><th>التفاصيل</th></tr></thead><tbody id="events"><tr><td colspan="5">استورد سجلًا موثّقًا لعرض الأحداث.</td></tr></tbody></table></div><div class="actions"><button id="export-csv" class="secondary" type="button" disabled>تنزيل CSV للنتائج المفلترة</button><button id="export-json" class="secondary" type="button" disabled>تنزيل JSON للسجل الكامل</button></div></section>
+</main>
+<footer class="footer">OMDA Audit Explorer · لا اتصالات خارجية · لا Local Storage · لا إرسال أو نشر · راجع مصدر الملف قبل الاعتماد على محتواه.</footer>
+</div>
+<script type="module" src="./app.mjs"></script>
+</body>
+</html>

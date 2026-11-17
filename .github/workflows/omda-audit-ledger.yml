@@ -4,10 +4,14 @@ on:
     branches: [omda-freellmapi-secure-runtime-v1]
     paths:
       - 'integrations/omda-freellmapi-audit/**'
+      - 'integrations/omda-freellmapi-audit-explorer/**'
+      - 'integrations/omda-freellmapi-command-center/**'
       - '.github/workflows/omda-audit-ledger.yml'
   pull_request:
     paths:
       - 'integrations/omda-freellmapi-audit/**'
+      - 'integrations/omda-freellmapi-audit-explorer/**'
+      - 'integrations/omda-freellmapi-command-center/**'
       - '.github/workflows/omda-audit-ledger.yml'
   workflow_dispatch:
 permissions:
@@ -22,3 +26,23 @@ jobs:
         with:
           node-version: '22'
       - run: node --test integrations/omda-freellmapi-audit/audit.test.mjs
+
+      - name: Audit Explorer syntax checks
+        run: |
+          node --check integrations/omda-freellmapi-audit-explorer/engine.mjs
+          node --check integrations/omda-freellmapi-audit-explorer/app.mjs
+      - name: Static UI smoke
+        shell: bash
+        run: |
+          set -euo pipefail
+          python3 -m http.server 18766 --bind 127.0.0.1 --directory integrations >/tmp/omda-audit-explorer.log 2>&1 &
+          pid=$!
+          trap 'kill "$pid" 2>/dev/null || true' EXIT
+          for attempt in $(seq 1 10); do
+            if curl -fsS http://127.0.0.1:18766/omda-freellmapi-audit-explorer/index.html -o /tmp/omda-audit-explorer.html; then break; fi
+            sleep 1
+          done
+          grep -q 'Audit Explorer' /tmp/omda-audit-explorer.html
+          curl -fsS http://127.0.0.1:18766/omda-freellmapi-audit-explorer/app.mjs | grep -q 'parseAuditExport'
+          curl -fsS http://127.0.0.1:18766/omda-freellmapi-audit-explorer/engine.mjs | grep -q 'verifyAuditLedger'
+          echo 'OMDA_AUDIT_EXPLORER_HTTP_SMOKE=PASS'
