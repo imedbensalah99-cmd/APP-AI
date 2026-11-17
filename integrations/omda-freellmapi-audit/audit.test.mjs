@@ -1,6 +1,7 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
 import {createAuditLedger,verifyAuditLedger} from './audit.mjs';
+import '../omda-freellmapi-audit-explorer/engine.test.mjs'; // Run viewer tests in the existing audit CI lane.
 test('ledger records a verified two-step task lifecycle',()=>{
  const a=createAuditLedger();a.append({type:'task.created',taskId:'job-1',detail:'Create spreadsheet',at:'2026-11-09T05:00:00.000Z'});a.append({type:'artifact.created',taskId:'job-1',detail:'tracker.csv',at:'2026-11-09T05:00:01.000Z'});
  const s=a.snapshot();assert.equal(s.length,2);assert.equal(s[1].previousHash,s[0].hash);assert.ok(verifyAuditLedger(s));assert.deepEqual(JSON.parse(a.exportJson()).events,s);
