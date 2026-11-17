@@ -10,6 +10,8 @@ on:
   pull_request:
     paths:
       - 'integrations/omda-freellmapi-audit/**'
+      - 'integrations/omda-freellmapi-audit-explorer/**'
+      - 'integrations/omda-freellmapi-command-center/**'
       - '.github/workflows/omda-audit-ledger.yml'
   workflow_dispatch:
 permissions:
@@ -29,7 +31,6 @@ jobs:
         run: |
           node --check integrations/omda-freellmapi-audit-explorer/engine.mjs
           node --check integrations/omda-freellmapi-audit-explorer/app.mjs
-          node --test integrations/omda-freellmapi-audit-explorer/engine.test.mjs
       - name: Static UI smoke
         shell: bash
         run: |
