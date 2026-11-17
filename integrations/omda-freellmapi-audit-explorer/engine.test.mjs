@@ -1,5 +1,6 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
+import { readFileSync } from 'node:fs';
 import { createAuditLedger } from '../omda-freellmapi-audit/audit.mjs';
 import {
   MAX_BYTES, parseAuditExport, summarizeAudit, filterAuditEvents,
@@ -81,4 +82,14 @@ test('JSON export preserves a verifiable chain and ends with a newline', () => {
   const output = exportAuditJson(events);
   assert.equal(output.endsWith('\n'), true);
   assert.equal(parseAuditExport(output).events.length, 3);
+});
+
+test('browser shell stays local-only and renders untrusted text safely', () => {
+  const html = readFileSync(new URL('./index.html', import.meta.url), 'utf8');
+  const app = readFileSync(new URL('./app.mjs', import.meta.url), 'utf8');
+  assert.match(html, /connect-src 'none'/);
+  assert.match(html, /script type="module" src="\.\/app\.mjs"/);
+  assert.doesNotMatch(html, /https?:\/\//);
+  assert.doesNotMatch(app, /\bfetch\s*\(|XMLHttpRequest|WebSocket|localStorage|sessionStorage|indexedDB|innerHTML|outerHTML/);
+  assert.match(app, /textContent/);
 });
