@@ -38,7 +38,7 @@ Then open `http://127.0.0.1:8765/integrations/omda-freellmapi-agent-watch-histor
 
 ## Manual live snapshot (no Cloudflare Cron required)
 
-The Cloudflare account currently has no free Cron-trigger slot available for this Worker. To avoid changing or disabling another project's trigger, the repository includes a manual GitHub Actions workflow: **OMDA Agent Watch Snapshot (manual, no secrets)**. Run it from Actions on the isolated target branch, download the `omda-agent-watch-snapshot` artifact (3-day retention), and import the JSON into this page. The probe performs exactly two anonymous GETs to the fixed Staging origin, has a 15-second timeout per request, does not follow redirects, and sends no credentials or body. A non-safe result fails the workflow after the artifact upload step.
+The Cloudflare account currently has no free Cron-trigger slot available for this Worker. To avoid changing or disabling another project's trigger, the repository includes a push-triggered GitHub Actions workflow: **OMDA Agent Watch Snapshot (read-only)**. After this PR is merged into the isolated target branch, a push touching this tool runs the probe, uploads the `omda-agent-watch-snapshot` artifact (3-day retention), and the JSON can be imported into this page. The probe performs exactly two anonymous GETs to the fixed Staging origin, has a 15-second timeout per request, does not follow redirects, and sends no credentials or body. A non-safe result fails the workflow after the artifact upload step.
 
 ## Live heartbeat scope
 
