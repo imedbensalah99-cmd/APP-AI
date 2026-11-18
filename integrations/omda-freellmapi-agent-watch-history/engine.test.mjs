@@ -106,6 +106,11 @@ test('exports only verified, bounded columns and neutralizes CSV formula starter
   assert.equal(json.checks[0].id, undefined);
 });
 
-test('parseSnapshotText validates and preserves the D1 envelope for analysis', () => {\n  const parsed = parseSnapshotText(JSON.stringify({ success: true, result: [{ results: sample }] }));\n  assert.equal(analyzeHistory(parsed, { now: new Date('2026-11-18T05:00:00.000Z') }).checks, 3);\n});\n\ntest('parseSnapshotText rejects malformed JSON', () => {
+test('parseSnapshotText validates and preserves the D1 envelope for analysis', () => {
+  const parsed = parseSnapshotText(JSON.stringify({ success: true, result: [{ results: sample }] }));
+  assert.equal(analyzeHistory(parsed, { now: new Date('2026-11-18T05:00:00.000Z') }).checks, 3);
+});
+
+test('parseSnapshotText rejects malformed JSON', () => {
   assert.throws(() => parseSnapshotText('{bad json'), /Invalid JSON/);
 });
