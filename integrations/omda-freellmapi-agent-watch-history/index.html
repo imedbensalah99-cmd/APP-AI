@@ -1,0 +1,105 @@
+<!doctype html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<meta name="color-scheme" content="dark">
+<title>OMDA | Agent Watch History</title>
+<style>
+:root{font-family:system-ui,"Segoe UI",Tahoma,sans-serif;color:#eff2ff;background:#070b13;color-scheme:dark;--muted:#9da9c2;--line:#31364d;--panel:#111625;--violet:#9b70f4}
+*{box-sizing:border-box}body{margin:0;min-height:100vh;background:radial-gradient(circle at 84% 4%,#42217445,transparent 32%),#080a11}
+.shell{max-width:1050px;margin:auto;padding:24px 16px 64px}header{display:flex;justify-content:space-between;align-items:center;gap:12px;margin-bottom:30px}.brand{font-weight:850;font-size:1.15rem}.tag{border:1px solid #715ba08b;color:#d3c1ff;border-radius:99px;padding:7px 12px;font-size:.72rem}
+.hero{margin-bottom:20px}.eyebrow{color:#bd9aff;font-size:.78rem;font-weight:750}h1{font-size:clamp(2rem,5vw,3.2rem);margin:8px 0;letter-spacing:-.04em}.lead{color:var(--muted);line-height:1.85;max-width:760px;margin:0}
+.panel{border:1px solid var(--line);background:#111625e8;border-radius:20px;padding:19px;margin:16px 0;box-shadow:0 18px 45px #0004}.panel h2{margin:0 0 12px;font-size:1.12rem}
+textarea{width:100%;min-height:160px;resize:vertical;border:1px solid #46506a;background:#0a0f1b;color:#f5f3ff;border-radius:12px;padding:13px;font: .85rem/1.65 ui-monospace,monospace;direction:ltr;text-align:left}textarea:focus,input:focus-visible,button:focus-visible,a:focus-visible{outline:2px solid #b99aff;outline-offset:3px}
+input[type=file]{max-width:100%;color:var(--muted);margin:10px 0}
+.actions{display:flex;flex-wrap:wrap;gap:9px;margin-top:12px}button,.download{border:1px solid #4a4168;border-radius:11px;background:#211b35;color:#f4efff;padding:10px 14px;font:inherit;font-size:.86rem;font-weight:700;cursor:pointer;text-decoration:none;display:inline-flex;align-items:center;justify-content:center;min-height:42px}.primary{background:linear-gradient(125deg,#9560f5,#633fc0);border-color:#9560f5}.danger{background:#311a28;border-color:#71344e}.muted{color:var(--muted);font-size:.8rem;line-height:1.8}
+#results[hidden]{display:none}.summary{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:10px;margin:12px 0}.metric{background:#0c1220;border:1px solid #303851;border-radius:14px;padding:13px}.metric strong{display:block;font-size:1.45rem;font-variant-numeric:tabular-nums}.metric span{color:var(--muted);font-size:.74rem}
+.status{display:inline-flex;border-radius:99px;padding:6px 11px;font-size:.76rem;font-weight:800;border:1px solid #45516b;background:#1a2635}.healthy{color:#8ce0b5;border-color:#276c4c;background:#10271d}.attention,.clock{color:#ffd28b;border-color:#76521d;background:#30230f}.stale,.nodata{color:#c1c9da;border-color:#4a5366;background:#202636}
+.bar{height:10px;border-radius:99px;background:#273047;overflow:hidden;margin:10px 0}.bar>i{display:block;height:100%;background:linear-gradient(90deg,#4fbd8b,#a0e0b9);width:0}
+.rows{display:grid;gap:8px;margin-top:12px}.event{display:grid;grid-template-columns:minmax(0,1fr) auto;gap:12px;align-items:center;border:1px solid #30384f;background:#0d1321;border-radius:12px;padding:12px}.event time{display:block;color:var(--muted);font-size:.75rem;direction:ltr;text-align:right}.event strong{font-size:.85rem}.event small{color:var(--muted);display:block;margin-top:4px}.error{color:#ffb8b8;min-height:1.5em}.hidden{display:noneaimportant}footer{text-align:center;color:#77839d;font-size:.78rem;margin-top:30px}
+@media(max-width:650px){.shell{padding:17px 12px 45px}.summary{grid-template-columns:repeat(2,minmax(0,1fr))}.panel{padding:14px}.event{grid-template-columns:1fr}.event time{text-align:right}.actions>*{flex:1 1 130px}}
+</style>
+</head>
+<body>
+<div class="shell">
+<header><div class="brand">OMDA <span style="color:#b99aff">/ مراقبة الوكلاء</span></div><div class="tag">READ-ONLY · LOCAL</div></header>
+<main>
+<section class="hero"><div class="eyebrow">AGENT WATCH / HISTORY</div><h1>سجل صحة الوكيل</h1><p class="lead">استورد نتائج الفحص الدورية من قاعدة D1 المخصصة، وتحقق من اتساق كل نتيجة قبل حساب الحالة والاتجاه. لا يوجد اتصال مباشر بالخدمات ولا تخزين دائم.</p></section>
+<section class="panel" aria-labelledby="import-title">
+<h2 id="import-title">استيراد سجل الفحوص</h2>
+<label for="file">اختر JSON صادرًا من استعلام D1</label><br><input id="file" type="file" accept="application/json,.json">
+<label for="raw">أو الصق نتيجة الاستعلام</label>
+<textarea id="raw" spellcheck="false" placeholder='{"success":true,"result":[{"results":[]}]} '></textarea>
+<div class="actions"><button class="primary" id="analyze">تحليل السجل</button><button id="sample">تحميل عينة تجريبية</button><button class="danger" id="clear">مسح</button></div>
+<p id="message" class="muted error" role="status" aria-live="polite"></p>
+<p class="muted">الحد الأقصى 64 KB و30 سجلًا. تُرفض الحقول الإضافية والتواريخ غير القياسية وأي اختلاف بين رمز HTTP والحالة المسجلة.</p>
+</section>
+<section class="panel" id="results" hidden aria-live="polite">
+<div style="display:flex;justify-content:space-between;align-items:center;gap:10px;flex-wrap:wrap"><h2 style="margin:0">ملخص المراقبة</h2><span id="status" class="status nodata">NO DATA</span></div>
+<div class="summary">
+<div class="metric"><strong id="checks">0</strong><span>عدد الفحوص</span></div>
+<div class="metric"><strong id="uptime">—</strong><span>نسبة سلامة المحيط</span></div>
+<div class="metric"><strong id="failures">0</strong><span>الفحوص غير السليمة</span></div>
+<div class="metric"><strong id="streak">0</strong><span>تتابع الإخفاق الحالي</span></div>
+</div>
+<div class="muted" id="latest">لا توجد قراءة بعد.</div>
+<div class="bar"><i id="bar"></i></div>
+<div class="muted" id="counts"></div>
+<div class="actions"><button id="csv">تنزيل CSV</button><button id="json">تنزيل JSON</button></div>
+<h2 style="margin-top:22px">آخر القراءات</h2><div id="rows" class="rows"></div>
+</section>
+</main>
+<footer>OMDA FreeLLMAPI · No AI inference · No provider calls · No public endpoint » No persistent storage</footer>
+</div>
+<script type="module">
+import { analyzeHistory, exportHistoryCsv, exportHistoryJson, parseSnapshotText } from './engine.mjs';
+const $ = id => document.getElementById(id);
+const raw = $('raw'), message = $('message'), results = $('results');
+let current = null, urls = [];
+const sample = {success:true,errors:[],messages:[],result:[{success:true,results:[
+ {id:'00000000-0000-4000-8000-000000000001',created_at:'2026-11-16T04:15:00.000Z',health_http:200,model_http:403,verdict:'PERIMETER_OK'},
+ {id:'00000000-0000-4000-8000-000000000002',created_at:'2026-11-17T04:15:00.000Z',health_http:200,model_http:403,verdict:'PERIMETER_OK'},
+ {id:'00000000-0000-4000-8000-000000000003',created_at:'2026-11-18T04:15:00.000Z',health_http:200,model_http:200,verdict:'ORIGIN_GATE_OPEN'}
+]}]};
+function clearUrls(){ for(const u of urls) URL.revokeObjectURL(u); urls=[]; }
+function download(name, content, type){
+ clearUrls(); const url=URL.createObjectURL(new Blob([content],{type})); urls.push(url);
+ const a=document.createElement('a'); a.href=url; a.download=name; a.click(); a.remove();
+}
+function render(report){
+ current=report; results.hidden=false;
+ const status=$('status'); status.textContent=report.status; status.className='status '+({HEALTHY:'healthy',ATTENTION:'attention',CLOCK_SKEW:'clock',STALE:'stale',NO_DATA:'nodata'}[report.status]||'nodata');
+ $('checks').textContent=report.checks;
+ $('uptime').textContent=report.uptimePercent===null?'—':`${report.uptimePercent}%`;
+ $('failures').textContent=report.failedChecks;
+ $('streak').textContent=report.currentFailureStreak;
+ $('latest').textContent=report.latestAt?`آخر قراءة: ${report.latestAt} · ${report.latestVerdict} · عمر القراءة ${report.ageHours} ساعة`:'لم تُسجّل أي قراءة بعد.';
+ $('bar').style.width=report.uptimePercent===null?'0%':`${report.uptimePercent}%`;
+ $('counts').textContent=`سليم: ${report.counts.PERIMETER_OK} · بوابة مفتوحة: ${report.counts.ORIGIN_GATE_OPEN} · شبكة: ${report.counts.NETWORK_UNAVAILABLE} · غير جاهز: ${report.counts.PERIMETER_NOT_READY} · أطول تتابع سليم: ${report.longestHealthyStreak}`;
+ const list=$('rows'); list.replaceChildren();
+ for(const row of [...report.rows].reverse()){
+  const item=document.createElement('article'); item.className='event';
+  const left=document.createElement('div'); const title=document.createElement('strong'); title.textContent=row.verdict;
+  const details=document.createElement('small'); details.textContent=`Health HTTP ${row.healthHttp} · Models HTTP ${row.modelHttp}`;
+  left.append(title,details); const time=document.createElement('time'); time.dateTime=row.createdAt; time.textContent=row.createdAt; item.append(left,time); list.append(item);
+ }
+}
+$('analyze').addEventListener('click',()=>{
+ message.textContent='';
+ try { const rows=parseSnapshotText(raw.value); render(analyzeHistory(rows)); message.textContent=`تم التحقق من ${rows.length} قراءة. لم يتم الاتصال بأي خدمة.`; }
+ catch(error){ current=null; results.hidden=true; message.textContent=error.message; }
+});
+$('sample').addEventListener('click',()=>{raw.value=JSON.stringify(sample,null,2);message.textContent='عينة اصطناعية للتجربة فقط؛ ليست حالة تشغيل حقيقية.';});
+$('file').addEventListener('change',async event=>{
+ const file=event.target.files?.[0]; if(!file)return;
+ if(file.size>65536){message.textContent='الملف أكبر من 64 KB.';event.target.value='';return;}
+ try{raw.value=await file.text();message.textContent='تم تحميل الملف في الذاكرة؛ اضغط تحليل السجل للتحقق منه.';}
+ catch{message.textContent='تعذر قراءة الملف.';}
+});
+$('clear').addEventListener('click',()=>{clearUrls();current=null;raw.value='';$('file').value='';message.textContent='';results.hidden=true;});
+$('csv').addEventListener('click',()=>{if(current)download('omda-agent-watch-history.csv',exportHistoryCsv(current),'text/csv;charset=utf-8');});
+$('json').addEventListener('click',()=>{if(current)download('omda-agent-watch-history.json',exportHistoryJson(current),'application/json;charset=utf-8');});
+</script>
+</body>
+</html>
