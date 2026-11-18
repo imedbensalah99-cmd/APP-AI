@@ -36,6 +36,10 @@ Then open `http://127.0.0.1:8765/integrations/omda-freellmapi-agent-watch-histor
 
 `fixtures/sample-d1-response.json` is synthetic demo data and must not be presented as a live health reading.
 
+## Manual live snapshot (no Cloudflare Cron required)
+
+The Cloudflare account currently has no free Cron-trigger slot available for this Worker. To avoid changing or disabling another project's trigger, the repository includes a manual GitHub Actions workflow: **OMDA Agent Watch Snapshot (manual, no secrets)**. Run it from Actions on the isolated target branch, download the `omda-agent-watch-snapshot` artifact (3-day retention), and import the JSON into this page. The probe performs exactly two anonymous GETs to the fixed Staging origin, has a 15-second timeout per request, does not follow redirects, and sends no credentials or body. A non-safe result fails the workflow after the artifact upload step.
+
 ## Live heartbeat scope
 
 The existing Cloudflare Agent Watch worker performs only two anonymous GETs to `/api/ping` and `/v1/models`, stores status codes/verdicts, and retains the latest 30 records. It does not invoke an AI model, send prompts, publish content, or make paid calls. The history page does not change or expose that Worker.
