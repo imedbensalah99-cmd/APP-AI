@@ -5,10 +5,12 @@ on:
     paths:
       - 'integrations/omda-freellmapi-agent-watch-history/**'
       - '.github/workflows/omda-freellmapi-agent-watch-history-ci.yml'
+      - '.github/workflows/omda-agent-watch-snapshot.yml'
   pull_request:
     paths:
       - 'integrations/omda-freellmapi-agent-watch-history/**'
       - '.github/workflows/omda-freellmapi-agent-watch-history-ci.yml'
+      - '.github/workflows/omda-agent-watch-snapshot.yml'
   workflow_dispatch:
 permissions:
   contents: read

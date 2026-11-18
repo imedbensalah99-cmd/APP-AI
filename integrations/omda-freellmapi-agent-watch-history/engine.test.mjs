@@ -1,5 +1,6 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
+import fs from 'node:fs';
 import {
   MAX_BYTES, MAX_ROWS, analyzeHistory, exportHistoryCsv, exportHistoryJson,
   expectedVerdict, normalizeRows, parseSnapshotText,
@@ -113,4 +114,14 @@ test('parseSnapshotText validates and preserves the D1 envelope for analysis', (
 
 test('parseSnapshotText rejects malformed JSON', () => {
   assert.throws(() => parseSnapshotText('{bad json'), /Invalid JSON/);
+});
+
+
+test('snapshot workflow is gated to the isolated branch and short-lived artifact', () => {
+  const source = fs.readFileSync(new URL('../../.github/workflows/omda-agent-watch-snapshot.yml', import.meta.url), 'utf8');
+  assert.doesNotMatch(source, /\u0000/);
+  assert.match(source, /branches:\s*\n\s+- 'omda-freellmapi-secure-runtime-v1'/);
+  assert.match(source, /if: github\.ref == 'refs\/heads\/omda-freellmapi-secure-runtime-v1'/);
+  assert.match(source, /retention-days: 3/);
+  assert.match(source, /run: node integrations\/omda-freellmapi-agent-watch-history\/probe\.mjs/);
 });
