@@ -74,7 +74,8 @@ function parseSnapshotText(text) {
   if (new TextEncoder().encode(text).byteLength > MAX_BYTES) throw new RangeError(`Snapshot exceeds ${MAX_BYTES} bytes`);
   let parsed;
   try { parsed = JSON.parse(text); } catch { throw new TypeError('Invalid JSON snapshot'); }
-  return normalizeRows(parsed);
+  normalizeRows(parsed);
+  return parsed;
 }
 
 function analyzeHistory(input, { now = new Date() } = {}) {

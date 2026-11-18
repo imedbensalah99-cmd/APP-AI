@@ -87,7 +87,7 @@ function render(report){
 }
 $('analyze').addEventListener('click',()=>{
  message.textContent='';
- try { const rows=parseSnapshotText(raw.value); render(analyzeHistory(rows)); message.textContent=`تم التحقق من ${rows.length} قراءة. لم يتم الاتصال بأي خدمة.`; }
+ try { const snapshot=parseSnapshotText(raw.value); const report=analyzeHistory(snapshot); render(report); message.textContent=`تم التحقق من ${report.checks} قراءة. لم يتم الاتصال بأي خدمة.`; }
  catch(error){ current=null; results.hidden=true; message.textContent=error.message; }
 });
 $('sample').addEventListener('click',()=>{raw.value=JSON.stringify(sample,null,2);message.textContent='عينة اصطناعية للتجربة فقط؛ ليست حالة تشغيل حقيقية.';});
