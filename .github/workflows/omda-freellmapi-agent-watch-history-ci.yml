@@ -1,0 +1,38 @@
+name: OMDA Agent Watch History
+on:
+  push:
+    branches: [omda-freellmapi-secure-runtime-v1]
+    paths:
+      - 'integrations/omda-freellmapi-agent-watch-history/**'
+      - '.github/workflows/omda-freellmapi-agent-watch-history-ci.yml'
+      - '.github/workflows/omda-agent-watch-snapshot.yml'
+  pull_request:
+    paths:
+      - 'integrations/omda-freellmapi-agent-watch-history/**'
+      - '.github/workflows/omda-freellmapi-agent-watch-history-ci.yml'
+      - '.github/workflows/omda-agent-watch-snapshot.yml'
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  verify:
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+      - name: Run bounded D1 history tests
+        run: node --test integrations/omda-freellmapi-agent-watch-history/engine.test.mjs integrations/omda-freellmapi-agent-watch-history/probe.test.mjs
+      - name: Syntax checks
+        run: |
+          node --check integrations/omda-freellmapi-agent-watch-history/engine.mjs
+          node --check integrations/omda-freellmapi-agent-watch-history/engine.test.mjs
+          node --check integrations/omda-freellmapi-agent-watch-history/probe.mjs
+          node --check integrations/omda-freellmapi-agent-watch-history/probe.test.mjs
+      - name: Browser privacy contract
+        shell: bash
+        run: |
+          ! grep -Eiq 'fetch\(|XMLHttpRequest|WebSocket|sendBeacon|localStorage|sessionStorage|indexedDB|document\.cookie' integrations/omda-freellmapi-agent-watch-history/index.html
+          grep -q 'textContent' integrations/omda-freellmapi-agent-watch-history/index.html

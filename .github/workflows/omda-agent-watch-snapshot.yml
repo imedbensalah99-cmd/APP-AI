@@ -1,0 +1,40 @@
+name: OMDA Agent Watch Snapshot (read-only, no secrets)
+on:
+  push:
+    branches:
+      - 'omda-freellmapi-secure-runtime-v1'
+    paths:
+      - 'integrations/omda-freellmapi-agent-watch-history/**'
+      - '.github/workflows/omda-agent-watch-snapshot.yml'
+permissions:
+  contents: read
+concurrency:
+  group: omda-agent-watch-snapshot
+  cancel-in-progress: false
+jobs:
+  snapshot:
+    if: github.ref == 'refs/heads/omda-freellmapi-secure-runtime-v1'
+    runs-on: ubuntu-latest
+    timeout-minutes: 3
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+      - name: Prepare artifact directory
+        run: mkdir -p artifacts
+      - name: Collect two anonymous Staging GET checks
+        id: probe
+        continue-on-error: true
+        run: node integrations/omda-freellmapi-agent-watch-history/probe.mjs > artifacts/agent-watch-snapshot.json
+      - name: Upload the status-only snapshot
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: omda-agent-watch-snapshot
+          path: artifacts/agent-watch-snapshot.json
+          if-no-files-found: warn
+          retention-days: 3
+      - name: Fail the run when the perimeter is not safe
+        if: steps.probe.outcome == 'failure'
+        run: exit 1
