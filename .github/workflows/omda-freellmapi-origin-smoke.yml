@@ -1,0 +1,36 @@
+name: OMDA FreeLLMAPI origin security smoke test
+on:
+  pull_request:
+    paths:
+      - '.github/workflows/omda-freellmapi-origin-smoke.yml'
+permissions:
+  contents: read
+jobs:
+  check-auth-gates:
+    runs-on: ubuntu-latest
+    timeout-minutes: 7
+    steps:
+      - name: Direct Render domain must reject dashboard and API access
+        shell: bash
+        run: |
+          set -euo pipefail
+          origin='https://omda-freellmapi-secure-staging-v1.onrender.com'
+          for path in / /api/auth/status /v1/models /mcp; do
+            code="$(curl -sS --retry 2 --retry-delay 5 --max-time 100 -o /dev/null -w '%{http_code}' "$origin$path")"
+            echo "ORIGIN $path HTTP $code"
+            test "$code" = 403
+          done
+          health="$(curl -sS --max-time 45 -o /dev/null -w '%{http_code}' "$origin/api/ping")"
+          echo "HEALTH HTTP $health"
+          test "$health" = 200
+      - name: Cloudflare Access must challenge unauthenticated callers
+        shell: bash
+        run: |
+          set -euo pipefail
+          url='https://omda-freellmapi-secure-gateway-v1.imedbensalah9988.workers.dev/'
+          code="$(curl -sS --max-time 60 -o /dev/null -w '%{http_code}' "$url")"
+          echo "ACCESS_GATEWAY HTTP $code"
+          case "$code" in
+            302|303|307|308|401|403) ;;
+            *) echo "Access gateway not verified (unexpected status)"; exit 1 ;;
+          esac
