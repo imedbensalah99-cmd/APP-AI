@@ -1,7 +1,26 @@
 {
-  "generatedAt": "2026-11-18T14:21:31.755Z",
+  "generatedAt": "2026-11-19T14:33:17.730Z",
   "source": "Himalayas public API",
   "jobs": [
+    {
+      "id": "himalayas:https://himalayas.app/companies/micro1/jobs/travel-operations-specialist",
+      "company": "micro1",
+      "role": "Travel Operations Specialist",
+      "location": "Remote · worldwide listing",
+      "sourceUrl": "https://himalayas.app/companies/micro1/jobs/travel-operations-specialist?utm_source=api",
+      "description": "  Role Title:  Travel Operations Specialist   Role Type:  Contractor   Location:  Remote   micro1  is engaging Travel Operations Specialists to contribute expertise to a customer's project focused on delivering exceptional travel support and solutions. In this role, you'll apply your expertise to help train next-generation AI systems. Your work will shape how models learn, reason, and perform through high-quality, real-world input. No prior experience in AI is required — your domain knowledge is what matters.  Scope of Work  \n Provide comprehensive travel booking services, including flights, accommodations, transportation, and specialized requests. \n Develop, review, and optimize detailed itineraries tailored to diverse traveler profiles and preferences. \n Manage reservation processes across multiple platforms, ensuring accuracy and timely confirmations or modifications. \n Deliver high-quality customer experience by responding to queries, resolving challenges, and offering proactive travel advice. \n Document best practices and real-world scenarios for use in AI training datasets. \n Collaborate with project stakeholders to refine travel operations workflows and identify opportunities for process improvement. \n Communicate findings and recommendations with clarity, both in written reports and during remote discussions. \n  Preferred Qualifications  \n Expertise in end-to-end travel booking, including flights, hotels, car rentals, and ancillary services. \n Demonstrated experience in itinerary planning and delivering personalized travel arrangements. \n Strong background in managing reservations and troubleshooting booking issues. \n Exceptional written and verbal communication skills, with attention to detail and customer care. \n Familiarity with various global reservation systems and travel management tools. \n Ability to synthesize complex travel requirements and present clear, actionable insights. \n Experience in collaborating with diverse stakeholders in remote or distributed project environments. \n  Originally posted on  Himalayas  ",
+      "source": "Himalayas",
+      "published": "2026-11-18",
+      "remote": true,
+      "sourceChecked": true,
+      "applicationChannel": {
+        "kind": "website_only",
+        "sourceUrl": "https://himalayas.app/companies/micro1/jobs/travel-operations-specialist?utm_source=api",
+        "verified": false,
+        "evidence": "job_ad"
+      },
+      "eligibility": "Country filter only; verify employer requirements before applying."
+    },
     {
       "id": "himalayas:https://himalayas.app/companies/uphone-esim/jobs/customer-service-executive",
       "company": "uPhone eSIM",
@@ -206,25 +225,6 @@
       "applicationChannel": {
         "kind": "website_only",
         "sourceUrl": "https://himalayas.app/companies/everhelp/jobs/customer-support-specialist-german-and-english-2909298726?utm_source=api",
-        "verified": false,
-        "evidence": "job_ad"
-      },
-      "eligibility": "Country filter only; verify employer requirements before applying."
-    },
-    {
-      "id": "himalayas:https://himalayas.app/companies/it-support-guy/jobs/virtual-admin-specialist",
-      "company": "IT Support Guy",
-      "role": "Virtual Admin Specialist",
-      "location": "Remote · worldwide listing",
-      "sourceUrl": "https://himalayas.app/companies/it-support-guy/jobs/virtual-admin-specialist?utm_source=api",
-      "description": "Category: Administration   Location:     We are seeking a  Virtual Admin Specialist  to join our team. In this role, you will assist our digital marketing clients by handling customer queries, answering calls, and responding to messages and emails professionally. You’ll serve as an extension of their team, ensuring timely, accurate, and courteous responses to all inquiries, helping to bridge any language or time-related communication gaps. \n   Requirements  \n Responsibilities  \n  \n Professionally handle incoming calls, messages, and emails on behalf of clients. \n \n Respond to customer inquiries with clear and accurate information. \n \n Address language and time-zone barriers to provide prompt support. \n \n Manage multiple communication channels and prioritize responses. \n \n Collaborate with clients to understand their brand voice and customer service preferences. \n \n Maintain records of interactions for quality and reporting purposes. \n \n  \n Requirements  \n  \n \n Fluent in English  (both written and spoken); Must be proficient in English. \n \n \n Excellent communication skills  with the ability to handle customer inquiries professionally. \n \n \n Experience in customer service  or virtual assistance is preferred. \n \n Familiarity with digital communication tools (email, chat platforms) and CRM systems. \n \n Ability to work remotely, maintain productivity, and manage time effectively. \n \n Strong organizational skills and attention to detail. \n \n   Benefits  Work remotely from anywhere in the world. \n  Flexible hours with the opportunity to work across different time zones. \n  Be part of a growing, supportive team in the digital marketing industry. \n  Professional development opportunities to enhance your customer service skills. \n  Competitive salary and performance-based bonuses. \n     Details Originally posted on  Himalayas  ",
-      "source": "Himalayas",
-      "published": "2026-11-01",
-      "remote": true,
-      "sourceChecked": true,
-      "applicationChannel": {
-        "kind": "website_only",
-        "sourceUrl": "https://himalayas.app/companies/it-support-guy/jobs/virtual-admin-specialist?utm_source=api",
         "verified": false,
         "evidence": "job_ad"
       },
