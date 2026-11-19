@@ -1,0 +1,36 @@
+name: OMDA Agent Operations API
+on:
+  push:
+    branches: [omda-freellmapi-secure-runtime-v1]
+    paths:
+      - 'server/src/lib/omda-agent-policy.ts'
+      - 'server/src/lib/omda-agent-server-guard.ts'
+      - 'server/src/routes/omda-agent-ops.ts'
+      - 'server/src/app.ts'
+      - 'server/src/__tests__/lib/omda-agent-policy.test.ts'
+      - 'integrations/omda-freellmapi-agent-ops/**'
+      - '.github/workflows/omda-agent-ops.yml'
+  pull_request:
+    paths:
+      - 'server/src/lib/omda-agent-policy.ts'
+      - 'server/src/lib/omda-agent-server-guard.ts'
+      - 'server/src/routes/omda-agent-ops.ts'
+      - 'server/src/app.ts'
+      - 'server/src/__tests__/lib/omda-agent-policy.test.ts'
+      - 'integrations/omda-freellmapi-agent-ops/**'
+      - '.github/workflows/omda-agent-ops.yml'
+permissions:
+  contents: read
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    timeout-minutes: 12
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+          cache: npm
+      - run: npm ci
+      - run: npm run test -w server -- src/__tests__/lib/omda-agent-policy.test.ts
+      - run: npm run build -w server
