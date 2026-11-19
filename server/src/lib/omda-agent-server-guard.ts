@@ -5,9 +5,10 @@ import type { Request, Response, NextFunction } from 'express';
 import type { RouteResult } from '../services/router.js';
 import { getDb } from '../db/index.js';
 import { resolveAuth } from './system-prompt.js';
+import { inspectOmdaAgentPayload, OMDA_AGENT_POLICY } from './omda-agent-policy.js';
 
 export const OMDA_AGENT_PROFILE = 'OMDA-Agent-Staging';
-export const OMDA_AGENT_MODEL = 'openai/gpt-oss-20b';
+export const OMDA_AGENT_MODEL = OMDA_AGENT_POLICY.model;
 const DAILY_LIMIT = 10;
 const MINUTE_LIMIT = 1;
 
@@ -24,19 +25,9 @@ export function isOmdaAgentAuth(auth: { kind: string; name?: string } | null): b
 }
 
 export function validOmdaAgentRequest(method: string, originalPath: string, body: unknown): boolean {
-  if (method !== 'POST' || originalPath !== '/v1/chat/completions') return false;
-  if (!body || typeof body !== 'object' || Array.isArray(body)) return false;
-  const payload=body as Record<string,unknown>;
-  if(Object.keys(payload).sort().join(',')!=='max_tokens,messages,model,stream,temperature')return false;
-  if(payload.model!==OMDA_AGENT_MODEL || payload.max_tokens!==128 || payload.temperature!==0.2 || payload.stream!==false)return false;
-  if(!Array.isArray(payload.messages) || payload.messages.length!==2)return false;
-  const messages=payload.messages as unknown[];
-  const good=(m:unknown,role:string,max:number)=>!!m && typeof m==='object' && !Array.isArray(m) &&
-    Object.keys(m).sort().join(',')==='content,role' &&
-    (m as Record<string,unknown>).role===role &&
-    typeof (m as Record<string,unknown>).content==='string' &&
-    (m as {content:string}).content.length>0 && (m as {content:string}).content.length<=max;
-  return good(messages[0],'system',220) && good(messages[1],'user',1000);
+  return method === 'POST' &&
+    originalPath === '/v1/chat/completions' &&
+    inspectOmdaAgentPayload(body).allowed;
 }
 
 export function omdaProviderAllowed(route: Pick<RouteResult,'platform'|'modelId'>): boolean {
