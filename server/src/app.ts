@@ -22,6 +22,7 @@ import { searchRouter } from './routes/search.js';
 import { decisionsRouter } from './routes/decisions.js';
 import { analyticsRouter } from './routes/analytics.js';
 import { healthRouter } from './routes/health.js';
+import { omdaAgentOpsRouter } from './routes/omda-agent-ops.js';
 import { freeTierRouter } from './routes/free-tier.js';
 import { settingsRouter } from './routes/settings.js';
 import { premiumRouter } from './routes/premium.js';
@@ -229,6 +230,8 @@ export function createApp(config?: Config) {
     ['/v1', '/v1beta', '/mcp', '/api/chat', '/api/generate', '/api/embed', '/api/embeddings'],
     express.json({ limit: cfg.requestBodyLimitBytes }),
   );
+  // The operator preflight accepts only small bounded metadata/prompt payloads.
+  app.use('/api/omda-agent/preflight', express.json({ limit: '8kb', strict: true }));
   app.use(express.json({ limit: '10mb' }));
   // Restrict the dedicated OMDA Agent profile across ALL API surfaces,
   // before Ollama, OpenAI, Anthropic, Responses, Gemini, MCP, or admin routing.
@@ -298,6 +301,8 @@ export function createApp(config?: Config) {
   app.use('/api/decisions', requireAuth, decisionsRouter);
   app.use('/api/analytics', requireAuth, analyticsRouter);
   app.use('/api/health', requireAuth, healthRouter);
+  // Read-only policy/quota visibility and prompt-safe preflight for OMDA Agent.
+  app.use('/api/omda-agent', requireAuth, omdaAgentOpsRouter);
   app.use('/api/free-tier', requireAuth, freeTierRouter);
   app.use('/api/settings', requireAuth, settingsRouter);
   app.use('/api/premium', requireAuth, premiumRouter);
