@@ -53,11 +53,20 @@ describe('free job discovery', () => {
   });
   it('requests the live source rather than hardcoding job listings', async () => {
     const fakeFetch = vi.fn().mockResolvedValue({ ok: true, json: async () => ({ jobs: [listing] }) });
-    const jobs = await searchJobFeeds(fakeFetch as unknown as typeof fetch, 'AML');
-    expect(fakeFetch).toHaveBeenCalledOnce();
-    const address = String(fakeFetch.mock.calls[0][0]);
-    expect(address).toContain('himalayas.app/jobs/api/search');
-    expect(address).toContain('country=QA');
-    expect(jobs.length).toBeGreaterThan(0);
+    // searchJobFeeds uses Date.now() when normalizing the response. Freeze the
+    // clock to the fixture date so this test does not start failing when the
+    // hard-coded listing expiry date passes in real time.
+    vi.useFakeTimers();
+    vi.setSystemTime(now);
+    try {
+      const jobs = await searchJobFeeds(fakeFetch as unknown as typeof fetch, 'AML');
+      expect(fakeFetch).toHaveBeenCalledOnce();
+      const address = String(fakeFetch.mock.calls[0][0]);
+      expect(address).toContain('himalayas.app/jobs/api/search');
+      expect(address).toContain('country=QA');
+      expect(jobs.length).toBeGreaterThan(0);
+    } finally {
+      vi.useRealTimers();
+    }
   });
 });
