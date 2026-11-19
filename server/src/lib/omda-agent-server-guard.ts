@@ -5,10 +5,10 @@ import type { Request, Response, NextFunction } from 'express';
 import type { RouteResult } from '../services/router.js';
 import { getDb } from '../db/index.js';
 import { resolveAuth } from './system-prompt.js';
-import { inspectOmdaAgentPayload } from './omda-agent-policy.js';
+import { inspectOmdaAgentPayload, OMDA_AGENT_POLICY } from './omda-agent-policy.js';
 
 export const OMDA_AGENT_PROFILE = 'OMDA-Agent-Staging';
-export const OMDA_AGENT_MODEL = 'openai/gpt-oss-20b';
+export const OMDA_AGENT_MODEL = OMDA_AGENT_POLICY.model;
 const DAILY_LIMIT = 10;
 const MINUTE_LIMIT = 1;
 
