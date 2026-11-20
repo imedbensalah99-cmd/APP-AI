@@ -1,7 +1,26 @@
 {
-  "generatedAt": "2026-11-19T14:33:17.730Z",
+  "generatedAt": "2026-11-20T14:11:39.176Z",
   "source": "Himalayas public API",
   "jobs": [
+    {
+      "id": "himalayas:https://himalayas.app/companies/micro1/jobs/federal-budget-analyst",
+      "company": "micro1",
+      "role": "Federal Budget Analyst",
+      "location": "Remote · worldwide listing",
+      "sourceUrl": "https://himalayas.app/companies/micro1/jobs/federal-budget-analyst?utm_source=api",
+      "description": "  Role Title:  Federal Budget Analyst   Role Type:  Contractor   Location:  Remote   micro1  is engaging Federal Budget Analysts to contribute to a customer's project focused on budget formulation and execution within the federal sector. In this role, you'll apply your expertise to help train next-generation AI systems. Your work will shape how models learn, reason, and perform through high-quality, real-world input.   Scope of Work  \n Create realistic training examples of federal budget justification materials, including narratives, exhibits, and supporting analyses. \n Write sample responses to OMB passback with clear, well-supported analysis, and annotate the reasoning behind each choice. \n Document mid-year reprogramming scenarios, noting which actions require higher-level approval and how they stay consistent with spend plans. \n Build worked examples that compare actual expenditures against planned obligations, evaluate fund availability, and explain variances. \n Walk through year-end closeout step by step, including reconciliation with accounting records and resolution of discrepancies. \n Write guidance on funding types, budget changes, and compliance requirements, drawing on how experienced analysts advise program managers. \n Produce templates, process walkthroughs, and annotated examples that capture how federal budget work is actually done. \n Review AI-generated budget content for accuracy, realism, and compliance, and explain what is wrong or missing so it can be corrected. \n  Preferred Qualifications  \n 5+ years of federal budget experience at about the GS-11/12 level or higher, in GS-0560, 0501, 0510, or comparable roles. \n Experience with budget formulation, execution, and funds control. \n Experience with OMB submissions, reprogramming, and year-end closeout. \n Familiarity with federal accounting and budget execution systems. \n Financial management certification (DoD FM, CGFM, or similar) a plus. \n  Originally posted on  Himalayas  ",
+      "source": "Himalayas",
+      "published": "2026-11-03",
+      "remote": true,
+      "sourceChecked": true,
+      "applicationChannel": {
+        "kind": "website_only",
+        "sourceUrl": "https://himalayas.app/companies/micro1/jobs/federal-budget-analyst?utm_source=api",
+        "verified": false,
+        "evidence": "job_ad"
+      },
+      "eligibility": "Country filter only; verify employer requirements before applying."
+    },
     {
       "id": "himalayas:https://himalayas.app/companies/micro1/jobs/travel-operations-specialist",
       "company": "micro1",
@@ -124,7 +143,7 @@
       "sourceUrl": "https://himalayas.app/companies/xperteez-technology/jobs/finance-research-expert-remote-contract?utm_source=api",
       "description": "  Role Title:  Finance Research Expert   Role Type:  Contract   Location:  Remote  Required Skills:  \n  Equity Research  \n  FP&amp;A  \n  Corporate Finance  \n  Accounting or Audit  \n  Investor Relations  \n  Credit Analysis  \n  Opportunity Snapshot:  \n   Time per task:  around 4 to 8 hours  \n   Location:  Remote, worldwide  \n   You’ll need:  Hands-on experience reading US SEC filings and familiarity with US GAAP  \n   Your tasks:  Write finance research questions with a verified, sourced answer, and check each one against what AI models answer  \n  Scope of Work:  \n  You will work on questions about real US public companies. Each question points to information that sits in long filings or IR materials, or that requires comparing several of them to find the right answer.  \n  Write questions that require finding a specific figure in a 10-K, 10-Q, 8-K, proxy statement, earnings release or investor presentation.  \n  Write questions where two documents show different numbers and the answer depends on knowing which one is correct (for example, original vs. restated figures, or adjusted vs. reported).  \n  Pay attention to period and document version: the right fiscal year, the right filing, the latest amended version.  \n  Test each question against current AI models and keep only the ones they answer incorrectly.  \n  Rewrite questions when the wording allows more than one valid answer.  \n  What we’re looking for:  \n  Hands-on work with US filings in one of these backgrounds:   \n  Equity research or investment analysis (sell-side or buy-side) covering US companies. Investment banking or corporate development. (M&amp;A, equity capital markets), with experience in deal filings, prospectuses, ownership history and subsidiary structures.  \n  Credit or restructuring analysis, with experience in credit agreements, bond terms and bankruptcy filings.  \n  SEC reporting or audit. (Big 4 audit, corporate reporting), with experience in restatements, footnotes and how figures change across filings.  \n  Corporate law or due diligence. (Securities law, KYC, investigations), with experience tracing entities, executives and related parties across records.  \n  You should also be comfortable reading long filings, including footnotes and tables, and have clear written English.  \n  How the selection process works:  \n  Apply with your resume and a short profile.  \n  Complete the finance interview. It is a short conversation about your experience with US filings and financial reporting. You don’t need to prepare or write anything. Finishing it is what moves your application forward.  \n  Review. We check your experience against what the project needs.  \n  Onboarding and first task. If selected, you get the guidelines and start with an initial task, which is reviewed before you continue.  \n  Originally posted on  Himalayas  ",
       "source": "Himalayas",
-      "published": "2026-11-05",
+      "published": "2026-11-19",
       "remote": true,
       "sourceChecked": true,
       "applicationChannel": {
@@ -162,7 +181,7 @@
       "sourceUrl": "https://himalayas.app/companies/growe-talents/jobs/finance-specialist?utm_source=api",
       "description": " Our client, Jugabet, is a brand and gaming platform accessible to players in Latin America. With a strong regional focus and localized strategies, Jugabet is quickly becoming a key player in the market.  Perfect for those who aim to:  \n  Review payment requests to ensure alignment with approved budgets and plans;  \n  Process requests in 1C;  \n  Regularly reconcile actual expenses with approved budgets;  \n  Confirm the accuracy and transparency of submitted services for audits;  \n  Ensure the correct entry of financial data into the system and glossary;  \n  Monitor budget balances across channels and partners;  \n  Identify and resolve discrepancies in financial data;  \n  Collaborate with departments to address financial issues efficiently.  \n  Experience you’ll need to bring:  \n  1+ years of experience in financial management, accounting, or treasury operations;  \n  Experience with 1C;  \n  Knowledge of budget control and payment management;  \n  Familiarity with financial reporting standards and audit processes;  \n Upper-Intermediate level of English. \n  It's a perfect match if you have those personal features:  \n  Attention to detail;  \n  Analytical skills;  \n  Strong communication skills and proactivity.  \n  Our clients offer competitive benefits to support your professional and personal growth, including:  \n  Health &amp; Wellness Focus;  \n  Global Medical Coverage;  \n  Growth Opportunities;  \n  Benefits Programs (compensation for the gym/stomatology/psychological service   \n  Performance-Driven Rewards;  \n  Dynamic Work Environment.  \n  Apply, and let your growth journey begin.  Originally posted on  Himalayas  ",
       "source": "Himalayas",
-      "published": "2026-10-25",
+      "published": "2026-11-19",
       "remote": true,
       "sourceChecked": true,
       "applicationChannel": {
@@ -212,6 +231,63 @@
       "eligibility": "Country filter only; verify employer requirements before applying."
     },
     {
+      "id": "himalayas:https://himalayas.app/companies/micro1/jobs/telecommunications-customer-support-specialist",
+      "company": "micro1",
+      "role": "Telecommunications Customer Support Specialist",
+      "location": "Remote · worldwide listing",
+      "sourceUrl": "https://himalayas.app/companies/micro1/jobs/telecommunications-customer-support-specialist?utm_source=api",
+      "description": " Role Title: Telecommunications Customer Support Specialist  Role Type: Contractor  Location: Remote   micro1  is engaging Telecommunications Customer Support Specialists to contribute their expertise to a customer's project focused on elevating client interaction and satisfaction within the telecommunications sector. In this role, you'll apply your expertise to help train next-generation AI systems. Your work will shape how models learn, reason, and perform through high-quality, real-world input. No prior experience in AI is required — your domain knowledge is what matters. This opportunity is ideal for professionals who are passionate about clear, effective communication, and who thrive in environments that demand both technical proficiency and customer empathy.  Scope of Work  \n Deliver high-quality written and verbal responses to simulated telecommunications support inquiries, enhancing and refining conversational AI accuracy. \n Analyze customer scenarios to identify root causes and recommend effective troubleshooting strategies. \n Document real-world telecommunications support workflows, identifying gaps or opportunities for process improvement. \n Evaluate AI-generated support dialogue for quality, clarity, and technical correctness, providing actionable feedback. \n Develop detailed knowledge articles and training content based on current industry practices and customer needs. \n Collaborate with technical teams to ensure feedback aligns with telecommunications best practices and standards. \n Participate in user-experience testing of support tools and interfaces, offering insights from a practitioner’s perspective. \n  Preferred Qualifications  \n Demonstrated expertise in telecommunications customer support, including troubleshooting, escalation, and resolution processes. \n Exceptional written and verbal communication skills, with an eye for detail and clarity. \n Experience creating or reviewing help documentation, FAQs, or customer-facing technical materials. \n Strong analytical thinking and problem-solving abilities focused on user experience improvement. \n Familiarity with telecommunications systems, such as VoIP, mobile networks, or broadband services. \n Ability to provide constructive, actionable feedback on both technical and interpersonal support interactions. \n Adaptability and enthusiasm for participating in innovative projects within a remote, collaborative environment. \n  Originally posted on  Himalayas  ",
+      "source": "Himalayas",
+      "published": "2026-11-20",
+      "remote": true,
+      "sourceChecked": true,
+      "applicationChannel": {
+        "kind": "website_only",
+        "sourceUrl": "https://himalayas.app/companies/micro1/jobs/telecommunications-customer-support-specialist?utm_source=api",
+        "verified": false,
+        "evidence": "job_ad"
+      },
+      "eligibility": "Country filter only; verify employer requirements before applying."
+    },
+    {
+      "id": "himalayas:https://himalayas.app/companies/micro1/jobs/retail-customer-support-specialist",
+      "company": "micro1",
+      "role": "Retail Customer Support Specialist",
+      "location": "Remote · worldwide listing",
+      "sourceUrl": "https://himalayas.app/companies/micro1/jobs/retail-customer-support-specialist?utm_source=api",
+      "description": " Role Title: Retail Customer Support Specialist  Role Type: Contractor  Location: Remote   micro1  is engaging Retail Customer Support Specialists to contribute to a customer's project focused on elevating the customer experience in retail service interactions. In this role, you'll apply your expertise to help train next-generation AI systems. Your work will shape how models learn, reason, and perform through high-quality, real-world input. No prior experience in AI is required — your domain knowledge is what matters.  Scope of Work  \n Provide detailed feedback and evaluations on written and spoken retail support scenarios, focusing on realism and accuracy. \n Simulate authentic customer support interactions related to order processing, returns, refunds, deliveries, and complaint resolution. \n Contribute to data annotation projects by categorizing, tagging, and enriching customer support exchanges for AI training. \n Assess the effectiveness of AI-generated responses for retail customer inquiries, highlighting areas for improvement. \n Create and review scripts, prompts, or roleplay dialogues that reflect everyday challenges in retail customer support. \n Document common pain points, best practices, and process improvements based on your retail service background. \n Participate in voice recording or transcription activities to support voice-based AI training tasks. \n  Preferred Qualifications  \n Professional experience in retail customer support or call center service, with a strong understanding of order, return, refund, and delivery processes. \n Demonstrated ability to resolve customer complaints with empathy, accuracy, and professionalism. \n Exceptional written and verbal communication skills in English, including clear and articulate speech for voice-based tasks. \n Proven attention to detail when documenting and assessing customer interactions. \n Adaptability to new technologies and willingness to engage with innovative AI projects. \n Prior experience working in a remote consulting, freelance, or project-based capacity is advantageous. \n Enthusiasm for shaping future AI solutions by sharing practical, real-world retail support knowledge. \n  Originally posted on  Himalayas  ",
+      "source": "Himalayas",
+      "published": "2026-11-20",
+      "remote": true,
+      "sourceChecked": true,
+      "applicationChannel": {
+        "kind": "website_only",
+        "sourceUrl": "https://himalayas.app/companies/micro1/jobs/retail-customer-support-specialist?utm_source=api",
+        "verified": false,
+        "evidence": "job_ad"
+      },
+      "eligibility": "Country filter only; verify employer requirements before applying."
+    },
+    {
+      "id": "himalayas:https://himalayas.app/companies/micro1/jobs/airline-customer-service-specialist",
+      "company": "micro1",
+      "role": "Airline Customer Service Specialist",
+      "location": "Remote · worldwide listing",
+      "sourceUrl": "https://himalayas.app/companies/micro1/jobs/airline-customer-service-specialist?utm_source=api",
+      "description": " Role Title: Airline Customer Service Specialist  Role Type: Contractor  Location: Remote   micro1  is engaging Airline Customer Service Specialists to contribute their industry knowledge to a specialized customer project. In this role, you'll apply your expertise to help train next-generation AI systems. Your work will shape how models learn, reason, and perform through high-quality, real-world input. No prior experience in AI is required — your domain knowledge is what matters.  Scope of Work  \n Deliver realistic, domain-specific written and verbal interactions based on common and complex airline customer service scenarios. \n Simulate and document customer support conversations covering flight bookings, cancellations, delays, rebookings, baggage inquiries, and disruption management. \n Evaluate, review, and provide feedback on AI-generated responses to ensure accuracy, empathy, and professionalism. \n Identify common customer pain points and communicate nuanced case details to inform model training and optimization. \n Prepare detailed summaries of customer interactions, highlighting escalation and resolution steps. \n Support improvements in the model by clarifying airline procedures and compliance requirements via text and voice inputs. \n Collaborate virtually with project managers and AI developers to address evolving deliverable needs. \n  Preferred Qualifications  \n Professional experience in airline or aviation customer service, preferably in a call center environment. \n Expertise handling flight reservations, cancellations, delays, rebookings, and baggage concerns. \n Demonstrated skill managing customer complaints and resolving challenging situations with poise. \n Full fluency in spoken and written English, with strong verbal communication skills suitable for voice training tasks. \n Ability to convey empathy, active listening, and a customer-first mindset in all interactions. \n Strong documentation and scenario-writing skills with attention to procedural accuracy. \n Familiarity with airline industry regulations, operational protocols, and CRM/ticketing systems is a plus. \n  Originally posted on  Himalayas  ",
+      "source": "Himalayas",
+      "published": "2026-11-20",
+      "remote": true,
+      "sourceChecked": true,
+      "applicationChannel": {
+        "kind": "website_only",
+        "sourceUrl": "https://himalayas.app/companies/micro1/jobs/airline-customer-service-specialist?utm_source=api",
+        "verified": false,
+        "evidence": "job_ad"
+      },
+      "eligibility": "Country filter only; verify employer requirements before applying."
+    },
+    {
       "id": "himalayas:https://himalayas.app/companies/everhelp/jobs/customer-support-specialist-german-and-english-2909298726",
       "company": "Everhelp",
       "role": "Customer Support Specialist | German and English",
@@ -225,6 +301,25 @@
       "applicationChannel": {
         "kind": "website_only",
         "sourceUrl": "https://himalayas.app/companies/everhelp/jobs/customer-support-specialist-german-and-english-2909298726?utm_source=api",
+        "verified": false,
+        "evidence": "job_ad"
+      },
+      "eligibility": "Country filter only; verify employer requirements before applying."
+    },
+    {
+      "id": "himalayas:https://himalayas.app/companies/it-support-guy/jobs/virtual-admin-specialist",
+      "company": "IT Support Guy",
+      "role": "Virtual Admin Specialist",
+      "location": "Remote · worldwide listing",
+      "sourceUrl": "https://himalayas.app/companies/it-support-guy/jobs/virtual-admin-specialist?utm_source=api",
+      "description": "Category: Administration   Location:     We are seeking a  Virtual Admin Specialist  to join our team. In this role, you will assist our digital marketing clients by handling customer queries, answering calls, and responding to messages and emails professionally. You’ll serve as an extension of their team, ensuring timely, accurate, and courteous responses to all inquiries, helping to bridge any language or time-related communication gaps. \n   Requirements  \n Responsibilities  \n  \n Professionally handle incoming calls, messages, and emails on behalf of clients. \n \n Respond to customer inquiries with clear and accurate information. \n \n Address language and time-zone barriers to provide prompt support. \n \n Manage multiple communication channels and prioritize responses. \n \n Collaborate with clients to understand their brand voice and customer service preferences. \n \n Maintain records of interactions for quality and reporting purposes. \n \n  \n Requirements  \n  \n \n Fluent in English  (both written and spoken); Must be proficient in English. \n \n \n Excellent communication skills  with the ability to handle customer inquiries professionally. \n \n \n Experience in customer service  or virtual assistance is preferred. \n \n Familiarity with digital communication tools (email, chat platforms) and CRM systems. \n \n Ability to work remotely, maintain productivity, and manage time effectively. \n \n Strong organizational skills and attention to detail. \n \n   Benefits  Work remotely from anywhere in the world. \n  Flexible hours with the opportunity to work across different time zones. \n  Be part of a growing, supportive team in the digital marketing industry. \n  Professional development opportunities to enhance your customer service skills. \n  Competitive salary and performance-based bonuses. \n     Details Originally posted on  Himalayas  ",
+      "source": "Himalayas",
+      "published": "2026-11-19",
+      "remote": true,
+      "sourceChecked": true,
+      "applicationChannel": {
+        "kind": "website_only",
+        "sourceUrl": "https://himalayas.app/companies/it-support-guy/jobs/virtual-admin-specialist?utm_source=api",
         "verified": false,
         "evidence": "job_ad"
       },
