@@ -1,0 +1,82 @@
+<!doctype html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><meta name="color-scheme" content="dark">
+<title>OMDA | Approval Desk</title>
+<style>
+:root{font:16px/1.65 system-ui,"Segoe UI",Tahoma,sans-serif;color:#f1efff;background:#080810;color-scheme:dark}
+*{box-sizing:border-box}body{margin:0;background:radial-gradient(ellipse at 80% 0,#49208357,transparent 42%),#080810;min-height:100vh}
+main{width:min(1040px,calc(100% - 28px));margin:auto;padding:24px 0 64px}header{display:flex;justify-content:space-between;align-items:center;gap:12px;flex-wrap:wrap;margin-bottom:30px}
+.brand{font-weight:900;font-size:1.3rem}.brand b{color:#bca0ff}.pill{border:1px solid #51426c;border-radius:30px;padding:5px 11px;color:#cbb9ff;font-size:.72rem}
+h1{font-size:clamp(2rem,6vw,3.6rem);line-height:1.16;margin:0 0 10px}.lead{color:#aaa8c3;max-width:720px;margin:0 0 24px}
+.panel{background:#14121fe8;border:1px solid #353148;border-radius:18px;padding:20px;margin:15px 0;box-shadow:0 16px 40px #0004}
+h2{font-size:1.12rem;margin:0 0 12px}.row{display:flex;align-items:center;justify-content:space-between;gap:10px;flex-wrap:wrap}
+button,.link{font:inherit;font-size:.88rem;font-weight:750;border-radius:10px;border:1px solid #4d456a;color:#eee6ff;background:#2b243c;padding:9px 12px;cursor:pointer;text-decoration:none;display:inline-flex;align-items:center;justify-content:center}
+button:focus-visible,a:focus-visible,input:focus-visible{outline:3px solid #b28cff;outline-offset:2px}.primary{background:linear-gradient(135deg,#9757ed,#602cc4);border-color:#8754d7;color:white}.danger{border-color:#75474e;background:#3a2028;color:#ffc2c2}.muted{color:#a6a1ba;font-size:.84rem}
+input[type=file]{position:absolute;width:1px;height:1px;opacity:0;overflow:hidden}.file-label{display:inline-flex;border:1px solid #4d456a;border-radius:10px;padding:9px 12px;cursor:pointer;background:#2b243c;font-weight:750;font-size:.88rem}
+#desk[hidden]{display:none}.notice{border-inline-start:3px solid #9c78ee;padding:8px 12px;color:#d5c7ff;background:#201a31;border-radius:8px;margin:12px 0}.notice.error{border-color:#f87171;color:#ffc0c0}
+.meta{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:9px;margin:14px 0}.metric{background:#211d2c;border:1px solid #383149;border-radius:12px;padding:12px}.metric strong{display:block;font-size:1.35rem}.metric small{color:#a7a0bb}
+.digest{direction:ltr;text-align:left;overflow-wrap:anywhere;font: .75rem/1.7 ui-monospace,monospace;color:#c5b3ff;background:#0c0b14;border-radius:8px;padding:9px}
+.item{border:1px solid #373148;background:#191728;border-radius:13px;padding:14px;margin:10px 0}.item.approved{border-color:#286b58}.item.rejected{border-color:#74454d}.item h3{font-size:1rem;margin:0 0 4px}.item p{margin:6px 0;color:#aaa5bd;font-size:.82rem}.item .decision{font-size:.76rem;font-weight:800}.actions{display:flex;gap:8px;flex-wrap:wrap;margin-top:12px}.actions button{min-width:92px}
+#items:empty:after{content:'لا توجد مراحل تتطلب موافقة في هذه الخطة.';display:block;color:#aaa5bd;padding:12px}
+footer{color:#9690a8;font-size:.78rem;line-height:1.8;margin-top:20px}.hidden{display:none!important}
+@media(max-width:620px){main{padding-top:16px}.panel{padding:15px}.meta{grid-template-columns:repeat(3,minmax(0,1fr))}.metric{padding:9px}.metric strong{font-size:1.1rem}.item .actions button{flex:1}}
+</style>
+</head>
+<body><main>
+<header><div class="brand">OMDA <b>/ عمدة</b></div><span class="pill">APPROVAL DESK · OFFLINE</span></header>
+<h1>مكتب مراجعة الموافقات</h1>
+<p class="lead">استورد خطة Workflow Studio، وراجع المراحل الحساسة، وسجّل قرارًا موثقًا مرتبطًا ببصمة الخطة. هذا سجل مراجعة داخلي فقط؛ لا ينفّذ إرسالًا أو تقديمًا أو نشرًا أو استدعاء نموذج.</p>
+<section class="panel" aria-labelledby="import-title">
+<h2 id="import-title">استيراد خطة العمل</h2>
+<div class="row"><label class="file-label" for="plan-file">اختيار ملف JSON</label><input id="plan-file" type="file" accept=".json,application/json"><a class="link" href="../omda-freellmapi-workflow-studio/index.html">فتح Workflow Studio</a></div>
+<p class="muted">الحد الأقصى 128 KiB و24 مرحلة. تتم المعالجة داخل المتصفح فقط، ولا يُحفظ الملف في التخزين المحلي.</p>
+<div id="notice" class="notice" role="status" aria-live="polite">اختر ملفًا صادرًا من Workflow Studio للبدء.</div>
+</section>
+<section id="desk" class="panel" hidden aria-labelledby="review-title">
+<div class="row"><h2 id="review-title">سجل المراجعة</h2><span class="pill" id="plan-count">0 مراحل</span></div>
+<p id="command" class="muted"></p><div id="digest" class="digest"></div>
+<div class="meta"><div class="metric"><strong id="pending">0</strong><small>بانتظار المراجعة</small></div><div class="metric"><strong id="approved">0</strong><small>موافق عليها</small></div><div class="metric"><strong id="rejected">0</strong><small>مرفوضة</small></div></div>
+<div id="items"></div>
+<div class="actions"><button id="export-json" class="primary">تنزيل سجل JSON</button><button id="export-csv">تنزيل CSV</button><button id="clear" class="danger">مسح الجلسة</button></div>
+</section>
+<footer>القرار لا يطلق أي إجراء خارجي. الموافقة هنا لا تعني الإذن بالنشر أو إرسال البريد أو تقديم طلب وظيفة. بصمة SHA-256 تربط السجل بمحتوى الخطة لكنها ليست توقيع هوية ولا تثبت من أنشأ الملف. صدّر السجل واحتفظ به إذا أردت الرجوع إليه؛ إغلاق الصفحة يمسح الجلسة من الذاكرة.</footer>
+</main>
+<script type="module">
+import {parsePlanJson,createApprovalPacket,decideApproval,summarizeApprovals,exportApprovalJson,exportApprovalCsv} from './engine.mjs';
+const byId=id=>document.getElementById(id);let plan=null,packet=null;
+function notify(message,error=false){const box=byId('notice');box.textContent=message;box.classList.toggle('error',error);}
+function download(name,content,type){const url=URL.createObjectURL(new Blob([content],{type}));const a=document.createElement('a');a.href=url;a.download=name;a.click();setTimeout(()=>URL.revokeObjectURL(url),1000);}
+function node(tag,text,className=''){const e=document.createElement(tag);e.textContent=text;if(className)e.className=className;return e;}
+function render(){
+  byId('desk').hidden=!plan||!packet;byId('items').replaceChildren();if(!plan||!packet)return;
+  const summary=summarizeApprovals(packet);byId('pending').textContent=summary.pending;byId('approved').textContent=summary.approved;byId('rejected').textContent=summary.rejected;
+  byId('plan-count').textContent=plan.steps.length+' مراحل';byId('command').textContent='المهمة: '+plan.command;byId('digest').textContent='SHA-256 · '+packet.planDigest;
+  for(const decision of packet.decisions){
+    const step=plan.steps.find(x=>x.id===decision.stepId);const card=node('article','item '+decision.decision);
+    const title=node('h3',step.title);const meta=node('p','المسار: '+step.kind+' · الحالة في الخطة: '+step.status+' · '+step.id);
+    card.append(title,meta);
+    const state=node('div',decision.decision==='pending'?'بانتظار قرار المراجع':decision.decision==='approved'?'تم تسجيل الموافقة':'تم تسجيل الرفض','decision');card.append(state);
+    if(decision.decidedAt)card.append(node('p','وقت القرار: '+decision.decidedAt));
+    if(decision.reviewerNote)card.append(node('p','ملاحظة المراجع: '+decision.reviewerNote));
+    if(decision.decision==='pending'){
+      const actions=node('div','','actions');const yes=node('button','تسجيل موافقة','primary');const no=node('button','رفض مع سبب','danger');
+      yes.type='button';no.type='button';
+      yes.addEventListener('click',async()=>{if(!confirm('تسجيل موافقة داخلية على مراجعة هذه المرحلة؟ لن يتم تنفيذ أي إجراء خارجي.'))return;try{packet=await decideApproval(packet,plan,decision.stepId,'approved','',new Date());render();notify('تم تسجيل قرار المراجعة محليًا. لم يُنفذ أي إجراء خارجي.');}catch(e){notify(e.message,true);}});
+      no.addEventListener('click',async()=>{const reason=prompt('اكتب سبب الرفض (5 إلى 240 حرفًا):');if(reason===null)return;try{packet=await decideApproval(packet,plan,decision.stepId,'rejected',reason,new Date());render();notify('تم تسجيل الرفض محليًا. لم يُنفذ أي إجراء خارجي.');}catch(e){notify(e.message,true);}});
+      actions.append(yes,no);card.append(actions);
+    }
+    byId('items').append(card);
+  }
+}
+byId('plan-file').addEventListener('change',async event=>{
+  const file=event.target.files?.[0];event.target.value='';if(!file)return;
+  if(file.size>131072){notify('الملف أكبر من 128 KiB.',true);return;}
+  try{const source=await file.text();plan=parsePlanJson(source);packet=await createApprovalPacket(plan);render();notify('تم استيراد الخطة والتحقق منها. جميع قرارات الموافقة تبدأ من جديد كـ Pending.');}
+  catch(error){plan=null;packet=null;render();notify(error.message||'تعذر استيراد الخطة.',true);}
+});
+byId('export-json').addEventListener('click',async()=>{try{download('omda-approval-record.json',await exportApprovalJson(packet,plan),'application/json');}catch(e){notify(e.message,true);}});
+byId('export-csv').addEventListener('click',async()=>{try{download('omda-approval-record.csv',await exportApprovalCsv(packet,plan),'text/csv;charset=utf-8');}catch(e){notify(e.message,true);}});
+byId('clear').addEventListener('click',()=>{if(!confirm('مسح الخطة وسجل المراجعة من ذاكرة الصفحة؟'))return;plan=null;packet=null;render();notify('تم مسح جلسة المراجعة من الذاكرة.');});
+</script>
+</body></html>

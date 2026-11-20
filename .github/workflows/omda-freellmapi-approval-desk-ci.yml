@@ -1,0 +1,54 @@
+name: OMDA Approval Desk CI
+on:
+  push:
+    branches: [omda-freellmapi-secure-runtime-v1]
+    paths:
+      - 'integrations/omda-freellmapi-approval-desk/**'
+      - 'integrations/omda-freellmapi-command-center/index.html'
+      - '.github/workflows/omda-freellmapi-approval-desk-ci.yml'
+  pull_request:
+    branches: [omda-freellmapi-secure-runtime-v1]
+    paths:
+      - 'integrations/omda-freellmapi-approval-desk/**'
+      - 'integrations/omda-freellmapi-command-center/index.html'
+      - '.github/workflows/omda-freellmapi-approval-desk-ci.yml'
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  approval-desk:
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+      - name: Run approval engine and UI contract tests
+        run: node --test integrations/omda-freellmapi-approval-desk/engine.test.mjs integrations/omda-freellmapi-approval-desk/ui-contract.test.mjs
+      - name: Check module syntax
+        run: node --check integrations/omda-freellmapi-approval-desk/engine.mjs
+      - name: Verify Command Center link and no remote scripts
+        run: |
+          node --input-type=module -e '
+            import fs from "node:fs";
+            import assert from "node:assert/strict";
+            const page = fs.readFileSync("integrations/omda-freellmapi-approval-desk/index.html", "utf8");
+            const hub = fs.readFileSync("integrations/omda-freellmapi-command-center/index.html", "utf8");
+            assert.match(hub, /\.\.\/omda-freellmapi-approval-desk\/index\.html/);
+            assert.doesNotMatch(page, /<script[^>]+src=["\x27]https?:/i);
+            assert.doesNotMatch(page, /\b(fetch|XMLHttpRequest|WebSocket|EventSource)\s*\(/);
+            console.log("PASS: Command Center link and offline-only UI contract");
+          '
+      - name: Static HTTP smoke
+        run: |
+          python3 -m http.server 8765 --bind 127.0.0.1 >/tmp/omda-approval-http.log 2>&1 &
+          server_pid=$!
+          trap 'kill "$server_pid" 2>/dev/null || true' EXIT
+          for attempt in $(seq 1 10); do
+            if curl -fsS http://127.0.0.1:8765/integrations/omda-freellmapi-approval-desk/index.html >/tmp/omda-approval.html; then break; fi
+            sleep 1
+          done
+          grep -q 'مكتب مراجعة الموافقات' /tmp/omda-approval.html
+          curl -fsS http://127.0.0.1:8765/integrations/omda-freellmapi-approval-desk/engine.mjs | grep -q 'createApprovalPacket'
+          echo 'PASS: static HTTP smoke'
