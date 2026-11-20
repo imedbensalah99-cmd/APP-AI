@@ -70,7 +70,7 @@ export function validatePlan(plan) {
   for (const kind of PROTECTED_KINDS) {
     const lastIndex = lastIndexByKind.get(kind);
     if (lastIndex !== undefined && plan.steps[lastIndex].approvalRequired !== true) {
-      throw new Error(`Protected ${kind} workstream must end with an approval-required stepp);
+      throw new Error(`Protected ${kind} workstream must end with an approval-required step`);
     }
   }
   return plan;
