@@ -1,0 +1,106 @@
+<!doctype html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><meta name="color-scheme" content="dark">
+<title>OMDA | Plan Readiness Analyzer</title>
+<style>
+:root{font:16px/1.65 system-ui,"Segoe UI",Tahoma,sans-serif;color:#f2efff;background:#080810;color-scheme:dark}
+*{box-sizing:border-box}body{margin:0;min-height:100vh;background:radial-gradient(ellipse at 82% 0,#49208355,transparent 43%),#080810}
+main{width:min(1060px,calc(100% - 28px));margin:auto;padding:24px 0 64px}
+header{display:flex;align-items:center;justify-content:space-between;gap:12px;flex-wrap:wrap;margin-bottom:32px}
+.brand{font-size:1.25rem;font-weight:900}.brand b{color:#bca0ff}.pill{border:1px solid #51426c;border-radius:30px;padding:5px 11px;color:#cbb9ff;font-size:.72rem}
+h1{font-size:clamp(2rem,6vw,3.5rem);line-height:1.16;margin:0 0 10px}.lead{color:#aaa8c3;max-width:760px;margin:0 0 24px}
+.panel{background:#14121fe8;border:1px solid #353148;border-radius:18px;padding:20px;margin:14px 0;box-shadow:0 16px 40px #0004}
+h2{font-size:1.1rem;margin:0 0 12px}.muted{color:#aaa5bd;font-size:.84rem}
+.row{display:flex;align-items:center;justify-content:space-between;gap:12px;flex-wrap:wrap}
+input[type=file]{max-width:100%;font:inherit;color:#ddd4f7}
+button,.link{font:inherit;font-size:.88rem;font-weight:750;border-radius:10px;border:1px solid #4d456a;color:#eee6ff;background:#2b243c;padding:9px 12px;cursor:pointer;text-decoration:none;display:inline-flex;align-items:center;justify-content:center}
+button:focus-visible,a:focus-visible,input:focus-visible{outline:3px solid #b28cff;outline-offset:2px}
+.primary{background:linear-gradient(135deg,#9757ed,#602cc4);border-color:#8754d7;color:white}.danger{border-color:#75474e;background:#3a2028;color:#ffc2c2}
+.notice{border-inline-start:3px solid #9c78ee;padding:9px 12px;color:#d5c7ff;background:#201a31;border-radius:8px;margin-top:13px}.notice.error{border-color:#f87171;color:#ffc0c0}
+#report[hidden]{display:none}.metrics{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:9px;margin:16px 0}
+.metric{background:#211d2c;border:1px solid #383149;border-radius:12px;padding:12px}.metric strong{display:block;font-size:1.4rem}.metric small{color:#a7a0bb}
+.decision{display:inline-flex;border-radius:30px;padding:6px 12px;font-weight:850;font-size:.82rem;border:1px solid #4b4562}
+.decision.READY{color:#8ee3bd;border-color:#286b58;background:#123126}.decision.REVIEW{color:#f6d58a;border-color:#82672d;background:#352b16}.decision.BLOCKED{color:#ffb6bd;border-color:#74454d;background:#3a2028}
+.digest{direction:ltr;text-align:left;overflow-wrap:anywhere;font:.73rem/1.7 ui-monospace,monospace;color:#c5b3ff;background:#0c0b14;border-radius:8px;padding:9px}
+.finding{border:1px solid #373148;background:#191728;border-radius:13px;padding:13px;margin:9px 0}.finding h3{font-size:.94rem;margin:0 0 6px}.finding p{font-size:.83rem;color:#b4aec5;margin:5px 0}.severity{font-size:.72rem;font-weight:850;text-transform:uppercase}
+.finding.blocker{border-inline-start:4px solid #e05e6a}.finding.high{border-inline-start:4px solid #e69b4c}.finding.medium{border-inline-start:4px solid #c9ae55}.finding.low{border-inline-start:4px solid #7788c5}.finding.info{border-inline-start:4px solid #7c719a}
+.actions{display:flex;gap:9px;flex-wrap:wrap;margin-top:14px}.empty{color:#a7a0bb;padding:14px}
+footer{color:#9690a8;font-size:.78rem;line-height:1.8;margin-top:22px}
+@media(max-width:620px){main{padding-top:16px}.panel{padding:15px}.metrics{grid-template-columns:repeat(2,minmax(0,1fr))}.actions>*{flex:1}}
+</style>
+</head>
+<body><main>
+<header><div class="brand">OMDA <b>/ عمدة</b></div><span class="pill">PLAN READINESS · OFFLINE</span></header>
+<h1>مراجع جاهزية خطة العمل</h1>
+<p class="lead">استورد خطة Workflow Studio لتحليل بوابات الموافقة، التبعيات، الآثار الخارجية، جودة عناوين المراحل، وإشارات الأدلة. لا ينفّذ هذا الفاحص أي خطوة ولا يرسل البيانات إلى خادم.</p>
+<section class="panel" aria-labelledby="import-title">
+<h2 id="import-title">تحليل خطة JSON</h2>
+<div class="row">
+<input id="plan-file" type="file" accept=".json,application/json" aria-label="اختر خطة JSON">
+<a class="link" href="../omda-freellmapi-workflow-studio/index.html">فتح Workflow Studio</a>
+</div>
+<p class="muted">الحد الأقصى 128 KiB و24 مرحلة. تُقرأ الخطة في ذاكرة الصفحة فقط. التقرير لا يتضمن نص الأمر الأصلي.</p>
+<div id="notice" class="notice" role="status" aria-live="polite">اختر ملف JSON صادرًا من Workflow Studio للبدء.</div>
+</section>
+<section id="report" class="panel" hidden aria-labelledby="report-title">
+<div class="row"><h2 id="report-title">نتيجة التحليل</h2><span id="decision" class="decision">READY</span></div>
+<div class="metrics">
+<div class="metric"><strong id="score">0</strong><small>درجة الجاهزية / 100</small></div>
+<div class="metric"><strong id="steps">0</strong><small>مراحل الخطة</small></div>
+<div class="metric"><strong id="gates">0</strong><small>مسارات محمية ببوابة</small></div>
+<div class="metric"><strong id="findings">0</strong><small>ملاحظات</small></div>
+</div>
+<div id="digest" class="digest"></div>
+<div id="severity-counts" class="muted"></div>
+<h2 style="margin-top:20px">الملاحظات والتوصيات</h2>
+<div id="items"></div>
+<div class="actions">
+<button id="export-json" class="primary" type="button">تنزيل تقرير JSON</button>
+<button id="export-csv" type="button">تنزيل CSV</button>
+<button id="clear" class="danger" type="button">مسح الجلسة</button>
+</div>
+</section>
+<footer>النتيجة فحص ساكن وليست موافقة أو تفويضًا بالتنفيذ. لا يثبت الفحص هوية المراجع ولا يضمن صحة المعلومات الخارجية. احتفظ بالخطة الأصلية مع التقرير إذا أردت مراجعة النتيجة لاحقًا. لا توجد اتصالات شبكة أو استدعاءات مدفوعة أو تخزين دائم.</footer>
+</main>
+<script type="module">
+import {analyzePlanJson,exportReportJSON,exportReportCSV} from './engine.mjs';
+const byId=id=>document.getElementById(id);
+let report=null;
+function notify(message,error=false){const box=byId('notice');box.textContent=message;box.classList.toggle('error',error);}
+function node(tag,text,className=''){const element=document.createElement(tag);element.textContent=text;if(className)element.className=className;return element;}
+function download(name,content,type){const url=URL.createObjectURL(new Blob([content],{type}));const anchor=document.createElement('a');anchor.href=url;anchor.download=name;anchor.click();setTimeout(()=>URL.revokeObjectURL(url),1000);}
+function render(){
+  byId('report').hidden=!report;if(!report)return;
+  byId('decision').textContent=report.decision;byId('decision').className='decision '+report.decision;
+  byId('score').textContent=String(report.score);byId('steps').textContent=String(report.summary.totalSteps);
+  byId('gates').textContent=String(report.summary.gatedWorkstreams);byId('findings').textContent=String(report.summary.findings);
+  byId('digest').textContent='SHA-256 · '+report.planDigest;
+  const c=report.summary.bySeverity;
+  byId('severity-counts').textContent='حواجز: '+c.blocker+' · عالية: '+c.high+' · متوسطة: '+c.medium+' · منخفضة: '+c.low+' · معلومات: '+c.info;
+  const list=byId('items');list.replaceChildren();
+  if(report.findings.length===0){list.append(node('p','لا توجد ملاحظات ضمن قواعد الفحص الحالية.','empty'));return;}
+  for(const finding of report.findings){
+    const card=node('article','','finding '+finding.severity);
+    card.append(node('div',finding.severity.toUpperCase()+' · '+finding.code,'severity'));
+    card.append(node('h3',finding.message));
+    if(finding.stepId)card.append(node('p','المرحلة: '+finding.stepId));
+    card.append(node('p','التوصية: '+finding.recommendation));
+    list.append(card);
+  }
+}
+byId('plan-file').addEventListener('change',async event=>{
+  const file=event.target.files?.[0];event.target.value='';if(!file)return;
+  if(file.size>131072){report=null;render();notify('الملف أكبر من 128 KiB.',true);return;}
+  try{
+    const source=await file.text();
+    report=await analyzePlanJson(source);
+    render();
+    notify('اكتمل التحليل داخل المتصفح. لم يتم تنفيذ أي خطوة أو إرسال محتوى الخطة.');
+  }catch(error){report=null;render();notify(error.message||'تعذر تحليل الخطة.',true);}
+});
+byId('export-json').addEventListener('click',()=>{if(!report)return;download('omda-plan-readiness.json',exportReportJSON(report),'application/json');});
+byId('export-csv').addEventListener('click',()=>{if(!report)return;download('omda-plan-readiness.csv',exportReportCSV(report),'text/csv;charset=utf-8');});
+byId('clear').addEventListener('click',()=>{report=null;render();notify('تم مسح نتيجة التحليل من ذاكرة الصفحة.');});
+</script>
+</body></html>
