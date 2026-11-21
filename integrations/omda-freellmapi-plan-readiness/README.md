@@ -25,10 +25,20 @@ This is a static review aid, not an approval system or task executor. It perform
 
 Input is limited to 128 KiB and 24 steps. CSV cells are quoted and formula-neutralized.
 
+## CLI
+
+The optional Node CLI reads one local plan file and prints a text, JSON, or CSV report. It never writes files or contacts a service.
+
+    node integrations/omda-freellmapi-plan-readiness/cli.mjs path/to/plan.json
+    node integrations/omda-freellmapi-plan-readiness/cli.mjs path/to/plan.json --format json
+    node integrations/omda-freellmapi-plan-readiness/cli.mjs path/to/plan.json --format csv --fail-on-review
+
+Exit code 1 means BLOCKED, or REVIEW when --fail-on-review is set; exit code 2 means invalid input.
+
 ## Tests
 
 Run:
 
-    node --test integrations/omda-freellmapi-plan-readiness/engine.test.mjs
+    node --test integrations/omda-freellmapi-plan-readiness/engine.test.mjs integrations/omda-freellmapi-plan-readiness/cli.test.mjs
 
 The focused GitHub Actions workflow also checks JavaScript syntax and serves the UI and engine through a loopback-only HTTP smoke test.

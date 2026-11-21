@@ -27,10 +27,11 @@ jobs:
         with:
           node-version: "22"
       - name: Run analyzer tests
-        run: node --test integrations/omda-freellmapi-plan-readiness/engine.test.mjs
+        run: node --test integrations/omda-freellmapi-plan-readiness/engine.test.mjs integrations/omda-freellmapi-plan-readiness/cli.test.mjs
       - name: Check module syntax
         run: |
           node --check integrations/omda-freellmapi-plan-readiness/engine.mjs
+          node --check integrations/omda-freellmapi-plan-readiness/cli.mjs
           node --check integrations/omda-freellmapi-workflow-studio/engine.mjs
       - name: Verify browser module syntax and local import
         run: |
