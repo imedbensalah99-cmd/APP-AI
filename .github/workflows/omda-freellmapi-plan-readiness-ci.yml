@@ -1,0 +1,62 @@
+name: OMDA Plan Readiness CI
+on:
+  pull_request:
+    branches: [omda-freellmapi-secure-runtime-v1]
+    paths:
+      - "integrations/omda-freellmapi-plan-readiness/**"
+      - "integrations/omda-freellmapi-workflow-studio/engine.mjs"
+      - "integrations/omda-freellmapi-command-center/index.html"
+      - ".github/workflows/omda-freellmapi-plan-readiness-ci.yml"
+  push:
+    branches: [omda-freellmapi-secure-runtime-v1]
+    paths:
+      - "integrations/omda-freellmapi-plan-readiness/**"
+      - "integrations/omda-freellmapi-workflow-studio/engine.mjs"
+      - "integrations/omda-freellmapi-command-center/index.html"
+      - ".github/workflows/omda-freellmapi-plan-readiness-ci.yml"
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  readiness:
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: "22"
+      - name: Run analyzer tests
+        run: node --test integrations/omda-freellmapi-plan-readiness/engine.test.mjs integrations/omda-freellmapi-plan-readiness/cli.test.mjs
+      - name: Check module syntax
+        run: |
+          node --check integrations/omda-freellmapi-plan-readiness/engine.mjs
+          node --check integrations/omda-freellmapi-plan-readiness/cli.mjs
+          node --check integrations/omda-freellmapi-workflow-studio/engine.mjs
+      - name: Verify browser module syntax and local import
+        run: |
+          node --experimental-vm-modules --input-type=module <<'NODE'
+          import fs from 'node:fs';
+          import vm from 'node:vm';
+          import path from 'node:path';
+          const file='integrations/omda-freellmapi-plan-readiness/index.html';
+          const html=fs.readFileSync(file,'utf8');
+          const match=html.match(/<script type="module">([\s\S]*?)<\/script>/);
+          if(!match) throw Error('UI module missing');
+          new vm.SourceTextModule(match[1]);
+          if(!match[1].includes("from './engine.mjs'")) throw Error('Local engine import missing');
+          if(!fs.existsSync(path.resolve(path.dirname(file),'./engine.mjs'))) throw Error('Engine import target missing');
+          console.log('PLAN_READINESS_UI_SYNTAX=PASS');
+          NODE
+      - name: Loopback-only static HTTP smoke
+        run: |
+          set -euo pipefail
+          python3 -m http.server 18766 --bind 127.0.0.1 --directory integrations >/tmp/omda-readiness-http.log 2>&1 &
+          pid=$!
+          trap 'kill "$pid" 2>/dev/null || true' EXIT
+          sleep 2
+          curl -fsS http://127.0.0.1:18766/omda-freellmapi-plan-readiness/index.html -o /tmp/omda-readiness.html
+          curl -fsS http://127.0.0.1:18766/omda-freellmapi-plan-readiness/engine.mjs -o /tmp/omda-readiness.mjs
+          grep -q 'مراجع جاهزية خطة العمل' /tmp/omda-readiness.html
+          grep -q 'exportReportJSON' /tmp/omda-readiness.mjs
+          echo 'PLAN_READINESS_HTTP_SMOKE=PASS'
