@@ -128,7 +128,7 @@ test('CSV output neutralizes formulas and quotes fields', async () => {
   const report = await analyzePlan(makePlan('build a website'), { now: clock });
   const csv = exportReportCSV(report);
   assert.ok(csv.startsWith('\uFEFF'));
-  assert.match(csv, /Code,Severity,Step ID/);
+  assert.match(csv, /\"Code\",\"Severity\",\"Step ID\"/);
 });
 
 test('browser UI uses local modules only and avoids unsafe DOM or persistent storage', () => {

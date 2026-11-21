@@ -105,10 +105,6 @@ async function analyzePlan(plan, options = {}) {
       }
     }
 
-    if (PROTECTED_KINDS.has(step.kind) && !step.approvalRequired && !gatedKinds.has(step.kind)) {
-      // A workstream-level gate is checked again after the full scan.
-    }
-
     const previous = lastByKind.get(step.kind);
     if (previous && !step.dependsOn.includes(previous.id)) {
       add(findings, 'workstream-dependency-gap', 'high', step.id,
