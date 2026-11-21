@@ -53,7 +53,7 @@ describe('free job discovery', () => {
   });
   it('requests the live source rather than hardcoding job listings', async () => {
     const fakeFetch = vi.fn().mockResolvedValue({ ok: true, json: async () => ({ jobs: [listing] }) });
-    const jobs = await searchJobFeeds(fakeFetch as unknown as typeof fetch, 'AML');
+    const jobs = await searchJobFeeds(fakeFetch as unknown as typeof fetch, 'AML', now);
     expect(fakeFetch).toHaveBeenCalledOnce();
     const address = String(fakeFetch.mock.calls[0][0]);
     expect(address).toContain('himalayas.app/jobs/api/search');
