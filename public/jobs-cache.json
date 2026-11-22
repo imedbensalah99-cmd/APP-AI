@@ -1,5 +1,5 @@
 {
-  "generatedAt": "2026-11-21T13:36:27.239Z",
+  "generatedAt": "2026-11-22T13:28:57.768Z",
   "source": "Himalayas public API",
   "jobs": [
     {
@@ -117,25 +117,6 @@
       "eligibility": "Country filter only; verify employer requirements before applying."
     },
     {
-      "id": "himalayas:https://himalayas.app/companies/clera/jobs/expert-talent-pool-data-operations-expert-5-years-4687778864",
-      "company": "Clera",
-      "role": "Expert Talent Pool, Data Operations (Expert, 5+ Years)",
-      "location": "Remote · worldwide listing",
-      "sourceUrl": "https://himalayas.app/companies/clera/jobs/expert-talent-pool-data-operations-expert-5-years-4687778864?utm_source=api",
-      "description": " About the Role  Lead data operations for projects supporting advanced AI development. As part of a flexible expert network, you will be matched with projects that fit your background and work directly with project teams to help ensure the quality of datasets used to train and evaluate models.  What You'll Do  \n  Lead data sourcing and collection programs by writing specifications, setting acceptance criteria, and tracking yield and quality.  \n  Coordinate media capture and document contributions at scale, then curate and validate the resulting datasets.  \n  Design synthetic data generation pipelines and validation checks to determine which data meets project standards.  \n  Review annotations, resolve disagreements, and run calibration and audit rounds with annotator teams.  \n  Write and maintain labelling guidelines, addressing gaps and updating guidance as edge cases arise.  \n  Coach reviewers and annotators, and report agreement rates, error rates, and other quality metrics to project teams.  \n  What We're Looking For  \n  At least 5 years of experience in data operations, annotation QA, data quality, dataset management, or a related field; alternatively, 5+ years of domain expertise with hands-on human-data work.  \n  Experience leading or reviewing others' work on data projects, such as as a QA lead, guideline owner, adjudicator, team lead, or project manager.  \n  Experience running data sourcing or collection programs, writing specifications, setting acceptance criteria, and tracking results.  \n  Experience owning labelling guidelines and running annotation review, calibration, or audit rounds, including measuring agreement or error rates.  \n  Hands-on familiarity with tools such as Label Studio, Labelbox, CVAT, Scale, Remotasks, or Appen, plus spreadsheets or SQL for quality analysis.  \n  Clear written communication, with the ability to explain data quality issues and solutions.  \n  Experience with synthetic data validation, media capture, document contribution, large-scale dataset curation, or coaching annotators is useful.  \n  Compensation &amp; Benefits  Compensation is $45 to $90 per hour, depending on project, field, and experience level. Payment is for hours worked.  Location  Fully remote. Projects may last from one week to several months.  Originally posted on  Himalayas  ",
-      "source": "Himalayas",
-      "published": "2026-11-18",
-      "remote": true,
-      "sourceChecked": true,
-      "applicationChannel": {
-        "kind": "website_only",
-        "sourceUrl": "https://himalayas.app/companies/clera/jobs/expert-talent-pool-data-operations-expert-5-years-4687778864?utm_source=api",
-        "verified": false,
-        "evidence": "job_ad"
-      },
-      "eligibility": "Country filter only; verify employer requirements before applying."
-    },
-    {
       "id": "himalayas:https://himalayas.app/companies/micro1/jobs/independent-consultant-finance-data-engineering-domain-expert",
       "company": "micro1",
       "role": "Independent Consultant, Finance, Data & Engineering (Domain Expert)",
@@ -231,25 +212,6 @@
       "eligibility": "Country filter only; verify employer requirements before applying."
     },
     {
-      "id": "himalayas:https://himalayas.app/companies/micro1/jobs/domain-researcher-finance-m-a",
-      "company": "micro1",
-      "role": "Domain Researcher, Finance (M&A)",
-      "location": "Remote · worldwide listing",
-      "sourceUrl": "https://himalayas.app/companies/micro1/jobs/domain-researcher-finance-m-a?utm_source=api",
-      "description": "  Job Title:  Domain Researcher, Finance (M&amp;A)   Job Type:  Full-time  Location: Remote     The Role    Join our research team as a  Domain Researcher (DR),  where you'll help advance AI-powered financial reasoning, with a focus on Corporate Development, Mergers &amp; Acquisitions (M&amp;A), and strategic transactions.    We're looking for professionals with hands-on experience in corporate development, acquisition evaluation, and M&amp;A execution who can translate real-world financial expertise into rigorous AI evaluation frameworks.    What You'll Be Doing   \n  Design and develop evaluation frameworks, benchmarks, and scoring methodologies for AI agents operating in corporate development and M&amp;A workflows.  \n  Create realistic test cases covering acquisition screening, valuation, financial due diligence, deal structuring, and strategic investment decisions.  \n  Evaluate AI-generated financial analyses, valuation models, acquisition assessments, and investment recommendations.  \n  Translate real-world M&amp;A experience into structured datasets, research scenarios, and measurable evaluation criteria.  \n  Collaborate with AI researchers, engineers, and product teams to identify model limitations and improve financial reasoning capabilities.  \n  Conduct applied research and document findings to advance AI performance in corporate finance and acquisition-related tasks.  \n   What We're Looking For   \n  Strong professional experience in Corporate Development, M&amp;A, Investment Banking, Private Equity, or Strategic Investments, with direct exposure to acquisition-related transactions.  \n  Hands-on experience across the M&amp;A lifecycle, including target screening, valuation, due diligence, transaction analysis, or deal execution.  \n  Strong understanding of acquisition strategies, financial modeling, company valuation (DCF, comparables, precedent transactions), and strategic fit assessments.  \n  Experience preparing or evaluating investment memoranda, acquisition recommendations, and transaction-related financial analyses.  \n  Ability to translate complex financial workflows into structured research questions, evaluation frameworks, and measurable criteria.  \n  Strong analytical, critical-thinking, and communication skills, with the ability to collaborate across technical and non-technical teams.  \n  Bachelor's degree in Finance, Economics, Business, Accounting, or a related field, or equivalent professional experience.  \n   Preferred Qualifications   \n  Direct experience within an in-house Corporate Development team, particularly involving buy-side acquisitions.  \n  Experience executing or supporting M&amp;A transactions from target identification through due diligence and closing.  \n  Background in technology-sector acquisitions, SaaS businesses, or strategic investments.  \n  MBA, CFA, or relevant advanced financial qualifications.  \n  Familiarity with AI agents, large language models, AI evaluation methodologies, or financial AI applications.  \n  Proficiency with financial modeling and analytical tools such as Excel, Python, or SQL.  \n   Compensation &amp; Benefits Notice    The national pay range for this full-time position is base salary of $200,000 –$250,000. All employees are eligible for equity compensation, and employees may also receive performance-based bonuses, dependent on role and subject to company policies.  micro1  provides a comprehensive benefits package, including up to 100% reimbursement for health-insurance premiums, paid time off, a 401(K) plan with a company match, and additional benefits designed to support a high-performing, remote-first workforce.     micro1  is an equal opportunity employer. All qualified applicants will receive consideration for employment without regard to race, color, religion, sex (including pregnancy, sexual orientation, or gender identity), national origin, age, disability, genetic information, veteran status, or any other characteristic protected by applicable local laws, regulations and ordinances. If you need assistance and/or a reasonable accommodation during the application process, reach out to .    Our hiring process utilizes artificial intelligence tools to assist in candidate screening and assessment. Our AI tools are designed to complement, not replace, human decision-making.   Originally posted on  Himalayas  ",
-      "source": "Himalayas",
-      "published": "2026-10-22",
-      "remote": true,
-      "sourceChecked": true,
-      "applicationChannel": {
-        "kind": "website_only",
-        "sourceUrl": "https://himalayas.app/companies/micro1/jobs/domain-researcher-finance-m-a?utm_source=api",
-        "verified": false,
-        "evidence": "job_ad"
-      },
-      "eligibility": "Country filter only; verify employer requirements before applying."
-    },
-    {
       "id": "himalayas:https://himalayas.app/companies/micro1/jobs/telecommunications-customer-support-specialist",
       "company": "micro1",
       "role": "Telecommunications Customer Support Specialist",
@@ -320,6 +282,25 @@
       "applicationChannel": {
         "kind": "website_only",
         "sourceUrl": "https://himalayas.app/companies/everhelp/jobs/customer-support-specialist-german-and-english-2909298726?utm_source=api",
+        "verified": false,
+        "evidence": "job_ad"
+      },
+      "eligibility": "Country filter only; verify employer requirements before applying."
+    },
+    {
+      "id": "himalayas:https://himalayas.app/companies/it-support-guy/jobs/virtual-admin-specialist",
+      "company": "IT Support Guy",
+      "role": "Virtual Admin Specialist",
+      "location": "Remote · worldwide listing",
+      "sourceUrl": "https://himalayas.app/companies/it-support-guy/jobs/virtual-admin-specialist?utm_source=api",
+      "description": "Category: Administration   Location:     We are seeking a  Virtual Admin Specialist  to join our team. In this role, you will assist our digital marketing clients by handling customer queries, answering calls, and responding to messages and emails professionally. You’ll serve as an extension of their team, ensuring timely, accurate, and courteous responses to all inquiries, helping to bridge any language or time-related communication gaps. \n   Requirements  \n Responsibilities  \n  \n Professionally handle incoming calls, messages, and emails on behalf of clients. \n \n Respond to customer inquiries with clear and accurate information. \n \n Address language and time-zone barriers to provide prompt support. \n \n Manage multiple communication channels and prioritize responses. \n \n Collaborate with clients to understand their brand voice and customer service preferences. \n \n Maintain records of interactions for quality and reporting purposes. \n \n  \n Requirements  \n  \n \n Fluent in English  (both written and spoken); Must be proficient in English. \n \n \n Excellent communication skills  with the ability to handle customer inquiries professionally. \n \n \n Experience in customer service  or virtual assistance is preferred. \n \n Familiarity with digital communication tools (email, chat platforms) and CRM systems. \n \n Ability to work remotely, maintain productivity, and manage time effectively. \n \n Strong organizational skills and attention to detail. \n \n   Benefits  Work remotely from anywhere in the world. \n  Flexible hours with the opportunity to work across different time zones. \n  Be part of a growing, supportive team in the digital marketing industry. \n  Professional development opportunities to enhance your customer service skills. \n  Competitive salary and performance-based bonuses. \n     Details Originally posted on  Himalayas  ",
+      "source": "Himalayas",
+      "published": "2026-11-21",
+      "remote": true,
+      "sourceChecked": true,
+      "applicationChannel": {
+        "kind": "website_only",
+        "sourceUrl": "https://himalayas.app/companies/it-support-guy/jobs/virtual-admin-specialist?utm_source=api",
         "verified": false,
         "evidence": "job_ad"
       },
