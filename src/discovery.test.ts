@@ -1,7 +1,7 @@
 import { describe, expect, it, vi } from 'vitest';
 import { normalizeHimalayas, parseImportedJobs, rankLead, searchJobFeeds, uniqueLeads } from './discovery';
 import type { JobApplication } from './types';
-const now = Date.parse('2026-10-22T12:00:00Z');
+const now = Date.now();
 const listing = {
   guid: 'https://himalayas.app/companies/bank/jobs/aml-analyst',
   title: 'AML Analyst', companyName: 'Example Finance',
