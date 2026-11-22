@@ -1,0 +1,48 @@
+name: OMDA Workflow Simulation Lab CI
+on:
+  pull_request:
+    branches: [omda-freellmapi-secure-runtime-v1]
+    paths:
+      - "integrations/omda-freellmapi-workflow-simulation/**"
+      - "integrations/omda-freellmapi-workflow-studio/engine.mjs"
+      - "integrations/omda-freellmapi-command-center/index.html"
+      - ".github/workflows/omda-freellmapi-workflow-simulation-ci.yml"
+  push:
+    branches: [omda-freellmapi-secure-runtime-v1]
+    paths:
+      - "integrations/omda-freellmapi-workflow-simulation/**"
+      - "integrations/omda-freellmapi-workflow-studio/engine.mjs"
+      - "integrations/omda-freellmapi-command-center/index.html"
+      - ".github/workflows/omda-freellmapi-workflow-simulation-ci.yml"
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  workflow-simulation:
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: "22"
+      - name: Run deterministic engine and CLI tests
+        run: node --test integrations/omda-freellmapi-workflow-simulation/engine.test.mjs integrations/omda-freellmapi-workflow-simulation/cli.test.mjs integrations/omda-freellmapi-workflow-simulation/ui.test.mjs
+      - name: Check module syntax
+        run: |
+          node --check integrations/omda-freellmapi-workflow-simulation/engine.mjs
+          node --check integrations/omda-freellmapi-workflow-simulation/cli.mjs
+      - name: Verify browser privacy and integration contract
+        run: |
+          node --input-type=module -e '
+            import fs from "node:fs";
+            import assert from "node:assert/strict";
+            const html = fs.readFileSync("integrations/omda-freellmapi-workflow-simulation/index.html", "utf8");
+            assert.match(html, /from \x27\.\/engine\.mjs\x27/);
+            assert.match(html, /simulatePlan/);
+            assert.match(html, /textContent/);
+            assert.match(html, /URL\.createObjectURL/);
+            assert.doesNotMatch(html, /innerHTML|localStorage|sessionStorage|indexedDB|XMLHttpRequest|WebSocket/);
+            assert.doesNotMatch(html, /<script[^>]+src=["\x27]https?:/);
+            console.log("PASS: browser UI is local-only and wired to the simulation engine");
+          '
