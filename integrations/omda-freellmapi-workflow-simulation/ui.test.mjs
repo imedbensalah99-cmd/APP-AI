@@ -18,6 +18,12 @@ test('browser UI is offline-only and does not persist imported plans', () => {
   assert.doesNotMatch(html, /\bfetch\s*\(|XMLHttpRequest|WebSocket|localStorage|sessionStorage|indexedDB|sendBeacon/);
   assert.doesNotMatch(html, /<script[^>]+src=["']https?:/);
 });
+test('changing simulation settings invalidates stale results before export', () => {
+  assert.match(html, /function invalidateResult\(\)/);
+  assert.match(html, /concurrency\.addEventListener\('change'/);
+  assert.match(html, /approvalWait\.addEventListener\('change'/);
+  assert.match(html, /defaultMinutes\.addEventListener\('change'/);
+});
 test('browser UI exports reports as user-initiated downloads', () => {
   assert.match(html, /URL\.createObjectURL/);
   assert.match(html, /downloadFile\(exportJSON/);

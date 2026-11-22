@@ -128,6 +128,12 @@ function formatMinutes(value) {
   if (hours) return hours + ' ساعة';
   return minutes + ' دقيقة';
 }
+function invalidateResult() {
+  simulation = null;
+  jsonButton.disabled = true;
+  csvButton.disabled = true;
+  resultPanel.hidden = true;
+}
 function renderStepInputs() {
   stepList.replaceChildren();
   for (const step of plan.steps) {
@@ -155,10 +161,8 @@ function renderStepInputs() {
       }
       if (value === Number(defaultMinutes.value)) delete durations[step.id];
       else durations[step.id] = value;
-      simulation = null;
-      jsonButton.disabled = true;
-      csvButton.disabled = true;
-      resultPanel.hidden = true;
+      invalidateResult();
+      setStatus(simulationStatus, 'تم تغيير التقديرات. أعد تشغيل المحاكاة.', false);
     });
     wrapper.append(label, input);
     row.append(info, wrapper);
@@ -270,7 +274,17 @@ csvButton.addEventListener('click', () => {
   if (simulation) downloadFile(exportCSV(simulation), 'text/csv', 'omda-workflow-simulation.csv');
 });
 defaultMinutes.addEventListener('change', () => {
+  invalidateResult();
   if (plan) renderStepInputs();
+  setStatus(simulationStatus, 'تغيرت المدة الافتراضية. أعد تشغيل المحاكاة.', false);
+});
+concurrency.addEventListener('change', () => {
+  invalidateResult();
+  setStatus(simulationStatus, 'تغير عدد المسارات. أعد تشغيل المحاكاة.', false);
+});
+approvalWait.addEventListener('change', () => {
+  invalidateResult();
+  setStatus(simulationStatus, 'تغير وقت انتظار الموافقة. أعد تشغيل المحاكاة.', false);
 });
 </script>
 </body>
