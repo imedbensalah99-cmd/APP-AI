@@ -1,5 +1,5 @@
 {
-  "generatedAt": "2026-11-22T13:28:57.768Z",
+  "generatedAt": "2026-11-23T16:14:27.464Z",
   "source": "Himalayas public API",
   "jobs": [
     {
@@ -73,44 +73,6 @@
       "applicationChannel": {
         "kind": "website_only",
         "sourceUrl": "https://himalayas.app/companies/uphone-esim/jobs/customer-service-executive?utm_source=api",
-        "verified": false,
-        "evidence": "job_ad"
-      },
-      "eligibility": "Country filter only; verify employer requirements before applying."
-    },
-    {
-      "id": "himalayas:https://himalayas.app/companies/clera/jobs/data-operations-associate-expert-talent-pool-3614061851",
-      "company": "Clera",
-      "role": "Data Operations Associate, Expert Talent Pool",
-      "location": "Remote · worldwide listing",
-      "sourceUrl": "https://himalayas.app/companies/clera/jobs/data-operations-associate-expert-talent-pool-3614061851?utm_source=api",
-      "description": " About the Role  Join a distributed expert network supporting human-data projects for advanced AI research. You will help source, prepare, and review datasets used to develop and evaluate AI systems, with project assignments matched to your experience.  What You'll Do  \n  Source and collect documents, images, audio, and video according to project specifications, including capturing new media when needed.  \n  Sort, de-duplicate, tag, and filter datasets to meet quality standards.  \n  Generate synthetic examples to specification and validate them against labeling guidelines.  \n  Review and adjudicate annotations, identifying work that is correct, incorrect, or unclear.  \n  Run calibration and audit rounds to support consistent annotation quality.  \n  Help write and refine labeling guidelines with clear, practical examples.  \n  What We're Looking For  \n  Under five years of hands-on experience in data operations, annotation quality assurance, or dataset work.  \n  Experience in detail-oriented data, quality assurance, research assistance, operations, or content review, or a degree in a data-related field such as statistics, linguistics, information science, computer science, library science, or GIS.  \n  Experience sourcing, collecting, cleaning, or curating data, and checking work against written guidelines or specifications.  \n  Comfort with Excel or Google Sheets and web-based tools.  \n  Experience with annotation platforms such as Label Studio, Labelbox, CVAT, Scale, Remotasks, or Appen is useful.  \n  AI data project experience, including labeling, evaluations, synthetic data generation, or guideline writing, is a plus. Fluency in languages in addition to English is also valued.  \n  Compensation &amp; Benefits  Compensation is $20 to $40 per hour, depending on the project, field, and experience level. Payment is for hours worked.  Location  Fully remote. Projects may last from one week to several months.  Originally posted on  Himalayas  ",
-      "source": "Himalayas",
-      "published": "2026-11-18",
-      "remote": true,
-      "sourceChecked": true,
-      "applicationChannel": {
-        "kind": "website_only",
-        "sourceUrl": "https://himalayas.app/companies/clera/jobs/data-operations-associate-expert-talent-pool-3614061851?utm_source=api",
-        "verified": false,
-        "evidence": "job_ad"
-      },
-      "eligibility": "Country filter only; verify employer requirements before applying."
-    },
-    {
-      "id": "himalayas:https://himalayas.app/companies/careerswift/jobs/people-operations-coordinator-1134581472",
-      "company": "Careerswift",
-      "role": "People Operations Coordinator",
-      "location": "Remote · worldwide listing",
-      "sourceUrl": "https://himalayas.app/companies/careerswift/jobs/people-operations-coordinator-1134581472?utm_source=api",
-      "description": " CareerSwift is a technology company focused on making the job search process simpler, faster, and more effective. Our platform combines AI-powered tools and practical career solutions to help job seekers create stronger applications, improve their professional profiles, and navigate their job search with greater confidence.  We are growing our team and are looking for an organized and people-focused  People Operations Coordinator  to support our employees and help keep day-to-day people processes running smoothly.  About the Role  As a  People Operations Coordinator , you will support a range of employee-related activities, including onboarding, HR administration, internal communication, employee records, and day-to-day People Operations processes.  You will work closely with employees, managers, and the People team to help create a positive employee experience and ensure that important HR processes are handled accurately and efficiently.  This is a great opportunity for someone interested in HR, People Operations, or employee experience who wants to build practical experience in a growing technology company.  Responsibilities  \n  Support employee onboarding and offboarding processes and ensure required information is completed.  \n  Maintain accurate employee records, documents, and HR information.  \n  Assist employees with routine HR and People Operations questions.  \n  Coordinate internal People-related communications, meetings, and activities.  \n  Support the administration of company policies, procedures, and employee programs.  \n  Help organize employee engagement activities and internal initiatives.  \n  Assist with improving People Operations processes and documentation.  \n  What We Are Looking For  \n  Strong organizational and time-management skills.  \n  Clear and professional written and verbal communication.  \n  High attention to detail and ability to handle confidential information responsibly.  \n  Comfortable working with spreadsheets, documents, and online HR tools.  \n  Ability to manage multiple tasks and priorities independently.  \n  Interest in HR, People Operations, or employee experience.  \n  Nice to Have  \n  Previous experience in HR, administration, recruiting, or employee support.  \n  Familiarity with HRIS or other people management systems.  \n  Experience working in a remote or technology-focused company.  \n  Basic understanding of HR processes and employment documentation.  \n  Compensation   $45,000 - $55,000 per year , depending on experience and qualifications.  Additional benefits and employment details will be discussed during the hiring process.  What We Offer  \n  Fully remote work environment.  \n  Opportunity to gain hands-on experience in People Operations.  \n  Exposure to a growing AI-powered technology company.  \n  Collaborative and supportive team environment.  \n  Opportunities for professional growth as CareerSwift expands.  \n   Apply today and help us create a positive and well-organized employee experience at CareerSwift.    Location:  Remote   Salary Range:  45,000 - 55,000 USD (gross, annually)  Originally posted on  Himalayas  ",
-      "source": "Himalayas",
-      "published": "2026-11-18",
-      "remote": true,
-      "sourceChecked": true,
-      "applicationChannel": {
-        "kind": "website_only",
-        "sourceUrl": "https://himalayas.app/companies/careerswift/jobs/people-operations-coordinator-1134581472?utm_source=api",
         "verified": false,
         "evidence": "job_ad"
       },
@@ -193,19 +155,19 @@
       "eligibility": "Country filter only; verify employer requirements before applying."
     },
     {
-      "id": "himalayas:https://himalayas.app/companies/micro1/jobs/structured-finance-attorney",
+      "id": "himalayas:https://himalayas.app/companies/micro1/jobs/finance-accounting-expert",
       "company": "micro1",
-      "role": "Structured Finance Attorney",
+      "role": "Finance & Accounting Expert",
       "location": "Remote · worldwide listing",
-      "sourceUrl": "https://himalayas.app/companies/micro1/jobs/structured-finance-attorney?utm_source=api",
-      "description": " Role Title: Structured Finance Attorney  Role Type: Contractor  Location: Remote   micro1  is engaging Structured Finance Attorneys to contribute their legal expertise to a customer's dynamic project. In this role, you'll apply your expertise to help train next-generation AI systems. Your work will shape how models learn, reason, and perform through high-quality, real-world input. No prior experience in AI is required — your domain knowledge is what matters.  Scope of Work  \n Review, analyze, and annotate legal contracts and transaction documents related to structured finance products, such as asset-backed securities, mortgage-backed securities, and collateralized debt obligations. \n Draft or evaluate sample documents, clauses, and legal frameworks pertinent to structured finance transactions. \n Provide detailed feedback on hypothetical scenarios or AI-generated content for legal sufficiency, accuracy, and clarity. \n Identify and explain industry-specific terminology, regulatory requirements, and common legal structures within structured finance. \n Contribute to the development of training datasets that reflect current legal standards and best practices in structured finance. \n Collaborate asynchronously with platform coordinators and other subject matter professionals to ensure the project’s legal content meets high standards. \n Deliver insights on evolving market practices, common pitfalls, and recent regulatory developments in the structured finance sector. \n  Preferred Qualifications  \n Juris Doctor (JD) degree or international equivalent, with active admission to practice in at least one jurisdiction. \n Extensive experience (typically 5+ years) advising on structured finance transactions, including drafting and negotiating transaction documents. \n Thorough knowledge of securities law, regulatory compliance frameworks, and relevant market regulations. \n Outstanding written and verbal communication skills, with a strong focus on clarity and precision in legal language. \n Experience reviewing and providing feedback on a range of financial legal documents, including prospectuses, term sheets, and offering memoranda. \n Proven ability to break down complex legal concepts for varied audiences or technology applications. \n Strong attention to detail, analytical mindset, and the ability to work independently in a remote setting. \n  Originally posted on  Himalayas  ",
+      "sourceUrl": "https://himalayas.app/companies/micro1/jobs/finance-accounting-expert?utm_source=api",
+      "description": "  Role Title:  Finance &amp; Accounting Expert   Role Type:  Contractor   Location:  Remote, global   Opportunity Snapshot   Pay:  Up to $90/hour equivalent.   Time per task:  ~10 hours per task   Engagement:  Project-based — paid per approved task   Location:  Fully remote — no geographic restrictions. Strong English required (B2 advanced or C1 minimum)   Next step:  Complete the role-specific AI interview — it’s how your expertise gets in front of the client   Your tasks:  Design realistic, multi-step finance and accounting tasks with objective criteria for grading the output   micro1  is engaging experienced finance and accounting practitioners to design the tasks that measure what AI systems can actually do. Your domain knowledge is what matters here — no prior AI experience required.  The work is to turn real finance workflows into benchmark tasks: realistic, difficult, and gradable against objective criteria. If you’ve built a review checklist, trained a junior analyst against a standard, or signed off on someone else’s workpapers, that’s the instinct this needs.  Scope of Work  \n Design multi-step tasks drawn from real finance and accounting work — FP&amp;A analysis, financial reporting, audit procedures, reconciliations — with realistic reference files and clear instructions. \n Define objective grading criteria so two qualified reviewers would reach the same verdict on the same output. \n Build tasks that require judgment rather than lookup: ones where the right answer depends on reading the materials correctly. \n Create or source the supporting materials each task needs: spreadsheets, GL extracts, financial statements, policy documents. \n Flag tasks that turn out to be ambiguous or ungradable instead of submitting them anyway. \n Deliver approved tasks on schedule and at the required quality level. \n  Preferred Qualifications  \n 5+ years of hands-on responsibility in FP&amp;A, financial reporting, audit, reconciliations, or accounting — direct ownership of the work, not supervisory-only or adjacent exposure. \n Experience creating or applying structured review standards: audit programs, review checklists, close checklists, grading rubrics, or training assessments. \n Strong Excel capability and comfort reasoning across multiple documents at once. \n CPA, CA, ACCA, CMA or equivalent is a plus, but not required. \n Strong written English. \n AI or LLM evaluation experience is a plus, but not required. \n  How the selection process works  \n Apply and complete the screening questions \n Complete the AI interview — this is how we showcase your expertise to the client \n Profile review \n Onboarding — our Talent Ops team will get you set up \n  Originally posted on  Himalayas  ",
       "source": "Himalayas",
-      "published": "2026-10-22",
+      "published": "2026-11-23",
       "remote": true,
       "sourceChecked": true,
       "applicationChannel": {
         "kind": "website_only",
-        "sourceUrl": "https://himalayas.app/companies/micro1/jobs/structured-finance-attorney?utm_source=api",
+        "sourceUrl": "https://himalayas.app/companies/micro1/jobs/finance-accounting-expert?utm_source=api",
         "verified": false,
         "evidence": "job_ad"
       },
@@ -282,25 +244,6 @@
       "applicationChannel": {
         "kind": "website_only",
         "sourceUrl": "https://himalayas.app/companies/everhelp/jobs/customer-support-specialist-german-and-english-2909298726?utm_source=api",
-        "verified": false,
-        "evidence": "job_ad"
-      },
-      "eligibility": "Country filter only; verify employer requirements before applying."
-    },
-    {
-      "id": "himalayas:https://himalayas.app/companies/it-support-guy/jobs/virtual-admin-specialist",
-      "company": "IT Support Guy",
-      "role": "Virtual Admin Specialist",
-      "location": "Remote · worldwide listing",
-      "sourceUrl": "https://himalayas.app/companies/it-support-guy/jobs/virtual-admin-specialist?utm_source=api",
-      "description": "Category: Administration   Location:     We are seeking a  Virtual Admin Specialist  to join our team. In this role, you will assist our digital marketing clients by handling customer queries, answering calls, and responding to messages and emails professionally. You’ll serve as an extension of their team, ensuring timely, accurate, and courteous responses to all inquiries, helping to bridge any language or time-related communication gaps. \n   Requirements  \n Responsibilities  \n  \n Professionally handle incoming calls, messages, and emails on behalf of clients. \n \n Respond to customer inquiries with clear and accurate information. \n \n Address language and time-zone barriers to provide prompt support. \n \n Manage multiple communication channels and prioritize responses. \n \n Collaborate with clients to understand their brand voice and customer service preferences. \n \n Maintain records of interactions for quality and reporting purposes. \n \n  \n Requirements  \n  \n \n Fluent in English  (both written and spoken); Must be proficient in English. \n \n \n Excellent communication skills  with the ability to handle customer inquiries professionally. \n \n \n Experience in customer service  or virtual assistance is preferred. \n \n Familiarity with digital communication tools (email, chat platforms) and CRM systems. \n \n Ability to work remotely, maintain productivity, and manage time effectively. \n \n Strong organizational skills and attention to detail. \n \n   Benefits  Work remotely from anywhere in the world. \n  Flexible hours with the opportunity to work across different time zones. \n  Be part of a growing, supportive team in the digital marketing industry. \n  Professional development opportunities to enhance your customer service skills. \n  Competitive salary and performance-based bonuses. \n     Details Originally posted on  Himalayas  ",
-      "source": "Himalayas",
-      "published": "2026-11-21",
-      "remote": true,
-      "sourceChecked": true,
-      "applicationChannel": {
-        "kind": "website_only",
-        "sourceUrl": "https://himalayas.app/companies/it-support-guy/jobs/virtual-admin-specialist?utm_source=api",
         "verified": false,
         "evidence": "job_ad"
       },
