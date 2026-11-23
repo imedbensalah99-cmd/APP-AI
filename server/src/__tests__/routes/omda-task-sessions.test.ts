@@ -144,6 +144,10 @@ describe('OMDA Task Sessions API', () => {
       label: 'Tamper check', planSha256: 'd'.repeat(64),
     });
     const id = created.body.session.id as string;
+    expect(() => getDb().prepare('UPDATE omda_task_session_events SET event_hash = ? WHERE session_id = ? AND seq = 0')
+      .run('e'.repeat(64), id)).toThrow(/append-only/i);
+    // Simulate privileged file-level tampering after the database guard is bypassed.
+    getDb().exec('DROP TRIGGER trg_omda_task_session_events_no_update');
     getDb().prepare('UPDATE omda_task_session_events SET event_hash = ? WHERE session_id = ? AND seq = 0')
       .run('f'.repeat(64), id);
 
