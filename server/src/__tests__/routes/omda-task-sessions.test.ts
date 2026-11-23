@@ -40,7 +40,6 @@ describe('OMDA Task Sessions API', () => {
   afterAll(() => {
     if (originalEncryptionKey === undefined) delete process.env.ENCRYPTION_KEY;
     else process.env.ENCRYPTION_KEY = originalEncryptionKey;
-    getDb().close?.();
   });
 
   it('requires dashboard authentication and rejects unknown request fields', async () => {
