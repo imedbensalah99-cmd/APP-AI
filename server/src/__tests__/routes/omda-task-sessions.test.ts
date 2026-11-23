@@ -153,6 +153,7 @@ describe('OMDA Task Sessions API', () => {
 
     const verified = await request('GET', '/api/omda/task-sessions/' + id + '/verify');
     expect(verified.body).toMatchObject({ valid: false, reason: 'event_hash_mismatch' });
+    getDb().exec("CREATE TRIGGER trg_omda_task_session_events_no_update BEFORE UPDATE ON omda_task_session_events BEGIN SELECT RAISE(ABORT, 'OMDA task session events are append-only'); END");
     expect(() => downTaskSessions(getDb())).toThrow(/retained audit history/i);
   });
 });
