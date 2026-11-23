@@ -26,7 +26,10 @@ export function up(db: Db): void {
     '  event_hash TEXT NOT NULL CHECK (length(event_hash) = 64),\n' +
     '  PRIMARY KEY (session_id, seq)\n' +
     ');\n' +
-    'CREATE INDEX IF NOT EXISTS idx_omda_task_session_events_time ON omda_task_session_events(session_id, occurred_at, seq);'
+    'CREATE INDEX IF NOT EXISTS idx_omda_task_session_events_time ON omda_task_session_events(session_id, occurred_at, seq);\n' +
+    'CREATE TRIGGER IF NOT EXISTS trg_omda_task_session_events_no_update BEFORE UPDATE ON omda_task_session_events BEGIN SELECT RAISE(ABORT, \'OMDA task session events are append-only\'); END;\n' +
+    'CREATE TRIGGER IF NOT EXISTS trg_omda_task_session_events_no_delete BEFORE DELETE ON omda_task_session_events BEGIN SELECT RAISE(ABORT, \'OMDA task session events are append-only\'); END;\n' +
+    'CREATE TRIGGER IF NOT EXISTS trg_omda_task_sessions_no_delete BEFORE DELETE ON omda_task_sessions BEGIN SELECT RAISE(ABORT, \'OMDA task sessions are retained\'); END;'
   );
 }
 
@@ -36,6 +39,9 @@ export function down(db: Db): void {
     throw new Error('OMDA task sessions contain retained audit history; export and explicitly clear records before rolling back this migration');
   }
   db.exec(
+    'DROP TRIGGER IF EXISTS trg_omda_task_session_events_no_update;\n' +
+    'DROP TRIGGER IF EXISTS trg_omda_task_session_events_no_delete;\n' +
+    'DROP TRIGGER IF EXISTS trg_omda_task_sessions_no_delete;\n' +
     'DROP INDEX IF EXISTS idx_omda_task_session_events_time;\n' +
     'DROP TABLE IF EXISTS omda_task_session_events;\n' +
     'DROP INDEX IF EXISTS idx_omda_task_sessions_user_updated;\n' +
