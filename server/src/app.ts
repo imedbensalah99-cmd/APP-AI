@@ -26,6 +26,7 @@ import { freeTierRouter } from './routes/free-tier.js';
 import { settingsRouter } from './routes/settings.js';
 import { premiumRouter } from './routes/premium.js';
 import { backupsRouter } from './routes/backups.js';
+import { omdaTaskSessionsRouter } from './routes/omda-task-sessions.js';
 import { cacheRouter } from './routes/cache.js';
 import { compressionRouter } from './routes/compression.js';
 import { authRouter } from './routes/auth.js';
@@ -229,6 +230,8 @@ export function createApp(config?: Config) {
     ['/v1', '/v1beta', '/mcp', '/api/chat', '/api/generate', '/api/embed', '/api/embeddings'],
     express.json({ limit: cfg.requestBodyLimitBytes }),
   );
+  // Keep OMDA lifecycle payloads small before the shared 10 MB JSON parser.
+  app.use('/api/omda/task-sessions', express.json({ limit: '8kb' }));
   app.use(express.json({ limit: '10mb' }));
   // Restrict the dedicated OMDA Agent profile across ALL API surfaces,
   // before Ollama, OpenAI, Anthropic, Responses, Gemini, MCP, or admin routing.
@@ -305,6 +308,8 @@ export function createApp(config?: Config) {
   // encrypted provider keys and every routing setting, so the unified /v1 key
   // must not open this surface.
   app.use('/api/backups', requireAuth, backupsRouter);
+  // Task lifecycle records are dashboard-session protected and never execute work.
+  app.use('/api/omda/task-sessions', requireAuth, omdaTaskSessionsRouter);
   app.use('/api/cache', requireAuth, cacheRouter);
   app.use('/api/compression', requireAuth, compressionRouter);
   app.use('/api/update', requireAuth, updateRouter);
