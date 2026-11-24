@@ -1,0 +1,67 @@
+<!doctype html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><meta name="theme-color" content="#09080f">
+<title>OMDA — مدقق أدلة جلسات المهام</title>
+<style>
+:root{color-scheme:dark;--bg:#09080f;--panel:#14111f;--line:#302744;--text:#f4f0ff;--muted:#aaa1bd;--accent:#a78bfa;--good:#86efac;--bad:#fda4af}
+*{box-sizing:border-box}body{margin:0;background:radial-gradient(ellipse at 80% 0%,#2b1747 0,transparent 38%),var(--bg);color:var(--text);font-family:system-ui,-apple-system,"Segoe UI",sans-serif;min-height:100vh}
+main{width:min(920px,100%);margin:auto;padding:28px 16px 56px}.eyebrow{color:var(--accent);font-size:.78rem;font-weight:700;letter-spacing:.08em}.hero{margin:12px 0 22px}.hero h1{font-size:clamp(1.65rem,5vw,2.6rem);margin:0 0 8px}.hero p{color:var(--muted);line-height:1.8;margin:0}
+.panel{background:linear-gradient(145deg,#181425,#100e18);border:1px solid var(--line);border-radius:22px;padding:20px;box-shadow:0 18px 60px #0005}.drop{border:1px dashed #7258a8;border-radius:16px;padding:26px 16px;text-align:center;background:#171126}.drop[data-dragging=true]{border-color:var(--accent);background:#24183a}.drop strong{display:block;margin-bottom:6px}.drop p{color:var(--muted);margin:0 0 14px;font-size:.9rem}.file{display:inline-block;background:#2a2140;border:1px solid #59427f;border-radius:999px;padding:10px 15px;cursor:pointer}.file input{position:absolute;width:1px;height:1px;opacity:0;pointer-events:none}
+.actions{display:flex;gap:10px;flex-wrap:wrap;margin-top:14px}.btn{border:1px solid var(--line);border-radius:12px;padding:11px 16px;background:#1c172b;color:var(--text);font:inherit;cursor:pointer}.btn.primary{background:#7048b7;border-color:#8b64d0}.btn:disabled{opacity:.45;cursor:not-allowed}.status{min-height:26px;margin:14px 2px 0;color:var(--muted);font-size:.88rem;overflow-wrap:anywhere}
+.result{margin-top:18px;border-radius:18px;padding:18px;border:1px solid var(--line);background:var(--panel)}.result[hidden]{display:none}.result[data-state=valid]{border-color:#286448}.result[data-state=invalid]{border-color:#783744}.result h2{margin:0 0 6px}.result[data-state=valid] h2{color:var(--good)}.result[data-state=invalid] h2{color:var(--bad)}.reason{color:var(--muted);font-size:.9rem;line-height:1.7;margin:0 0 16px}.grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:10px}.field{min-width:0;padding:12px;border-radius:12px;background:#0f0d16;border:1px solid #292236}.field span{display:block;color:var(--muted);font-size:.78rem;margin-bottom:6px}.field code{display:block;direction:ltr;text-align:left;overflow-wrap:anywhere;font-size:.78rem;color:#e9ddff}.foot{margin-top:18px;color:var(--muted);font-size:.8rem;line-height:1.8}
+@media(max-width:560px){main{padding:20px 12px 40px}.panel{padding:14px}.grid{grid-template-columns:1fr}.actions .btn{flex:1}.drop{padding:22px 12px}}
+</style>
+</head>
+<body><main>
+<div class="eyebrow">OMDA · TASK EVIDENCE</div>
+<header class="hero"><h1>مدقق أدلة جلسات المهام</h1><p>تحقق محليًا من سلسلة أحداث جلسة المهمة وبصمة ملف التصدير. لا يتم رفع الملف أو حفظه في المتصفح أو إرساله إلى أي مزود خارجي.</p></header>
+<section class="panel" aria-label="استيراد حزمة الأدلة">
+<div class="drop" id="drop-zone"><strong>اسحب ملف Evidence JSON إلى هنا</strong><p>أو اختر ملفًا من جهازك · الحد الأقصى 2 MiB</p><label class="file">اختيار ملف JSON<input id="bundle-file" type="file" accept=".json,application/json"></label></div>
+<div class="actions"><button class="btn primary" id="verify-button" type="button" disabled>تحقق من سلامة الحزمة</button><button class="btn" id="reset-button" type="button">مسح</button></div>
+<p class="status" id="status" role="status" aria-live="polite">اختر ملف JSON للتحقق منه</p>
+<section class="result" id="result" hidden aria-live="polite"><h2 id="result-title"></h2><p class="reason" id="result-reason"></p><div class="grid">
+<div class="field"><span>معرّف الجلسة</span><code id="session-id">—</code></div><div class="field"><span>الحالة</span><code id="session-state">—</code></div>
+<div class="field"><span>Revision</span><code id="session-revision">—</code></div><div class="field"><span>عدد الأحداث</span><code id="event-count">—</code></div>
+<div class="field"><span>Plan SHA-256</span><code id="plan-hash">—</code></div><div class="field"><span>Bundle SHA-256</span><code id="bundle-hash">—</code></div>
+</div></section></section>
+<p class="foot">نجاح التحقق يثبت الاتساق الداخلي ومطابقة البصمات فقط. لا يثبت هوية منشئ الملف أو أن الموافقة البشرية حدثت بالفعل؛ SHA-256 ليس توقيعًا رقميًا.</p>
+</main>
+<script type="module">
+import { MAX_EVIDENCE_BUNDLE_BYTES, verifyTaskSessionEvidenceBundle } from '../evidence-core.mjs';
+const byId = id => document.getElementById(id);
+const fileInput=byId('bundle-file'),verifyButton=byId('verify-button'),resetButton=byId('reset-button'),dropZone=byId('drop-zone');
+const status=byId('status'),panel=byId('result'),title=byId('result-title'),reason=byId('result-reason');
+const fields={sessionId:byId('session-id'),state:byId('session-state'),revision:byId('session-revision'),events:byId('event-count'),planHash:byId('plan-hash'),bundleHash:byId('bundle-hash')};
+let selectedFile=null;
+function clearResult(){panel.hidden=true;title.textContent='';reason.textContent='';for(const field of Object.values(fields))field.textContent='—';}
+function setFile(file){
+ clearResult();
+ if(!file){selectedFile=null;verifyButton.disabled=true;status.textContent='اختر ملف JSON للتحقق منه';return;}
+ if(!file.name.toLowerCase().endsWith('.json')){selectedFile=null;verifyButton.disabled=true;status.textContent='الملف يجب أن يكون بصيغة JSON';return;}
+ if(file.size>MAX_EVIDENCE_BUNDLE_BYTES){selectedFile=null;verifyButton.disabled=true;status.textContent='حجم الملف يتجاوز الحد 2 MiB';return;}
+ selectedFile=file;verifyButton.disabled=false;status.textContent=file.name+' · '+file.size.toLocaleString('en-US')+' bytes';
+}
+fileInput.addEventListener('change',()=>setFile(fileInput.files?.[0]??null));
+verifyButton.addEventListener('click',async()=>{
+ if(!selectedFile)return;verifyButton.disabled=true;status.textContent='جارٍ التحقق محليًا…';clearResult();
+ try{
+  const raw=await selectedFile.text();
+  if(new TextEncoder().encode(raw).byteLength>MAX_EVIDENCE_BUNDLE_BYTES){status.textContent='حجم الملف بعد القراءة يتجاوز الحد المسموح';return;}
+  const result=await verifyTaskSessionEvidenceBundle(JSON.parse(raw));panel.hidden=false;
+  if(!result.valid){panel.dataset.state='invalid';title.textContent='فشل التحقق';reason.textContent=result.reason;status.textContent='لم يتم اعتماد الحزمة — راجع سبب الرفض';return;}
+  panel.dataset.state='valid';title.textContent='الحزمة سليمة';
+  reason.textContent='تم التحقق من سلسلة الأحداث وبصمة الحزمة. هذا يثبت الاتساق الداخلي فقط، وليس هوية مصدر الملف.';
+  fields.sessionId.textContent=result.summary.sessionId;fields.state.textContent=result.summary.status;
+  fields.revision.textContent=String(result.summary.revision);fields.events.textContent=String(result.summary.eventCount);
+  fields.planHash.textContent=result.summary.planSha256;fields.bundleHash.textContent=result.summary.bundleSha256;
+  status.textContent='اكتمل التحقق دون إرسال الملف إلى أي خدمة';
+ }catch(error){panel.hidden=false;panel.dataset.state='invalid';title.textContent='تعذر قراءة الحزمة';reason.textContent=error instanceof SyntaxError?'invalid_json':'verification_error';status.textContent='تعذر التحقق من الملف';}
+ finally{verifyButton.disabled=!selectedFile;}
+});
+resetButton.addEventListener('click',()=>{fileInput.value='';setFile(null);clearResult();});
+for(const name of ['dragenter','dragover'])dropZone.addEventListener(name,event=>{event.preventDefault();dropZone.dataset.dragging='true';});
+for(const name of ['dragleave','drop'])dropZone.addEventListener(name,event=>{event.preventDefault();delete dropZone.dataset.dragging;});
+dropZone.addEventListener('drop',event=>setFile(event.dataTransfer?.files?.[0]??null));
+setFile(null);
+</script></body></html>

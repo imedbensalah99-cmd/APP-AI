@@ -1,0 +1,60 @@
+name: OMDA Task Session Lifecycle API
+on:
+  pull_request:
+    branches: [omda-freellmapi-secure-runtime-v1]
+    paths:
+      - 'server/src/app.ts'
+      - 'server/src/db/migrate/defaults.ts'
+      - 'server/src/db/migrations/20261123_000001_omda_task_sessions.ts'
+      - 'server/src/lib/omda-task-session-core.ts'
+      - 'server/src/services/omda-task-sessions.ts'
+      - 'server/src/routes/omda-task-sessions.ts'
+      - 'server/src/__tests__/lib/omda-task-session-core.test.ts'
+      - 'server/src/__tests__/routes/omda-task-sessions.test.ts'
+      - 'server/src/__tests__/db/migrate/roundtrip.test.ts'
+      - 'server/src/lib/omda-task-session-core.ts'
+      - 'server/src/__tests__/lib/omda-task-session-core.test.ts'
+      - 'server/src/routes/omda-task-sessions.ts'
+      - 'server/src/services/omda-task-sessions.ts'
+      - 'server/src/__tests__/routes/omda-task-sessions.test.ts'
+      - 'integrations/omda-freellmapi-task-sessions/**'
+      - 'integrations/omda-freellmapi-command-center/index.html'
+      - '.github/workflows/omda-task-sessions-ci.yml'
+  push:
+    branches: [omda-freellmapi-secure-runtime-v1, omda-task-session-lifecycle-20261123]
+    paths:
+      - 'server/src/app.ts'
+      - 'server/src/db/migrate/defaults.ts'
+      - 'server/src/db/migrations/20261123_000001_omda_task_sessions.ts'
+      - 'server/src/lib/omda-task-session-core.ts'
+      - 'server/src/services/omda-task-sessions.ts'
+      - 'server/src/routes/omda-task-sessions.ts'
+      - 'server/src/__tests__/lib/omda-task-session-core.test.ts'
+      - 'server/src/__tests__/routes/omda-task-sessions.test.ts'
+      - 'server/src/__tests__/db/migrate/roundtrip.test.ts'
+      - 'server/src/lib/omda-task-session-core.ts'
+      - 'server/src/__tests__/lib/omda-task-session-core.test.ts'
+      - 'server/src/routes/omda-task-sessions.ts'
+      - 'server/src/services/omda-task-sessions.ts'
+      - 'server/src/__tests__/routes/omda-task-sessions.test.ts'
+      - 'integrations/omda-freellmapi-task-sessions/**'
+      - 'integrations/omda-freellmapi-command-center/index.html'
+      - '.github/workflows/omda-task-sessions-ci.yml'
+permissions:
+  contents: read
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+          cache: npm
+      - run: npm ci
+      - run: npm run test -w server -- src/__tests__/lib/omda-task-session-core.test.ts src/__tests__/routes/omda-task-sessions.test.ts src/__tests__/db/migrate/roundtrip.test.ts
+      - run: node --test integrations/omda-freellmapi-task-sessions/evidence-core.test.mjs
+      - run: node --check integrations/omda-freellmapi-task-sessions/evidence-core.mjs
+      - run: node --check integrations/omda-freellmapi-task-sessions/verify-evidence.mjs
+      - run: npm run build -w server
