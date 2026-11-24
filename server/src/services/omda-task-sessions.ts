@@ -1,6 +1,7 @@
 import { randomUUID } from 'node:crypto';
 import type { Db } from '../db/types.js';
 import {
+  createTaskSessionEvidenceBundle,
   hashTaskSessionEvent,
   resolveTaskSessionTransition,
   TASK_SESSION_ZERO_HASH,
@@ -241,4 +242,28 @@ export function verifyTaskSession(db: Db, userId: number, sessionId: string) {
   const events = getEventRows(db, sessionId);
   const verification = verifyTaskSessionEventChain(events.map(mapEvent), mapSession(session));
   return { sessionId, ...verification };
+}
+
+
+/**
+ * Export one consistent read snapshot. A corrupt or over-limit ledger is never
+ * packaged as valid evidence.
+ */
+export function exportTaskSessionEvidence(db: Db, userId: number, sessionId: string) {
+  db.exec('BEGIN');
+  try {
+    const sessionRow = getSessionRow(db, userId, sessionId);
+    const events = getEventRows(db, sessionId).map(mapEvent);
+    const session = mapSession(sessionRow);
+    const verification = verifyTaskSessionEventChain(events, session);
+    if (!verification.valid) {
+      throw new TaskSessionError(409, 'ledger_invalid', 'Task session evidence cannot be exported because its event ledger failed verification');
+    }
+    const bundle = createTaskSessionEvidenceBundle(session, events);
+    db.exec('COMMIT');
+    return bundle;
+  } catch (error) {
+    try { db.exec('ROLLBACK'); } catch { /* preserve the original failure */ }
+    throw error;
+  }
 }

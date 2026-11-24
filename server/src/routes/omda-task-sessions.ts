@@ -6,6 +6,7 @@ import { TASK_SESSION_ACTIONS, TASK_SESSION_STATUSES, TaskSessionError, type Tas
 import type { SessionUser } from '../services/auth.js';
 import {
   createTaskSession,
+  exportTaskSessionEvidence,
   getTaskSession,
   listTaskSessions,
   transitionTaskSession,
@@ -123,6 +124,26 @@ omdaTaskSessionsRouter.get('/:id/verify', (req: Request, res: Response) => {
   if (!id) return;
   try {
     res.json(verifyTaskSession(getDb(), userId, id));
+  } catch (error) {
+    fail(res, error);
+  }
+});
+
+omdaTaskSessionsRouter.get('/:id/export', (req: Request, res: Response) => {
+  const userId = currentUserId(req);
+  if (!userId) {
+    res.status(401).json({ error: { type: 'authentication_error', message: 'Authentication required' } });
+    return;
+  }
+  const id = parseSessionId(req, res);
+  if (!id) return;
+  try {
+    const bundle = exportTaskSessionEvidence(getDb(), userId, id);
+    res.setHeader('Content-Type', 'application/json; charset=utf-8');
+    res.setHeader('Content-Disposition', 'attachment; filename="omda-task-session-' + id + '.json"');
+    res.setHeader('Cache-Control', 'private, no-store, max-age=0');
+    res.setHeader('X-Content-Type-Options', 'nosniff');
+    res.status(200).json(bundle);
   } catch (error) {
     fail(res, error);
   }

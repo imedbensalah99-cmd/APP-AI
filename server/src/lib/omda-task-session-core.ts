@@ -132,3 +132,79 @@ export function verifyTaskSessionEventChain(
 
   return { valid: true, eventCount: events.length, lastHash: previousHash };
 }
+
+
+export const TASK_SESSION_EVIDENCE_SCHEMA = 'omda.task-session-evidence.v1' as const;
+
+export interface TaskSessionEvidenceSession {
+  id: string;
+  label: string;
+  planSha256: string;
+  status: TaskSessionStatus;
+  revision: number;
+  createdAt: string;
+  updatedAt: string;
+}
+
+export interface TaskSessionEvidenceBundle {
+  schemaVersion: typeof TASK_SESSION_EVIDENCE_SCHEMA;
+  exportedAt: string;
+  session: TaskSessionEvidenceSession;
+  events: VerifiableTaskSessionEvent[];
+  verification: { valid: true; eventCount: number; lastHash: string };
+  bundleSha256: string;
+}
+
+export function canonicalizeEvidenceJson(value: unknown): string {
+  if (value === null || typeof value === 'string' || typeof value === 'boolean') {
+    const encoded = JSON.stringify(value);
+    if (encoded === undefined) throw new TypeError('Evidence JSON value cannot be encoded');
+    return encoded;
+  }
+  if (typeof value === 'number') {
+    if (!Number.isFinite(value)) throw new TypeError('Evidence JSON numbers must be finite');
+    return JSON.stringify(value);
+  }
+  if (Array.isArray(value)) return '[' + value.map(canonicalizeEvidenceJson).join(',') + ']';
+  if (typeof value === 'object') {
+    const prototype = Object.getPrototypeOf(value);
+    if (prototype !== Object.prototype && prototype !== null) throw new TypeError('Evidence JSON must contain plain objects only');
+    const record = value as Record<string, unknown>;
+    const keys = Object.keys(record).sort((left, right) => left < right ? -1 : left > right ? 1 : 0);
+    return '{' + keys.map(key => {
+      const item = record[key];
+      if (item === undefined) throw new TypeError('Evidence JSON cannot contain undefined values');
+      return JSON.stringify(key) + ':' + canonicalizeEvidenceJson(item);
+    }).join(',') + '}';
+  }
+  throw new TypeError('Unsupported value in evidence JSON');
+}
+
+export function createTaskSessionEvidenceBundle(
+  session: TaskSessionEvidenceSession,
+  events: readonly VerifiableTaskSessionEvent[],
+  exportedAt = new Date().toISOString(),
+): TaskSessionEvidenceBundle {
+  const exportDate = new Date(exportedAt);
+  if (!/^\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}\.\d{3}Z$/.test(exportedAt)
+    || !Number.isFinite(exportDate.getTime()) || exportDate.toISOString() !== exportedAt) {
+    throw new TaskSessionError(500, 'invalid_export_timestamp', 'Evidence export timestamp is invalid');
+  }
+
+  const chain = verifyTaskSessionEventChain(events, session);
+  if (!chain.valid) {
+    throw new TaskSessionError(409, 'ledger_invalid', 'Task session evidence cannot be exported because its event ledger failed verification');
+  }
+
+  const unsigned = {
+    schemaVersion: TASK_SESSION_EVIDENCE_SCHEMA,
+    exportedAt,
+    session,
+    events: [...events],
+    verification: { valid: true as const, eventCount: chain.eventCount, lastHash: chain.lastHash },
+  };
+  const bundleSha256 = createHash('sha256')
+    .update(canonicalizeEvidenceJson(unsigned), 'utf8')
+    .digest('hex');
+  return { ...unsigned, bundleSha256 };
+}

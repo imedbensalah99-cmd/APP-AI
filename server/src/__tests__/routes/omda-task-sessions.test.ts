@@ -22,7 +22,7 @@ async function request(method: string, path: string, body?: unknown, withAuth = 
       },
       body: body !== undefined ? JSON.stringify(body) : undefined,
     });
-    return { status: res.status, body: await res.json().catch(() => null) };
+    return { status: res.status, body: await res.json().catch(() => null), headers: Object.fromEntries(res.headers.entries()) };
   } finally {
     await new Promise<void>(resolve => server.close(() => resolve()));
   }
@@ -45,6 +45,8 @@ describe('OMDA Task Sessions API', () => {
   it('requires dashboard authentication and rejects unknown request fields', async () => {
     const unauthenticated = await request('GET', '/api/omda/task-sessions', undefined, false);
     expect(unauthenticated.status).toBe(401);
+    const unauthenticatedExport = await request('GET', '/api/omda/task-sessions/00000000-0000-4000-8000-000000000000/export', undefined, false);
+    expect(unauthenticatedExport.status).toBe(401);
 
     const invalid = await request('POST', '/api/omda/task-sessions', {
       label: 'Release review',
@@ -99,6 +101,17 @@ describe('OMDA Task Sessions API', () => {
     const verified = await request('GET', '/api/omda/task-sessions/' + id + '/verify');
     expect(verified.status).toBe(200);
     expect(verified.body).toMatchObject({ valid: true, eventCount: 5 });
+
+    const exported = await request('GET', '/api/omda/task-sessions/' + id + '/export');
+    expect(exported.status).toBe(200);
+    expect(exported.headers['content-disposition']).toContain('attachment; filename="omda-task-session-' + id + '.json"');
+    expect(exported.headers['cache-control']).toContain('no-store');
+    expect(exported.body).toMatchObject({
+      schemaVersion: 'omda.task-session-evidence.v1',
+      session: { id, status: 'completed', revision: 4 },
+      verification: { valid: true, eventCount: 5 },
+    });
+    expect(exported.body.bundleSha256).toMatch(/^[a-f0-9]{64}$/);
   });
 
   it('uses optimistic revisions and requires completion/failure evidence', async () => {
@@ -132,6 +145,8 @@ describe('OMDA Task Sessions API', () => {
     try {
       const hidden = await request('GET', '/api/omda/task-sessions/' + id);
       expect(hidden.status).toBe(404);
+      const hiddenExport = await request('GET', '/api/omda/task-sessions/' + id + '/export');
+      expect(hiddenExport.status).toBe(404);
     } finally {
       dashToken = originalToken;
     }
@@ -153,6 +168,9 @@ describe('OMDA Task Sessions API', () => {
 
     const verified = await request('GET', '/api/omda/task-sessions/' + id + '/verify');
     expect(verified.body).toMatchObject({ valid: false, reason: 'event_hash_mismatch' });
+    const blockedExport = await request('GET', '/api/omda/task-sessions/' + id + '/export');
+    expect(blockedExport.status).toBe(409);
+    expect(blockedExport.body.error.type).toBe('ledger_invalid');
     getDb().exec("CREATE TRIGGER trg_omda_task_session_events_no_update BEFORE UPDATE ON omda_task_session_events BEGIN SELECT RAISE(ABORT, 'OMDA task session events are append-only'); END");
     expect(() => downTaskSessions(getDb())).toThrow(/retained audit history/i);
   });

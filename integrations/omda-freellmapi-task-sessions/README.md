@@ -15,6 +15,7 @@ Every endpoint requires the existing dashboard session token in the Authorizatio
 - GET /api/omda/task-sessions/:id
 - POST /api/omda/task-sessions/:id/transitions
 - GET /api/omda/task-sessions/:id/verify
+- GET /api/omda/task-sessions/:id/export
 
 Create a session with a label and a 64-character SHA-256 fingerprint of the source plan. Transitions require an expectedRevision to reject stale writes.
 
@@ -40,3 +41,40 @@ Complete and fail transitions require an evidence note of at least five characte
 ## Verification
 
 The PR CI workflow runs the focused lifecycle, API, and migration round-trip tests, then builds the server. No Cloudflare D1, Render, or external service changes are required for this feature branch.
+
+
+## Portable evidence export
+
+The authenticated export endpoint returns an attachment using the schema
+omda.task-session-evidence.v1. It takes a consistent SQLite read snapshot,
+re-verifies the complete event chain, and refuses the export with HTTP 409 if
+the chain is invalid or exceeds the event limit. The bundle contains session
+metadata, append-only events, a verification summary, and a SHA-256 digest over
+canonical JSON. It deliberately omits the internal dashboard user ID.
+
+The export is private and sent with Cache-Control: private, no-store. Event
+notes are part of the evidence record and may contain sensitive text; protect
+the downloaded file accordingly.
+
+## Offline verification
+
+Run the no-dependency Node 22 verifier:
+
+    node integrations/omda-freellmapi-task-sessions/verify-evidence.mjs ./session-evidence.json
+
+For machine-readable output:
+
+    node integrations/omda-freellmapi-task-sessions/verify-evidence.mjs ./session-evidence.json --format json
+
+The mobile-friendly browser verifier is available at:
+
+    integrations/omda-freellmapi-task-sessions/evidence-verifier/index.html
+
+The verifier accepts files up to 2 MiB and at most 2,000 events. It reports only
+safe session metadata and digest values; it does not print labels or event notes.
+The browser tool is offline-only, has no network calls, and keeps the imported
+file in memory only.
+
+SHA-256 proves internal consistency and detects changes to the exported bytes.
+It is not a digital signature, does not prove who created the export, and does
+not independently prove that a human approval occurred.

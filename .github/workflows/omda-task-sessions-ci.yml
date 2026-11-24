@@ -12,9 +12,16 @@ on:
       - 'server/src/__tests__/lib/omda-task-session-core.test.ts'
       - 'server/src/__tests__/routes/omda-task-sessions.test.ts'
       - 'server/src/__tests__/db/migrate/roundtrip.test.ts'
+      - 'server/src/lib/omda-task-session-core.ts'
+      - 'server/src/__tests__/lib/omda-task-session-core.test.ts'
+      - 'server/src/routes/omda-task-sessions.ts'
+      - 'server/src/services/omda-task-sessions.ts'
+      - 'server/src/__tests__/routes/omda-task-sessions.test.ts'
+      - 'integrations/omda-freellmapi-task-sessions/**'
+      - 'integrations/omda-freellmapi-command-center/index.html'
       - '.github/workflows/omda-task-sessions-ci.yml'
   push:
-    branches: [omda-freellmapi-secure-runtime-v1]
+    branches: [omda-freellmapi-secure-runtime-v1, omda-task-session-lifecycle-20261123]
     paths:
       - 'server/src/app.ts'
       - 'server/src/db/migrate/defaults.ts'
@@ -25,6 +32,13 @@ on:
       - 'server/src/__tests__/lib/omda-task-session-core.test.ts'
       - 'server/src/__tests__/routes/omda-task-sessions.test.ts'
       - 'server/src/__tests__/db/migrate/roundtrip.test.ts'
+      - 'server/src/lib/omda-task-session-core.ts'
+      - 'server/src/__tests__/lib/omda-task-session-core.test.ts'
+      - 'server/src/routes/omda-task-sessions.ts'
+      - 'server/src/services/omda-task-sessions.ts'
+      - 'server/src/__tests__/routes/omda-task-sessions.test.ts'
+      - 'integrations/omda-freellmapi-task-sessions/**'
+      - 'integrations/omda-freellmapi-command-center/index.html'
       - '.github/workflows/omda-task-sessions-ci.yml'
 permissions:
   contents: read
@@ -40,4 +54,7 @@ jobs:
           cache: npm
       - run: npm ci
       - run: npm run test -w server -- src/__tests__/lib/omda-task-session-core.test.ts src/__tests__/routes/omda-task-sessions.test.ts src/__tests__/db/migrate/roundtrip.test.ts
+      - run: node --test integrations/omda-freellmapi-task-sessions/evidence-core.test.mjs
+      - run: node --check integrations/omda-freellmapi-task-sessions/evidence-core.mjs
+      - run: node --check integrations/omda-freellmapi-task-sessions/verify-evidence.mjs
       - run: npm run build -w server
