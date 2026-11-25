@@ -63,12 +63,21 @@ function runScan() {
     downloadLink.hidden = false;
   } catch (error) {
     setStatus(error instanceof RangeError ? 'النص يتجاوز حد الحجم المسموح.' : 'تعذّر فحص النص. تحقق من الإدخال.', true);
+    output.hidden = false;
+    safePreview.value = '';
+    findingsList.replaceChildren();
     copyButton.disabled = true;
   }
 }
 
 input.addEventListener('input', () => {
   charCount.textContent = input.value.length + ' / ' + MAX_PROMPT_CHARS;
+  currentResult = null;
+  copyButton.disabled = true;
+  clearDownload();
+  safePreview.value = '';
+  findingsList.replaceChildren();
+  output.hidden = true;
 });
 
 scanButton.addEventListener('click', runScan);
