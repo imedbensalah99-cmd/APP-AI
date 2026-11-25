@@ -11,8 +11,8 @@ test('detects common provider tokens without returning their values', () => {
   assert.equal(result.sanitizedPrompt.includes(secret), false);
 });
 
-test('detects private key blocks across line breaks', () => {
-  const input = '-----BEGIN PRIVATE KEY-----\\nSYNTHETIC-MATERIAL\\n-----END PRIVATE KEY-----';
+test('detects private key blocks across real line breaks', () => {
+  const input = '-----BEGIN PRIVATE KEY-----\nSYNTHETIC-MATERIAL\n-----END PRIVATE KEY-----';
   const result = scanPrompt(input);
   assert.equal(result.counts.critical, 1);
   assert.equal(result.sanitizedPrompt, '[REDACTED:secret]');
