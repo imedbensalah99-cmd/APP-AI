@@ -24,3 +24,9 @@ test('browser code avoids network and persistent storage APIs', () => {
 test('command center links to the new Prompt Guard', () => {
   assert.ok(commandCenter.includes('../omda-freellmapi-prompt-guard/index.html'));
 });
+
+test('editing the prompt invalidates the previous safe copy', () => {
+  assert.match(app, /currentResult = null/);
+  assert.match(app, /copyButton\\.disabled = true/);
+  assert.match(app, /clearDownload\\(\\)/);
+});
