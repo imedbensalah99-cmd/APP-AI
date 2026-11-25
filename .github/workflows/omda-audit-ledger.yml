@@ -1,9 +1,11 @@
 name: OMDA Audit Ledger
 on:
   push:
-    branches: [omda-freellmapi-secure-runtime-v1]
+    branches: [omda-freellmapi-secure-runtime-v1, omda-prompt-data-guard-20261125]
     paths:
       - 'integrations/omda-freellmapi-audit/**'
+      - 'integrations/omda-freellmapi-prompt-guard/**'
+      - 'integrations/omda-freellmapi-command-center/index.html'
       - '.github/workflows/omda-audit-ledger.yml'
   pull_request:
     paths:
@@ -22,3 +24,7 @@ jobs:
         with:
           node-version: '22'
       - run: node --test integrations/omda-freellmapi-audit/audit.test.mjs
+      - run: node --check integrations/omda-freellmapi-prompt-guard/engine.mjs
+      - run: node --check integrations/omda-freellmapi-prompt-guard/app.mjs
+      - run: node --check integrations/omda-freellmapi-prompt-guard/cli.mjs
+      - run: node --test integrations/omda-freellmapi-prompt-guard/engine.test.mjs integrations/omda-freellmapi-prompt-guard/cli.test.mjs integrations/omda-freellmapi-prompt-guard/ui-contract.test.mjs
