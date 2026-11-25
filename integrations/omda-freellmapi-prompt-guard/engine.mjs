@@ -23,7 +23,7 @@ const PATTERNS = [
 ];
 
 function isLuhnValid(value) {
-  const digits = value.replace(/\\D/g, '');
+  const digits = value.replace(/\D/g, '');
   if (digits.length < 13 || digits.length > 19) return false;
   let sum = 0;
   let doubleDigit = false;
