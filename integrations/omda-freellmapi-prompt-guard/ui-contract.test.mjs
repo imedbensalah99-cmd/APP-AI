@@ -27,6 +27,6 @@ test('command center links to the new Prompt Guard', () => {
 
 test('editing the prompt invalidates the previous safe copy', () => {
   assert.match(app, /currentResult = null/);
-  assert.match(app, /copyButton\\.disabled = true/);
-  assert.match(app, /clearDownload\\(\\)/);
+  assert.ok(app.includes('copyButton.disabled = true'));
+  assert.ok(app.includes('clearDownload()'));
 });
