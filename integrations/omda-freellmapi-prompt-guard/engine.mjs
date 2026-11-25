@@ -14,7 +14,7 @@ const PATTERNS = [
   { id: 'aws-key-id', label: 'AWS access key identifier', category: 'secret', severity: 'high', source: '\\b(?:AKIA|ASIA)[A-Z0-9]{16}\\b', flags: 'g' },
   { id: 'google-api-key', label: 'Google API key', category: 'secret', severity: 'high', source: '\\bAIza[0-9A-Za-z_-]{35}\\b', flags: 'g' },
   { id: 'slack-token', label: 'Slack token', category: 'secret', severity: 'high', source: '\\bxox[baprs]-[A-Za-z0-9-]{10,}\\b', flags: 'g' },
-  { id: 'credential-assignment', label: 'Credential-like assignment', category: 'secret', severity: 'high', source: '\\b(?:api[_-]?key|access[_-]?token|refresh[_-]?token|client[_-]?secret|secret[_-]?key|password|passwd|authorization)\\b\\s*[:=]\\s*(?:"[^"\\r\\n]{4,}"|\'[^\'\\r\\n]{4,}\'|[^\\s,;]{4,})', flags: 'gi' },
+  { id: 'credential-assignment', label: 'Credential-like assignment', category: 'secret', severity: 'high', source: "\\b(?:api[_-]?key|access[_-]?token|refresh[_-]?token|client[_-]?secret|secret[_-]?key|password|passwd|authorization)\\b\\s*[:=]\\s*(?:\"[^\"\\r\\n]{4,}\"|'[^'\\r\\n]{4,}'|[^\\s,;]{4,})", flags: 'gi' },
   { id: 'url-query-secret', label: 'Secret in URL query parameter', category: 'secret', severity: 'high', source: '[?&](?:access_token|api[_-]?key|token|secret|password|signature)=([^&#\\s]{8,})', flags: 'gi' },
   { id: 'email', label: 'Email address', category: 'personal', severity: 'medium', source: '\\b[A-Z0-9._%+-]+@[A-Z0-9.-]+\\.[A-Z]{2,}\\b', flags: 'gi' },
   { id: 'international-phone', label: 'International phone number', category: 'personal', severity: 'medium', source: '(?<!\\d)(?:\\+|00)\\d[\\d\\s().-]{7,}\\d(?!\\d)', flags: 'g' },
