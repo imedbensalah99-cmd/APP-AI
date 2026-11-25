@@ -1,5 +1,5 @@
 {
-  "generatedAt": "2026-11-24T16:01:48.122Z",
+  "generatedAt": "2026-11-25T15:50:01.039Z",
   "source": "Himalayas public API",
   "jobs": [
     {
@@ -16,44 +16,6 @@
       "applicationChannel": {
         "kind": "website_only",
         "sourceUrl": "https://himalayas.app/companies/kinship-ventures/jobs/investment-fund-operations-coordinator?utm_source=api",
-        "verified": false,
-        "evidence": "job_ad"
-      },
-      "eligibility": "Country filter only; verify employer requirements before applying."
-    },
-    {
-      "id": "himalayas:https://himalayas.app/companies/micro1/jobs/travel-operations-specialist",
-      "company": "micro1",
-      "role": "Travel Operations Specialist",
-      "location": "Remote · worldwide listing",
-      "sourceUrl": "https://himalayas.app/companies/micro1/jobs/travel-operations-specialist?utm_source=api",
-      "description": "  Role Title:  Travel Operations Specialist   Role Type:  Contractor   Location:  Remote   micro1  is engaging Travel Operations Specialists to contribute expertise to a customer's project focused on delivering exceptional travel support and solutions. In this role, you'll apply your expertise to help train next-generation AI systems. Your work will shape how models learn, reason, and perform through high-quality, real-world input. No prior experience in AI is required — your domain knowledge is what matters.  Scope of Work  \n Provide comprehensive travel booking services, including flights, accommodations, transportation, and specialized requests. \n Develop, review, and optimize detailed itineraries tailored to diverse traveler profiles and preferences. \n Manage reservation processes across multiple platforms, ensuring accuracy and timely confirmations or modifications. \n Deliver high-quality customer experience by responding to queries, resolving challenges, and offering proactive travel advice. \n Document best practices and real-world scenarios for use in AI training datasets. \n Collaborate with project stakeholders to refine travel operations workflows and identify opportunities for process improvement. \n Communicate findings and recommendations with clarity, both in written reports and during remote discussions. \n  Preferred Qualifications  \n Expertise in end-to-end travel booking, including flights, hotels, car rentals, and ancillary services. \n Demonstrated experience in itinerary planning and delivering personalized travel arrangements. \n Strong background in managing reservations and troubleshooting booking issues. \n Exceptional written and verbal communication skills, with attention to detail and customer care. \n Familiarity with various global reservation systems and travel management tools. \n Ability to synthesize complex travel requirements and present clear, actionable insights. \n Experience in collaborating with diverse stakeholders in remote or distributed project environments. \n  Originally posted on  Himalayas  ",
-      "source": "Himalayas",
-      "published": "2026-11-18",
-      "remote": true,
-      "sourceChecked": true,
-      "applicationChannel": {
-        "kind": "website_only",
-        "sourceUrl": "https://himalayas.app/companies/micro1/jobs/travel-operations-specialist?utm_source=api",
-        "verified": false,
-        "evidence": "job_ad"
-      },
-      "eligibility": "Country filter only; verify employer requirements before applying."
-    },
-    {
-      "id": "himalayas:https://himalayas.app/companies/uphone-esim/jobs/customer-service-executive",
-      "company": "uPhone eSIM",
-      "role": "Customer Service Executive",
-      "location": "Remote · worldwide listing",
-      "sourceUrl": "https://himalayas.app/companies/uphone-esim/jobs/customer-service-executive?utm_source=api",
-      "description": " Customer Service Executive — uPhone  uPhone · Fully remote (work from anywhere) · Full-time · Apply to   Posted 18 November 2026 · Open until 17 January 2027  Fully remote — work from anywhere in the world, with no country restriction. Compensation is competitive and negotiable based on experience.  About uPhone  uPhone is an eSIM marketplace built for modern travellers, available at  (). The service is operated by Targa Limited, a company registered in Hong Kong. The team is small, remote-first, and based across Europe and Asia.  uPhone was founded on a simple belief: staying connected abroad should not be expensive, complicated, or stressful. The company sources eSIM data plans from multiple suppliers across 150+ countries so travellers can get a fair price — without hidden fees, locked contracts, roaming charges, or the plastic waste of a physical SIM card.  What uPhone eSIM is, in practice: an eSIM is a digital SIM profile built into the phone. Customers choose a country, regional, or global data plan (5,000+ plans are listed, including unlimited-data options and a Globetrotter plan covering 150+ countries on one eSIM), pay securely (card or PayPal; other methods, including crypto on the Crypto eSIM checkout, are listed on the site), and receive a QR code by email — typically within seconds. They scan it in iPhone or Android settings and can be connected in under two minutes, with no store visit. The physical SIM stays in the phone, so the home number remains available. Plans are data-only; calls and texts abroad are made over apps such as WhatsApp, FaceTime, or iMessage. Monthly and yearly plans are available for trips of 30 days or more. Plans are listed from about $2, with no contract.  uPhone publishes 24/7 customer support via live chat and email (the help centre cites a typical response time under two minutes), a 30-day unused-eSIM refund if the QR code has not been scanned and the eSIM has not been installed or activated, and a rating of 4.8/5 from 50,000+ travellers who trust the service.  Company values, as stated on the About Us page: transparency (what you see is what you pay), simplicity (purchase to connected in under two minutes), reliability (24/7 support and a clear refund policy), and sustainability (digital eSIMs mean zero plastic waste).  The role  We are hiring a Customer Service Executive to be a frontline point of contact for travellers using uPhone eSIM.  You will help customers choose a plan, install their eSIM, troubleshoot connection issues, and understand refunds and top-ups — over live chat and email. Many conversations happen just before a flight or just after landing, so clear, accurate, and calm help matters. This is a fully remote, full-time role — you can work from anywhere in the world. Support is published as 24/7, with a typical response time under two minutes, so this role includes shift work. That may include evenings, nights, weekends, or public holidays, as agreed with the team.  You do not need to be an engineer. You do need to follow documentation, explain technical steps in plain language, and know when to escalate.  Responsibilities  - Respond to customer questions on live chat and email within the team's service standards, aiming to protect the published typical response time of under two minutes.  - Help travellers choose an appropriate country, regional, or global plan (including unlimited and longer-stay monthly or yearly options) and explain what is included: uPhone plans are data-only; the physical SIM and home number can stay in the phone; calls and texts go through apps such as WhatsApp, FaceTime, or iMessage.  - Walk customers through purchase, QR-code delivery, installation on iPhone and Android, and when to activate (profiles can be installed before travel; data should usually be turned on at the destination so validity starts when it is needed).  - Troubleshoot common issues using the documented playbooks: device compatibility, carrier locks, APN settings, activation delays (typically under two minutes, occasionally up to around ten), coverage at the destination, top-ups, and exhausted data.  - Explain and process requests under the 30-day unused-eSIM refund policy (full refund only if the QR code has not been scanned and the eSIM has not been installed or activated). Escalating anything that does not fit the policy.  - Keep accurate notes, use approved macros, and flag repeating product, supplier, or documentation problems to the Customer Service Manager.  - Treat every traveller with patience and clarity, including people who are in a hurry, offline at an airport, or not confident with phone settings.  - Work in the team's live-chat and email tools, following the documented processes for each shift.  Requirements  - Experience in customer service, support, or a similar written-and-chat role, ideally in travel, e-commerce, telecom, or another digital consumer product.  - Excellent written English and the ability to give step-by-step instructions ",
-      "source": "Himalayas",
-      "published": "2026-11-18",
-      "remote": true,
-      "sourceChecked": true,
-      "applicationChannel": {
-        "kind": "website_only",
-        "sourceUrl": "https://himalayas.app/companies/uphone-esim/jobs/customer-service-executive?utm_source=api",
         "verified": false,
         "evidence": "job_ad"
       },
@@ -155,6 +117,25 @@
       "eligibility": "Country filter only; verify employer requirements before applying."
     },
     {
+      "id": "himalayas:https://himalayas.app/companies/micro1/jobs/structured-finance-attorney",
+      "company": "micro1",
+      "role": "Structured Finance Attorney",
+      "location": "Remote · worldwide listing",
+      "sourceUrl": "https://himalayas.app/companies/micro1/jobs/structured-finance-attorney?utm_source=api",
+      "description": " Role Title: Structured Finance Attorney  Role Type: Contractor  Location: Remote   micro1  is engaging Structured Finance Attorneys to contribute their legal expertise to a customer's dynamic project. In this role, you'll apply your expertise to help train next-generation AI systems. Your work will shape how models learn, reason, and perform through high-quality, real-world input. No prior experience in AI is required — your domain knowledge is what matters.  Scope of Work  \n Review, analyze, and annotate legal contracts and transaction documents related to structured finance products, such as asset-backed securities, mortgage-backed securities, and collateralized debt obligations. \n Draft or evaluate sample documents, clauses, and legal frameworks pertinent to structured finance transactions. \n Provide detailed feedback on hypothetical scenarios or AI-generated content for legal sufficiency, accuracy, and clarity. \n Identify and explain industry-specific terminology, regulatory requirements, and common legal structures within structured finance. \n Contribute to the development of training datasets that reflect current legal standards and best practices in structured finance. \n Collaborate asynchronously with platform coordinators and other subject matter professionals to ensure the project’s legal content meets high standards. \n Deliver insights on evolving market practices, common pitfalls, and recent regulatory developments in the structured finance sector. \n  Preferred Qualifications  \n Juris Doctor (JD) degree or international equivalent, with active admission to practice in at least one jurisdiction. \n Extensive experience (typically 5+ years) advising on structured finance transactions, including drafting and negotiating transaction documents. \n Thorough knowledge of securities law, regulatory compliance frameworks, and relevant market regulations. \n Outstanding written and verbal communication skills, with a strong focus on clarity and precision in legal language. \n Experience reviewing and providing feedback on a range of financial legal documents, including prospectuses, term sheets, and offering memoranda. \n Proven ability to break down complex legal concepts for varied audiences or technology applications. \n Strong attention to detail, analytical mindset, and the ability to work independently in a remote setting. \n  Originally posted on  Himalayas  ",
+      "source": "Himalayas",
+      "published": "2026-10-22",
+      "remote": true,
+      "sourceChecked": true,
+      "applicationChannel": {
+        "kind": "website_only",
+        "sourceUrl": "https://himalayas.app/companies/micro1/jobs/structured-finance-attorney?utm_source=api",
+        "verified": false,
+        "evidence": "job_ad"
+      },
+      "eligibility": "Country filter only; verify employer requirements before applying."
+    },
+    {
       "id": "himalayas:https://himalayas.app/companies/micro1/jobs/telecommunications-customer-support-specialist",
       "company": "micro1",
       "role": "Telecommunications Customer Support Specialist",
@@ -200,12 +181,31 @@
       "sourceUrl": "https://himalayas.app/companies/micro1/jobs/airline-customer-service-specialist?utm_source=api",
       "description": " Role Title: Airline Customer Service Specialist  Role Type: Contractor  Location: Remote   micro1  is engaging Airline Customer Service Specialists to contribute their industry knowledge to a specialized customer project. In this role, you'll apply your expertise to help train next-generation AI systems. Your work will shape how models learn, reason, and perform through high-quality, real-world input. No prior experience in AI is required — your domain knowledge is what matters.  Scope of Work  \n Deliver realistic, domain-specific written and verbal interactions based on common and complex airline customer service scenarios. \n Simulate and document customer support conversations covering flight bookings, cancellations, delays, rebookings, baggage inquiries, and disruption management. \n Evaluate, review, and provide feedback on AI-generated responses to ensure accuracy, empathy, and professionalism. \n Identify common customer pain points and communicate nuanced case details to inform model training and optimization. \n Prepare detailed summaries of customer interactions, highlighting escalation and resolution steps. \n Support improvements in the model by clarifying airline procedures and compliance requirements via text and voice inputs. \n Collaborate virtually with project managers and AI developers to address evolving deliverable needs. \n  Preferred Qualifications  \n Professional experience in airline or aviation customer service, preferably in a call center environment. \n Expertise handling flight reservations, cancellations, delays, rebookings, and baggage concerns. \n Demonstrated skill managing customer complaints and resolving challenging situations with poise. \n Full fluency in spoken and written English, with strong verbal communication skills suitable for voice training tasks. \n Ability to convey empathy, active listening, and a customer-first mindset in all interactions. \n Strong documentation and scenario-writing skills with attention to procedural accuracy. \n Familiarity with airline industry regulations, operational protocols, and CRM/ticketing systems is a plus. \n  Originally posted on  Himalayas  ",
       "source": "Himalayas",
-      "published": "2026-11-20",
+      "published": "2026-11-25",
       "remote": true,
       "sourceChecked": true,
       "applicationChannel": {
         "kind": "website_only",
         "sourceUrl": "https://himalayas.app/companies/micro1/jobs/airline-customer-service-specialist?utm_source=api",
+        "verified": false,
+        "evidence": "job_ad"
+      },
+      "eligibility": "Country filter only; verify employer requirements before applying."
+    },
+    {
+      "id": "himalayas:https://himalayas.app/companies/uphone-esim/jobs/customer-service-executive",
+      "company": "uPhone eSIM",
+      "role": "Customer Service Executive",
+      "location": "Remote · worldwide listing",
+      "sourceUrl": "https://himalayas.app/companies/uphone-esim/jobs/customer-service-executive?utm_source=api",
+      "description": " Customer Service Executive — uPhone  uPhone · Fully remote (work from anywhere) · Full-time · Apply to   Posted 18 November 2026 · Open until 17 January 2027  Fully remote — work from anywhere in the world, with no country restriction. Compensation is competitive and negotiable based on experience.  About uPhone  uPhone is an eSIM marketplace built for modern travellers, available at  (). The service is operated by Targa Limited, a company registered in Hong Kong. The team is small, remote-first, and based across Europe and Asia.  uPhone was founded on a simple belief: staying connected abroad should not be expensive, complicated, or stressful. The company sources eSIM data plans from multiple suppliers across 150+ countries so travellers can get a fair price — without hidden fees, locked contracts, roaming charges, or the plastic waste of a physical SIM card.  What uPhone eSIM is, in practice: an eSIM is a digital SIM profile built into the phone. Customers choose a country, regional, or global data plan (5,000+ plans are listed, including unlimited-data options and a Globetrotter plan covering 150+ countries on one eSIM), pay securely (card or PayPal; other methods, including crypto on the Crypto eSIM checkout, are listed on the site), and receive a QR code by email — typically within seconds. They scan it in iPhone or Android settings and can be connected in under two minutes, with no store visit. The physical SIM stays in the phone, so the home number remains available. Plans are data-only; calls and texts abroad are made over apps such as WhatsApp, FaceTime, or iMessage. Monthly and yearly plans are available for trips of 30 days or more. Plans are listed from about $2, with no contract.  uPhone publishes 24/7 customer support via live chat and email (the help centre cites a typical response time under two minutes), a 30-day unused-eSIM refund if the QR code has not been scanned and the eSIM has not been installed or activated, and a rating of 4.8/5 from 50,000+ travellers who trust the service.  Company values, as stated on the About Us page: transparency (what you see is what you pay), simplicity (purchase to connected in under two minutes), reliability (24/7 support and a clear refund policy), and sustainability (digital eSIMs mean zero plastic waste).  The role  We are hiring a Customer Service Executive to be a frontline point of contact for travellers using uPhone eSIM.  You will help customers choose a plan, install their eSIM, troubleshoot connection issues, and understand refunds and top-ups — over live chat and email. Many conversations happen just before a flight or just after landing, so clear, accurate, and calm help matters. This is a fully remote, full-time role — you can work from anywhere in the world. Support is published as 24/7, with a typical response time under two minutes, so this role includes shift work. That may include evenings, nights, weekends, or public holidays, as agreed with the team.  You do not need to be an engineer. You do need to follow documentation, explain technical steps in plain language, and know when to escalate.  Responsibilities  - Respond to customer questions on live chat and email within the team's service standards, aiming to protect the published typical response time of under two minutes.  - Help travellers choose an appropriate country, regional, or global plan (including unlimited and longer-stay monthly or yearly options) and explain what is included: uPhone plans are data-only; the physical SIM and home number can stay in the phone; calls and texts go through apps such as WhatsApp, FaceTime, or iMessage.  - Walk customers through purchase, QR-code delivery, installation on iPhone and Android, and when to activate (profiles can be installed before travel; data should usually be turned on at the destination so validity starts when it is needed).  - Troubleshoot common issues using the documented playbooks: device compatibility, carrier locks, APN settings, activation delays (typically under two minutes, occasionally up to around ten), coverage at the destination, top-ups, and exhausted data.  - Explain and process requests under the 30-day unused-eSIM refund policy (full refund only if the QR code has not been scanned and the eSIM has not been installed or activated). Escalating anything that does not fit the policy.  - Keep accurate notes, use approved macros, and flag repeating product, supplier, or documentation problems to the Customer Service Manager.  - Treat every traveller with patience and clarity, including people who are in a hurry, offline at an airport, or not confident with phone settings.  - Work in the team's live-chat and email tools, following the documented processes for each shift.  Requirements  - Experience in customer service, support, or a similar written-and-chat role, ideally in travel, e-commerce, telecom, or another digital consumer product.  - Excellent written English and the ability to give step-by-step instructions ",
+      "source": "Himalayas",
+      "published": "2026-11-18",
+      "remote": true,
+      "sourceChecked": true,
+      "applicationChannel": {
+        "kind": "website_only",
+        "sourceUrl": "https://himalayas.app/companies/uphone-esim/jobs/customer-service-executive?utm_source=api",
         "verified": false,
         "evidence": "job_ad"
       },
