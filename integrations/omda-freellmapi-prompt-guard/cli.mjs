@@ -9,11 +9,13 @@ if (args.length === 1 && args[0] === '--help') {
   let file = null;
   let format = 'summary';
   let strict = false;
+  let formatSeen = false;
   let invalid = false;
   for (let index = 0; index < args.length; index += 1) {
     const value = args[index];
     if (value === '--format') {
-      if (format !== 'summary' || !args[index + 1] || args[index + 1].startsWith('--')) { invalid = true; break; }
+      if (formatSeen || !args[index + 1] || args[index + 1].startsWith('--')) { invalid = true; break; }
+      formatSeen = true;
       format = args[index + 1];
       index += 1;
     } else if (value === '--strict') {
