@@ -1,7 +1,26 @@
 {
-  "generatedAt": "2026-11-25T15:50:01.039Z",
+  "generatedAt": "2026-11-26T15:29:14.348Z",
   "source": "Himalayas public API",
   "jobs": [
+    {
+      "id": "himalayas:https://himalayas.app/companies/micro1/jobs/military-operations-expert-1860650404",
+      "company": "micro1",
+      "role": "Military Operations Expert",
+      "location": "Remote · worldwide listing",
+      "sourceUrl": "https://himalayas.app/companies/micro1/jobs/military-operations-expert-1860650404?utm_source=api",
+      "description": " Role Title: Military Operations Expert  Role Type: Contractor  Location: Remote  About the Role   micro1  is seeking current or former military professionals with firsthand operational experience to contribute to an AI development project focused on military operations, tactical decision-making, and international humanitarian law. You'll evaluate AI-generated military scenarios, identify inaccuracies, and provide expert feedback to improve AI reasoning and reliability.  Scope of Work  \n Evaluate AI-generated military scenarios for operational realism, tactical accuracy, and sound decision-making. \n Review military planning, combat operations, targeting, and weapons employment scenarios. \n Assess the application of Rules of Engagement (ROE), Law of Armed Conflict (LOAC), and operational constraints. \n Identify inaccuracies and provide clear, structured written feedback. \n  Qualifications  \n Military operational experience in areas such as infantry, Special Operations Forces, combat aviation, artillery, targeting, air defense, naval operations, or military intelligence. \n Strong understanding of military operations, tactical planning, and operational decision-making. \n Ability to assess complex scenarios and communicate findings clearly in writing. \n Combat deployments, operational command, weapons specialization, or military instructional experience are highly desirable. \n Familiarity with ROE, LOAC, or international humanitarian law is a plus. \n   Learn More About Our Government &amp; Defense Work  At  micro1 , we work with government and defense experts to evaluate how advanced AI models perform on real-world tasks.  Our MissionReport benchmark assesses AI-generated military and government reports, highlighting the importance of expert judgment, accuracy, and operational understanding.  Learn more:   Originally posted on  Himalayas  ",
+      "source": "Himalayas",
+      "published": "2026-11-25",
+      "remote": true,
+      "sourceChecked": true,
+      "applicationChannel": {
+        "kind": "website_only",
+        "sourceUrl": "https://himalayas.app/companies/micro1/jobs/military-operations-expert-1860650404?utm_source=api",
+        "verified": false,
+        "evidence": "job_ad"
+      },
+      "eligibility": "Country filter only; verify employer requirements before applying."
+    },
     {
       "id": "himalayas:https://himalayas.app/companies/kinship-ventures/jobs/investment-fund-operations-coordinator",
       "company": "Kinship Ventures",
@@ -79,25 +98,6 @@
       "eligibility": "Country filter only; verify employer requirements before applying."
     },
     {
-      "id": "himalayas:https://himalayas.app/companies/growe-talents/jobs/finance-specialist",
-      "company": "Growe Talents",
-      "role": "Finance Specialist",
-      "location": "Remote · worldwide listing",
-      "sourceUrl": "https://himalayas.app/companies/growe-talents/jobs/finance-specialist?utm_source=api",
-      "description": " Our client, Jugabet, is a brand and gaming platform accessible to players in Latin America. With a strong regional focus and localized strategies, Jugabet is quickly becoming a key player in the market.  Perfect for those who aim to:  \n  Review payment requests to ensure alignment with approved budgets and plans;  \n  Process requests in 1C;  \n  Regularly reconcile actual expenses with approved budgets;  \n  Confirm the accuracy and transparency of submitted services for audits;  \n  Ensure the correct entry of financial data into the system and glossary;  \n  Monitor budget balances across channels and partners;  \n  Identify and resolve discrepancies in financial data;  \n  Collaborate with departments to address financial issues efficiently.  \n  Experience you’ll need to bring:  \n  1+ years of experience in financial management, accounting, or treasury operations;  \n  Experience with 1C;  \n  Knowledge of budget control and payment management;  \n  Familiarity with financial reporting standards and audit processes;  \n Upper-Intermediate level of English. \n  It's a perfect match if you have those personal features:  \n  Attention to detail;  \n  Analytical skills;  \n  Strong communication skills and proactivity.  \n  Our clients offer competitive benefits to support your professional and personal growth, including:  \n  Health &amp; Wellness Focus;  \n  Global Medical Coverage;  \n  Growth Opportunities;  \n  Benefits Programs (compensation for the gym/stomatology/psychological service   \n  Performance-Driven Rewards;  \n  Dynamic Work Environment.  \n  Apply, and let your growth journey begin.  Originally posted on  Himalayas  ",
-      "source": "Himalayas",
-      "published": "2026-11-19",
-      "remote": true,
-      "sourceChecked": true,
-      "applicationChannel": {
-        "kind": "website_only",
-        "sourceUrl": "https://himalayas.app/companies/growe-talents/jobs/finance-specialist?utm_source=api",
-        "verified": false,
-        "evidence": "job_ad"
-      },
-      "eligibility": "Country filter only; verify employer requirements before applying."
-    },
-    {
       "id": "himalayas:https://himalayas.app/companies/micro1/jobs/finance-accounting-expert",
       "company": "micro1",
       "role": "Finance & Accounting Expert",
@@ -130,6 +130,44 @@
       "applicationChannel": {
         "kind": "website_only",
         "sourceUrl": "https://himalayas.app/companies/micro1/jobs/structured-finance-attorney?utm_source=api",
+        "verified": false,
+        "evidence": "job_ad"
+      },
+      "eligibility": "Country filter only; verify employer requirements before applying."
+    },
+    {
+      "id": "himalayas:https://himalayas.app/companies/micro1/jobs/domain-researcher-finance-m-a",
+      "company": "micro1",
+      "role": "Domain Researcher, Finance (M&A)",
+      "location": "Remote · worldwide listing",
+      "sourceUrl": "https://himalayas.app/companies/micro1/jobs/domain-researcher-finance-m-a?utm_source=api",
+      "description": "  Job Title:  Domain Researcher, Finance (M&amp;A)   Job Type:  Full-time  Location: Remote     The Role    Join our research team as a  Domain Researcher (DR),  where you'll help advance AI-powered financial reasoning, with a focus on Corporate Development, Mergers &amp; Acquisitions (M&amp;A), and strategic transactions.    We're looking for professionals with hands-on experience in corporate development, acquisition evaluation, and M&amp;A execution who can translate real-world financial expertise into rigorous AI evaluation frameworks.    What You'll Be Doing   \n  Design and develop evaluation frameworks, benchmarks, and scoring methodologies for AI agents operating in corporate development and M&amp;A workflows.  \n  Create realistic test cases covering acquisition screening, valuation, financial due diligence, deal structuring, and strategic investment decisions.  \n  Evaluate AI-generated financial analyses, valuation models, acquisition assessments, and investment recommendations.  \n  Translate real-world M&amp;A experience into structured datasets, research scenarios, and measurable evaluation criteria.  \n  Collaborate with AI researchers, engineers, and product teams to identify model limitations and improve financial reasoning capabilities.  \n  Conduct applied research and document findings to advance AI performance in corporate finance and acquisition-related tasks.  \n   What We're Looking For   \n  Strong professional experience in Corporate Development, M&amp;A, Investment Banking, Private Equity, or Strategic Investments, with direct exposure to acquisition-related transactions.  \n  Hands-on experience across the M&amp;A lifecycle, including target screening, valuation, due diligence, transaction analysis, or deal execution.  \n  Strong understanding of acquisition strategies, financial modeling, company valuation (DCF, comparables, precedent transactions), and strategic fit assessments.  \n  Experience preparing or evaluating investment memoranda, acquisition recommendations, and transaction-related financial analyses.  \n  Ability to translate complex financial workflows into structured research questions, evaluation frameworks, and measurable criteria.  \n  Strong analytical, critical-thinking, and communication skills, with the ability to collaborate across technical and non-technical teams.  \n  Bachelor's degree in Finance, Economics, Business, Accounting, or a related field, or equivalent professional experience.  \n   Preferred Qualifications   \n  Direct experience within an in-house Corporate Development team, particularly involving buy-side acquisitions.  \n  Experience executing or supporting M&amp;A transactions from target identification through due diligence and closing.  \n  Background in technology-sector acquisitions, SaaS businesses, or strategic investments.  \n  MBA, CFA, or relevant advanced financial qualifications.  \n  Familiarity with AI agents, large language models, AI evaluation methodologies, or financial AI applications.  \n  Proficiency with financial modeling and analytical tools such as Excel, Python, or SQL.  \n   Compensation &amp; Benefits Notice    The national pay range for this full-time position is base salary of $200,000 –$250,000. All employees are eligible for equity compensation, and employees may also receive performance-based bonuses, dependent on role and subject to company policies.  micro1  provides a comprehensive benefits package, including up to 100% reimbursement for health-insurance premiums, paid time off, a 401(K) plan with a company match, and additional benefits designed to support a high-performing, remote-first workforce.     micro1  is an equal opportunity employer. All qualified applicants will receive consideration for employment without regard to race, color, religion, sex (including pregnancy, sexual orientation, or gender identity), national origin, age, disability, genetic information, veteran status, or any other characteristic protected by applicable local laws, regulations and ordinances. If you need assistance and/or a reasonable accommodation during the application process, reach out to .    Our hiring process utilizes artificial intelligence tools to assist in candidate screening and assessment. Our AI tools are designed to complement, not replace, human decision-making.   Originally posted on  Himalayas  ",
+      "source": "Himalayas",
+      "published": "2026-10-22",
+      "remote": true,
+      "sourceChecked": true,
+      "applicationChannel": {
+        "kind": "website_only",
+        "sourceUrl": "https://himalayas.app/companies/micro1/jobs/domain-researcher-finance-m-a?utm_source=api",
+        "verified": false,
+        "evidence": "job_ad"
+      },
+      "eligibility": "Country filter only; verify employer requirements before applying."
+    },
+    {
+      "id": "himalayas:https://himalayas.app/companies/everhelp/jobs/customer-support-representative-italian-desk",
+      "company": "Everhelp",
+      "role": "Customer Support Representative (Italian Desk)",
+      "location": "Remote · worldwide listing",
+      "sourceUrl": "https://himalayas.app/companies/everhelp/jobs/customer-support-representative-italian-desk?utm_source=api",
+      "description": "  EverHelp  is a team of professionals, that’s developing outsourcing support services for plenty of products all over the world at a dynamic tempo. The project launched in 2021, and last year we experienced a yearly growth rate of +82%. Since February 2022, we've managed to preserve all our workplaces and, most importantly, we continue to strengthen our team while maintaining an employee satisfaction rate of over 90%.  In 2026, EverHelp received    9 international workplace and employer awards.    The company ranked #1 in the    Top 30 Inspiring Workplaces in Europe , was named the # 1 employer among European companies      with 500-4,999 employees, and earned    Best-in-Class recognition across 6 categories : Culture &amp; Purpose, Leadership, Inclusion &amp; Belonging, Wellbeing, Employee Voice, and Employee Experience. EverHelp was also named one of the    28 Best Places to Work by Business Intelligence Group    - a global award recognizing companies with strong workplace cultures and outstanding employee experience.  We're launching a partnership with one of Europe's fastest-growing hospitality brands, and we're looking for an    Italian-speaking Customer Support Representative    to help deliver an outstanding guest experience. In this role, you'll become one of the first agents supporting the project, helping guests with bookings, accommodation access, and other travel-related inquiries while contributing to the successful launch and growth of the support team.   Your future responsibilities include:   \n  Support guests via inbound calls, OTA platforms (, Airbnb), emails, chats, and WhatsApp.  \n  Assist customers with booking, accommodation access, and reservation-related inquiries.  \n  Deliver a warm, guest-first experience following hospitality best practices.  \n  Escalate critical cases such as refunds, legal issues, or negative review risks to the appropriate team.  \n  Document interactions and work with the client's internal support tools.  \n  Collaborate closely with teammates to ensure a seamless customer experience.  \n   Needed experience &amp; skills:   \n  Italian —    B2+ .  \n  English —    B2+/C1 .  \n  At least    1 year of experience    in Customer Support or Hospitality.  \n  Excellent written and verbal communication skills.  \n  Strong problem-solving skills and the ability to make decisions independently.  \n  Ability to multitask and stay calm under pressure.  \n  Comfortable working in a fast-changing environment.  \n   Nice to have skills:   \n  Experience in Hospitality, Travel, OTA, Hotel, or Property Management.  \n  Strong team player with a collaborative mindset.  \n  Previous experience working with international customers.  \n   Work with EverHelp is about:   \n   Opportunity to join an international team and work with global products;   \n    Fully remote  work opportunities depending on your location;   \n    Career growth  opportunities within Customer Support operations;   \n    20+ vacation days  and  10 sick leaves ;   \n   Internal learning opportunities, professional communities, and knowledge sharing;   \n   Dynamic environment where you can directly influence processes in a growing support team.   \n  Originally posted on  Himalayas  ",
+      "source": "Himalayas",
+      "published": "2026-11-26",
+      "remote": true,
+      "sourceChecked": true,
+      "applicationChannel": {
+        "kind": "website_only",
+        "sourceUrl": "https://himalayas.app/companies/everhelp/jobs/customer-support-representative-italian-desk?utm_source=api",
         "verified": false,
         "evidence": "job_ad"
       },
