@@ -52,12 +52,20 @@ describe('free job discovery', () => {
     expect(rank.scoreLabel).toContain('CV skill matches');
   });
   it('requests the live source rather than hardcoding job listings', async () => {
-    const fakeFetch = vi.fn().mockResolvedValue({ ok: true, json: async () => ({ jobs: [listing] }) });
-    const jobs = await searchJobFeeds(fakeFetch as unknown as typeof fetch, 'AML');
-    expect(fakeFetch).toHaveBeenCalledOnce();
-    const address = String(fakeFetch.mock.calls[0][0]);
-    expect(address).toContain('himalayas.app/jobs/api/search');
-    expect(address).toContain('country=QA');
-    expect(jobs.length).toBeGreaterThan(0);
+    // Keep this fixture test deterministic: its publication/expiry dates are
+    // anchored to the fixed "now" above, not the wall clock of the CI runner.
+    vi.useFakeTimers();
+    vi.setSystemTime(now);
+    try {
+      const fakeFetch = vi.fn().mockResolvedValue({ ok: true, json: async () => ({ jobs: [listing] }) });
+      const jobs = await searchJobFeeds(fakeFetch as unknown as typeof fetch, 'AML');
+      expect(fakeFetch).toHaveBeenCalledOnce();
+      const address = String(fakeFetch.mock.calls[0][0]);
+      expect(address).toContain('himalayas.app/jobs/api/search');
+      expect(address).toContain('country=QA');
+      expect(jobs.length).toBeGreaterThan(0);
+    } finally {
+      vi.useRealTimers();
+    }
   });
 });
