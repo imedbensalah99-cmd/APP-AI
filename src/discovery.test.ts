@@ -52,7 +52,13 @@ describe('free job discovery', () => {
     expect(rank.scoreLabel).toContain('CV skill matches');
   });
   it('requests the live source rather than hardcoding job listings', async () => {
-    const fakeFetch = vi.fn().mockResolvedValue({ ok: true, json: async () => ({ jobs: [listing] }) });
+    const liveNow = Math.floor(Date.now() / 1000);
+    const liveListing = {
+      ...listing,
+      pubDate: liveNow - 86400,
+      expiryDate: liveNow + 86400 * 20,
+    };
+    const fakeFetch = vi.fn().mockResolvedValue({ ok: true, json: async () => ({ jobs: [liveListing] }) });
     const jobs = await searchJobFeeds(fakeFetch as unknown as typeof fetch, 'AML');
     expect(fakeFetch).toHaveBeenCalledOnce();
     const address = String(fakeFetch.mock.calls[0][0]);
