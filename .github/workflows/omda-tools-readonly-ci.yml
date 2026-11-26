@@ -1,0 +1,22 @@
+name: OMDA — readonly tool tests
+on:
+  pull_request:
+    paths:
+      - 'integrations/omda-director/tools-readonly.mjs'
+      - 'integrations/omda-director/tools-readonly.test.mjs'
+      - '.github/workflows/omda-tools-readonly-ci.yml'
+      - 'integrations/omda-director/drive-bridge.mjs'
+      - 'integrations/omda-director/drive-bridge.test.mjs'
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  safe_tools:
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+      - run: node --test integrations/omda-director/tools-readonly.test.mjs integrations/omda-director/drive-bridge.test.mjs
