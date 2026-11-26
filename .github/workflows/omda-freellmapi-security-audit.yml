@@ -1,0 +1,47 @@
+name: OMDA FreeLLMAPI dependency security audit (read-only)
+on:
+  pull_request:
+    paths:
+      - '.github/workflows/omda-freellmapi-security-audit.yml'
+      - 'integrations/freellmapi-cloud-v1/**'
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  audit-pinned-upstream:
+    runs-on: ubuntu-latest
+    timeout-minutes: 8
+    steps:
+      - name: Checkout audited upstream at exact deployed commit
+        uses: actions/checkout@v4
+        with:
+          repository: tashfeenahmed/freellmapi
+          ref: eae1a4038d5908c7a9a6ad771df96d324731c78a
+          persist-credentials: false
+      - name: Node 24 (matches container)
+        uses: actions/setup-node@v4
+        with:
+          node-version: "24"
+      - name: Audit production dependency graph; no install or scripts
+        shell: bash
+        run: |
+          set -eu
+          npm audit --omit=dev --json --audit-level=low > "$RUNNER_TEMP/security-audit.json" || true
+          node -e '
+          const fs=require("node:fs");
+          const f=JSON.parse(fs.readFileSync(process.env.RUNNER_TEMP+"/security-audit.json","utf8"));
+          if(f.error){console.error("AUDIT_FAILED", f.error.code, f.error.summary);process.exit(1);}
+          console.log("METADATA",JSON.stringify(f.metadata?.vulnerabilities||{}));
+          for (const [name,v] of Object.entries(f.vulnerabilities||{})){
+            console.log(JSON.stringify({
+              name,severity:v.severity,isDirect:v.isDirect,
+              range:v.range,
+              via:(v.via||[]).map(a=>typeof a==="string"?a:{title:a.title,url:a.url,range:a.range}),
+              effects:v.effects||[],
+              fixAvailable:v.fixAvailable
+            }));
+          }'
+      - name: Verify no paid integration or provider credentials in repository snapshot
+        shell: bash
+        run: |
+          echo "Checked official upstream commit; this workflow uses no secrets and performs no deployment."

@@ -1,0 +1,30 @@
+name: OMDA FreeLLMAPI complete dependency audit
+on:
+  pull_request:
+    paths:
+      - '.github/workflows/omda-freellmapi-all-deps.yml'
+permissions:
+  contents: read
+jobs:
+  audit:
+    runs-on: ubuntu-latest
+    timeout-minutes: 8
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          repository: tashfeenahmed/freellmapi
+          ref: eae1a4038d5908c7a9a6ad771df96d324731c78a
+          persist-credentials: false
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '24'
+      - run: |
+          npm pkg set -w client 'devDependencies.shadcn=^4.2.0'
+          npm pkg delete -w client dependencies.shadcn
+          npm pkg set -w server dependencies.zod=^4.6.7
+          npm pkg set -w server dependencies.undici=^6.29.1
+          npm install --package-lock-only --ignore-scripts
+          npm audit fix --package-lock-only --ignore-scripts || true
+      - run: |
+          npm audit --json > "$RUNNER_TEMP/all.json" || true
+          node -e 'const j=require(process.env.RUNNER_TEMP+"/all.json");if(j.error)process.exit(1);console.log("ALL_DEPENDENCY_COUNTS",JSON.stringify(j.metadata?.vulnerabilities));for(const [k,v] of Object.entries(j.vulnerabilities||{})) console.log("REMAINS",k,v.severity,JSON.stringify(v.fixAvailable))'
