@@ -47,6 +47,7 @@ import * as requestFailureAttribution from '../migrations/20261017_233153_reques
 import * as removeAurayProvider from '../migrations/20261019_000001_remove_auray_provider.js';
 import * as keyLastHealthyAt from '../migrations/20261020_000001_key_last_healthy_at.js';
 import * as omdaTaskSessions from '../migrations/20261123_000001_omda_task_sessions.js';
+import * as omdaTaskSessionLeases from '../migrations/20261126_000001_omda_task_session_leases.js';
 
 export interface MigrationModule {
   up(db: Db): void;
@@ -106,6 +107,7 @@ export const REQUEST_FAILURE_ATTRIBUTION_FILENAME = '20261017_233153_request_fai
 export const REMOVE_AURAY_PROVIDER_FILENAME = '20261019_000001_remove_auray_provider.ts';
 export const KEY_LAST_HEALTHY_AT_FILENAME = '20261020_000001_key_last_healthy_at.ts';
 export const OMDA_TASK_SESSIONS_FILENAME = '20261123_000001_omda_task_sessions.ts';
+export const OMDA_TASK_SESSION_LEASES_FILENAME = '20261126_000001_omda_task_session_leases.ts';
 
 export const DEFAULT_MIGRATIONS: readonly DefaultMigration[] = [
   { filename: LEGACY_BASELINE_FILENAME, module: legacyBaseline },
@@ -156,4 +158,5 @@ export const DEFAULT_MIGRATIONS: readonly DefaultMigration[] = [
   { filename: REMOVE_AURAY_PROVIDER_FILENAME, module: removeAurayProvider },
   { filename: KEY_LAST_HEALTHY_AT_FILENAME, module: keyLastHealthyAt },
   { filename: OMDA_TASK_SESSIONS_FILENAME, module: omdaTaskSessions },
+  { filename: OMDA_TASK_SESSION_LEASES_FILENAME, module: omdaTaskSessionLeases },
 ];
