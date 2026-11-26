@@ -162,6 +162,15 @@ function appendLeaseEvent(
   );
 }
 
+function assertEventCapacity(db: Db, sessionId: string, reserve: number): void {
+  const row = db.prepare(
+    'SELECT COUNT(*) AS count FROM omda_task_session_lease_events WHERE session_id = ?'
+  ).get(sessionId) as { count: number };
+  if (row.count + reserve > MAX_TASK_SESSION_LEASE_EVENTS) {
+    throw new TaskSessionError(409, 'lease_event_limit', 'This task session must retain room for a terminal lease event');
+  }
+}
+
 function validateTtl(ttlSeconds: number | undefined): number {
   const value = ttlSeconds ?? DEFAULT_TASK_SESSION_LEASE_TTL_SECONDS;
   if (!Number.isSafeInteger(value) || value < MIN_TASK_SESSION_LEASE_TTL_SECONDS || value > MAX_TASK_SESSION_LEASE_TTL_SECONDS) {
@@ -244,11 +253,14 @@ export function claimTaskSessionLease(
       if (oldExpiry > nowMs) {
         throw new TaskSessionError(409, 'lease_held', 'This task session already has an active worker lease');
       }
+      assertEventCapacity(db, sessionId, 3);
       db.prepare(
         'UPDATE omda_task_session_leases SET status = \'expired\', token_hash = NULL, revision = revision + 1, closed_at = ?, updated_at = ? WHERE session_id = ? AND status = \'active\''
       ).run(nowIso, nowIso, sessionId);
       appendLeaseEvent(db, sessionId, existing.lease_id, 'expire', existing.worker_id, nowIso, existing.expires_at);
     }
+
+    if (existing?.status !== 'active') assertEventCapacity(db, sessionId, 2);
 
     if (existing) {
       db.prepare(
@@ -314,6 +326,7 @@ export function renewTaskSessionLease(
   let updated: LeaseRow | undefined;
   runTransaction(db, () => {
     const lease = getMutableLease(db, userId, sessionId, input, nowMs);
+    assertEventCapacity(db, sessionId, 2);
     const expiresAt = new Date(nowMs + ttlSeconds * 1_000).toISOString();
     const nextRevision = lease.revision + 1;
     if (nextRevision > MAX_TASK_SESSION_LEASE_EVENTS) {
@@ -342,6 +355,7 @@ export function releaseTaskSessionLease(
   let updated: LeaseRow | undefined;
   runTransaction(db, () => {
     const lease = getMutableLease(db, userId, sessionId, input, nowMs);
+    assertEventCapacity(db, sessionId, 1);
     const nextRevision = lease.revision + 1;
     if (nextRevision > MAX_TASK_SESSION_LEASE_EVENTS) {
       throw new TaskSessionError(409, 'lease_revision_limit', 'This worker lease reached its revision limit');
@@ -365,6 +379,7 @@ export function revokeActiveTaskSessionLease(
   const lease = getLeaseRow(db, userId, sessionId);
   if (!lease || lease.status !== 'active') return;
   assertValidHistory(db, userId, sessionId);
+  assertEventCapacity(db, sessionId, 1);
   const expired = Date.parse(lease.expires_at) <= Date.parse(nowIso);
   const action: TaskSessionLeaseAction = expired ? 'expire' : 'revoke';
   const status: TaskSessionLeaseStatus = expired ? 'expired' : 'revoked';
