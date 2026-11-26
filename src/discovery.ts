@@ -118,7 +118,7 @@ export function rankLead(job: DiscoveredJob, facts: string, existing: JobApplica
   return { ...result, score: result.matching.length, scoreLabel: result.matching.length + ' CV skill matches' };
 }
 
-export async function searchJobFeeds(fetcher: typeof fetch, keyword: string): Promise<DiscoveredJob[]> {
+export async function searchJobFeeds(fetcher: typeof fetch, keyword: string, now = Date.now()): Promise<DiscoveredJob[]> {
   const searchUrl = new URL('https://himalayas.app/jobs/api/search');
   searchUrl.searchParams.set('country', 'QA');
   searchUrl.searchParams.set('sort', 'recent');
@@ -126,5 +126,5 @@ export async function searchJobFeeds(fetcher: typeof fetch, keyword: string): Pr
   const response = await fetcher(searchUrl.toString(), { mode: 'cors', credentials: 'omit', cache: 'no-store' });
   if (!response.ok) throw new Error(response.status === 429 ? 'Free job source rate limit; try again later.' : 'Job source returned HTTP ' + response.status);
   const json: unknown = await response.json();
-  return normalizeHimalayas(json);
+  return normalizeHimalayas(json, now);
 }
