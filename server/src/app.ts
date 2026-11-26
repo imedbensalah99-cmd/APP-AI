@@ -27,6 +27,7 @@ import { settingsRouter } from './routes/settings.js';
 import { premiumRouter } from './routes/premium.js';
 import { backupsRouter } from './routes/backups.js';
 import { omdaTaskSessionsRouter } from './routes/omda-task-sessions.js';
+import { omdaTaskSessionLeasesRouter } from './routes/omda-task-session-leases.js';
 import { cacheRouter } from './routes/cache.js';
 import { compressionRouter } from './routes/compression.js';
 import { authRouter } from './routes/auth.js';
@@ -309,7 +310,7 @@ export function createApp(config?: Config) {
   // must not open this surface.
   app.use('/api/backups', requireAuth, backupsRouter);
   // Task lifecycle records are dashboard-session protected and never execute work.
-  app.use('/api/omda/task-sessions', requireAuth, omdaTaskSessionsRouter);
+  app.use('/api/omda/task-sessions', requireAuth, omdaTaskSessionsRouter, omdaTaskSessionLeasesRouter);
   app.use('/api/cache', requireAuth, cacheRouter);
   app.use('/api/compression', requireAuth, compressionRouter);
   app.use('/api/update', requireAuth, updateRouter);

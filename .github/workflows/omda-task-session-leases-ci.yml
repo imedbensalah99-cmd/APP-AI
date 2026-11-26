@@ -1,0 +1,47 @@
+name: OMDA Task Session Worker Leases
+on:
+  push:
+    branches: [omda-task-session-lifecycle-20261123, omda-task-worker-leases-20261126]
+    paths:
+      - 'server/src/app.ts'
+      - 'server/src/db/migrate/defaults.ts'
+      - 'server/src/db/migrations/20261126_000001_omda_task_session_leases.ts'
+      - 'server/src/lib/omda-task-session-lease-core.ts'
+      - 'server/src/services/omda-task-session-leases.ts'
+      - 'server/src/services/omda-task-sessions.ts'
+      - 'server/src/routes/omda-task-session-leases.ts'
+      - 'server/src/__tests__/routes/omda-task-session-leases.test.ts'
+      - 'server/src/__tests__/db/migrate/roundtrip.test.ts'
+      - 'integrations/omda-freellmapi-task-leases/**'
+      - '.github/workflows/omda-task-session-leases-ci.yml'
+  pull_request:
+    branches: [omda-task-session-lifecycle-20261123]
+    paths:
+      - 'server/src/app.ts'
+      - 'server/src/db/migrate/defaults.ts'
+      - 'server/src/db/migrations/20261126_000001_omda_task_session_leases.ts'
+      - 'server/src/lib/omda-task-session-lease-core.ts'
+      - 'server/src/services/omda-task-session-leases.ts'
+      - 'server/src/services/omda-task-sessions.ts'
+      - 'server/src/routes/omda-task-session-leases.ts'
+      - 'server/src/__tests__/routes/omda-task-session-leases.test.ts'
+      - 'server/src/__tests__/db/migrate/roundtrip.test.ts'
+      - 'integrations/omda-freellmapi-task-leases/**'
+      - '.github/workflows/omda-task-session-leases-ci.yml'
+permissions:
+  contents: read
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+          cache: npm
+      - run: npm ci
+      - name: Task session and worker lease integration tests
+        run: npm run test -w server -- src/__tests__/routes/omda-task-session-leases.test.ts src/__tests__/routes/omda-task-sessions.test.ts src/__tests__/db/migrate/roundtrip.test.ts
+      - name: Build server
+        run: npm run build -w server

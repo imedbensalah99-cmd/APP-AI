@@ -52,6 +52,7 @@ const REQUEST_FAILURE_ATTRIBUTION_FILENAME = '20261017_233153_request_failure_at
 const REMOVE_AURAY_PROVIDER_FILENAME = '20261019_000001_remove_auray_provider.ts';
 const KEY_LAST_HEALTHY_AT_FILENAME = '20261020_000001_key_last_healthy_at.ts';
 const OMDA_TASK_SESSIONS_FILENAME = '20261123_000001_omda_task_sessions.ts';
+const OMDA_TASK_SESSION_LEASES_FILENAME = '20261126_000001_omda_task_session_leases.ts';
 
 interface SchemaRow {
   type: string;
@@ -150,6 +151,7 @@ describe('migration round trip', () => {
         REMOVE_AURAY_PROVIDER_FILENAME,
         KEY_LAST_HEALTHY_AT_FILENAME,
         OMDA_TASK_SESSIONS_FILENAME,
+        OMDA_TASK_SESSION_LEASES_FILENAME,
       ]);
     } finally {
       db.close();
