@@ -2,6 +2,7 @@ import { describe, it, expect, beforeAll, afterAll } from 'vitest';
 import type { Express } from 'express';
 import { createApp } from '../../app.js';
 import { getDb, initDb } from '../../db/index.js';
+import { down as downTaskSessionLeases } from '../../db/migrations/20261126_000001_omda_task_session_leases.js';
 import { mintDashboardToken, isGatedApiPath } from '../helpers/auth.js';
 import { createUser, createSession } from '../../services/auth.js';
 import { claimTaskSessionLease, getTaskSessionLease } from '../../services/omda-task-session-leases.js';
@@ -88,6 +89,12 @@ describe('OMDA Task Session Worker Leases API', () => {
     expect(competingClaim.status).toBe(409);
     expect(competingClaim.body.error.type).toBe('lease_held');
 
+    const invalidToken = await request('POST', '/api/omda/task-sessions/' + id + '/lease/renew', {
+      leaseId, leaseToken: 'A'.repeat(43), expectedRevision: 1, ttlSeconds: 120,
+    });
+    expect(invalidToken.status).toBe(403);
+    expect(invalidToken.body.error.type).toBe('lease_token_invalid');
+
     const renewed = await request('POST', '/api/omda/task-sessions/' + id + '/lease/renew', {
       leaseId, leaseToken: token, expectedRevision: 1, ttlSeconds: 120,
     });
@@ -164,5 +171,23 @@ describe('OMDA Task Session Worker Leases API', () => {
     expect(rows.token_hash).toMatch(/^[a-f0-9]{64}$/);
     const inspected = await request('GET', '/api/omda/task-sessions/' + id + '/lease');
     expect(JSON.stringify(inspected.body)).not.toContain(rows.token_hash);
+  });
+
+  it('detects privileged lease-history tampering and refuses destructive rollback', async () => {
+    const id = await createRunningSession('Lease ledger tampering');
+    const claimed = await request('POST', '/api/omda/task-sessions/' + id + '/lease/claim', { workerId: 'worker-tamper' });
+    expect(claimed.status).toBe(201);
+    expect(() => downTaskSessionLeases(getDb())).toThrow(/retained/i);
+
+    getDb().exec('DROP TRIGGER trg_omda_task_session_lease_events_no_update');
+    getDb().prepare('UPDATE omda_task_session_lease_events SET event_hash = ? WHERE session_id = ? AND seq = 0')
+      .run('f'.repeat(64), id);
+    getDb().exec("CREATE TRIGGER trg_omda_task_session_lease_events_no_update BEFORE UPDATE ON omda_task_session_lease_events BEGIN SELECT RAISE(ABORT, 'OMDA task session lease events are append-only'); END");
+
+    const verified = await request('GET', '/api/omda/task-sessions/' + id + '/lease/verify');
+    expect(verified.body).toMatchObject({ valid: false, reason: 'event_hash_mismatch' });
+    const blockedClaim = await request('POST', '/api/omda/task-sessions/' + id + '/lease/claim', { workerId: 'worker-after-tamper' });
+    expect(blockedClaim.status).toBe(409);
+    expect(blockedClaim.body.error.type).toBe('lease_ledger_invalid');
   });
 });
