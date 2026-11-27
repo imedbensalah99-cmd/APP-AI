@@ -1,5 +1,5 @@
 import { Router } from 'express';
-import type { Request, Response } from 'express';
+import type { NextFunction, Request, Response } from 'express';
 import { z } from 'zod';
 import { getDb } from '../db/index.js';
 import { TaskSessionError } from '../lib/omda-task-session-core.js';
@@ -22,7 +22,7 @@ function ownerId(req: Request): number | null {
   return user && Number.isSafeInteger(user.userId) && user.userId > 0 ? user.userId : null;
 }
 
-function privateHeaders(_req: Request, res: Response, next: () => void): void {
+function privateHeaders(_req: Request, res: Response, next: NextFunction): void {
   res.setHeader('Cache-Control', 'private, no-store, max-age=0');
   res.setHeader('X-Content-Type-Options', 'nosniff');
   next();
