@@ -26,6 +26,7 @@ interface WorkerEventRow {
   registry_id: string;
   seq: number;
   action: WorkerEventAction;
+  credential_hash: string;
   occurred_at: string;
   previous_hash: string;
   event_hash: string;
@@ -72,6 +73,9 @@ function makeToken(): string {
 
 function hashEvent(input: {
   registryId: string;
+  workerId: string;
+  label: string;
+  credentialHash: string;
   seq: number;
   action: WorkerEventAction;
   occurredAt: string;
@@ -91,7 +95,7 @@ function getOwnedWorker(db: Db, userId: number, registryId: string): WorkerRow {
 
 function getEvents(db: Db, registryId: string): WorkerEventRow[] {
   return db.prepare(
-    'SELECT registry_id, seq, action, occurred_at, previous_hash, event_hash ' +
+    'SELECT registry_id, seq, action, credential_hash, occurred_at, previous_hash, event_hash ' +
     'FROM omda_worker_events WHERE registry_id = ? ORDER BY seq ASC LIMIT ?'
   ).all(registryId, MAX_OMDA_WORKER_EVENTS + 1) as WorkerEventRow[];
 }
@@ -107,8 +111,14 @@ function verifyRowHistory(db: Db, row: WorkerRow) {
     if (event.registry_id !== row.id || event.seq !== index || event.previous_hash !== previousHash) {
       return { valid: false, reason: 'event_order_mismatch', eventCount: events.length, lastHash: events.at(-1)?.event_hash ?? null };
     }
+    if (!/^[a-f0-9]{64}$/.test(event.credential_hash)) {
+      return { valid: false, reason: 'credential_fingerprint_invalid', eventCount: events.length, lastHash: event.event_hash };
+    }
     const expected = hashEvent({
       registryId: event.registry_id,
+      workerId: row.worker_id,
+      label: row.label,
+      credentialHash: event.credential_hash,
       seq: event.seq,
       action: event.action,
       occurredAt: event.occurred_at,
@@ -122,10 +132,14 @@ function verifyRowHistory(db: Db, row: WorkerRow) {
     }
     previousHash = event.event_hash;
   }
-  const lastAction = events[events.length - 1]!.action;
+  const lastEvent = events[events.length - 1]!;
+  if (row.status === 'active' && lastEvent.credential_hash !== row.token_hash) {
+    return { valid: false, reason: 'credential_fingerprint_mismatch', eventCount: events.length, lastHash: previousHash };
+  }
+  const lastAction = lastEvent.action;
   const stateMatches = row.status === 'active'
-    ? lastAction === 'created' || lastAction === 'rotated'
-    : lastAction === 'revoked';
+    ? (lastAction === 'created' || lastAction === 'rotated') && row.token_hash !== null
+    : lastAction === 'revoked' && row.token_hash === null;
   if (!stateMatches) {
     return { valid: false, reason: 'worker_status_mismatch', eventCount: events.length, lastHash: previousHash };
   }
@@ -138,7 +152,15 @@ function assertValidHistory(db: Db, row: WorkerRow): void {
   }
 }
 
-function appendEvent(db: Db, registryId: string, action: WorkerEventAction, occurredAt: string): void {
+function appendEvent(
+  db: Db,
+  registryId: string,
+  workerId: string,
+  label: string,
+  credentialHash: string,
+  action: WorkerEventAction,
+  occurredAt: string,
+): void {
   const last = db.prepare(
     'SELECT seq, event_hash FROM omda_worker_events WHERE registry_id = ? ORDER BY seq DESC LIMIT 1'
   ).get(registryId) as { seq: number; event_hash: string } | undefined;
@@ -148,14 +170,17 @@ function appendEvent(db: Db, registryId: string, action: WorkerEventAction, occu
   }
   const input = {
     registryId,
+    workerId,
+    label,
+    credentialHash,
     seq,
     action,
     occurredAt,
     previousHash: last?.event_hash ?? ZERO_HASH,
   };
   db.prepare(
-    'INSERT INTO omda_worker_events (registry_id, seq, action, occurred_at, previous_hash, event_hash) VALUES (?, ?, ?, ?, ?, ?)'
-  ).run(registryId, seq, action, occurredAt, input.previousHash, hashEvent(input));
+    'INSERT INTO omda_worker_events (registry_id, seq, action, credential_hash, occurred_at, previous_hash, event_hash) VALUES (?, ?, ?, ?, ?, ?, ?)'
+  ).run(registryId, seq, action, credentialHash, occurredAt, input.previousHash, hashEvent(input));
 }
 
 function publicWorker(row: WorkerRow) {
@@ -198,7 +223,7 @@ export function createOmdaWorker(db: Db, userId: number, input: CreateOmdaWorker
       'INSERT INTO omda_workers (id, user_id, worker_id, label, token_hash, status, revision, created_at, updated_at, last_seen_at, revoked_at) ' +
       'VALUES (?, ?, ?, ?, ?, \'active\', 1, ?, ?, NULL, NULL)'
     ).run(id, userId, workerId, label, digest(workerToken), nowIso, nowIso);
-    appendEvent(db, id, 'created', nowIso);
+    appendEvent(db, id, workerId, label, digest(workerToken), 'created', nowIso);
     row = getOwnedWorker(db, userId, id);
   });
   if (!row) throw new TaskSessionError(500, 'worker_create_failed', 'Unable to create worker');
@@ -243,7 +268,7 @@ export function rotateOmdaWorkerToken(
     db.prepare(
       'UPDATE omda_workers SET token_hash = ?, revision = revision + 1, updated_at = ? WHERE id = ? AND user_id = ? AND revision = ? AND status = \'active\''
     ).run(digest(workerToken), nowIso, registryId, userId, expectedRevision);
-    appendEvent(db, registryId, 'rotated', nowIso);
+    appendEvent(db, registryId, current.worker_id, current.label, digest(workerToken), 'rotated', nowIso);
     row = getOwnedWorker(db, userId, registryId);
   });
   if (!row) throw new TaskSessionError(500, 'worker_rotation_failed', 'Unable to rotate worker token');
@@ -269,7 +294,7 @@ export function revokeOmdaWorker(
     db.prepare(
       'UPDATE omda_workers SET status = \'revoked\', token_hash = NULL, revision = revision + 1, updated_at = ?, revoked_at = ? WHERE id = ? AND user_id = ? AND revision = ? AND status = \'active\''
     ).run(nowIso, nowIso, registryId, userId, expectedRevision);
-    appendEvent(db, registryId, 'revoked', nowIso);
+    appendEvent(db, registryId, current.worker_id, current.label, current.token_hash!, 'revoked', nowIso);
     row = getOwnedWorker(db, userId, registryId);
   });
   if (!row) throw new TaskSessionError(500, 'worker_revoke_failed', 'Unable to revoke worker');
