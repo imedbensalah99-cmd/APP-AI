@@ -216,7 +216,7 @@ describe('OMDA authenticated worker registry and runtime', () => {
   it('fails closed when the append-only worker audit chain is tampered with', async () => {
     const worker = await createWorker('tamper-worker');
     getDb().exec('DROP TRIGGER trg_omda_worker_events_no_update');
-    getDb().prepare('UPDATE omda_worker_events SET event_hash = ? WHERE registry_id = ? AND seq = 0')
+    getDb().prepare('UPDATE omda_worker_events SET credential_hash = ? WHERE registry_id = ? AND seq = 0')
       .run('f'.repeat(64), worker.worker.id);
 
     const runtime = await request('GET', '/api/omda/worker/me', undefined, worker.workerToken);
@@ -245,6 +245,26 @@ describe('OMDA authenticated worker registry and runtime', () => {
     }
     expect(() => createOmdaWorker(getDb(), owner.userId, { label: 'beyond-retention-cap' }))
       .toThrow(/50 worker registry records/i);
+  });
+
+  it('keeps worker identity fields immutable and binds them into the audit chain', async () => {
+    const worker = await createWorker('immutable-worker');
+    expect(() => getDb().prepare('UPDATE omda_workers SET label = ? WHERE id = ?')
+      .run('renamed-without-audit', worker.worker.id)).toThrow(/identity fields are immutable/i);
+    expect(() => getDb().prepare('UPDATE omda_workers SET worker_id = ? WHERE id = ?')
+      .run('wrk_forgedidentity', worker.worker.id)).toThrow(/identity fields are immutable/i);
+    const verification = await request('GET', '/api/omda/workers/' + worker.worker.id + '/verify');
+    expect(verification.body).toMatchObject({ valid: true, eventCount: 1 });
+  });
+
+  it('fails closed when the active credential fingerprint is changed in storage', async () => {
+    const worker = await createWorker('credential-fingerprint-worker');
+    getDb().prepare('UPDATE omda_workers SET token_hash = ? WHERE id = ?')
+      .run('f'.repeat(64), worker.worker.id);
+    const runtime = await request('GET', '/api/omda/worker/me', undefined, worker.workerToken);
+    expect(runtime.status).toBe(401);
+    const verification = await request('GET', '/api/omda/workers/' + worker.worker.id + '/verify');
+    expect(verification.body).toMatchObject({ valid: false, reason: 'credential_fingerprint_mismatch' });
   });
 
 });
