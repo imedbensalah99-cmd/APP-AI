@@ -236,4 +236,15 @@ describe('OMDA authenticated worker registry and runtime', () => {
       .toThrow(/at most 10 active workers/i);
     expect(() => downWorkerRegistry(getDb())).toThrow(/credentials or audit history are retained/i);
   });
+  it('bounds retained registry records even after credentials are revoked', async () => {
+    const owner = createUser('worker-record-cap@example.com', 'password123');
+    const { createOmdaWorker, revokeOmdaWorker } = await import('../../services/omda-workers.js');
+    for (let index = 0; index < 50; index += 1) {
+      const created = createOmdaWorker(getDb(), owner.userId, { label: 'retained-' + index });
+      revokeOmdaWorker(getDb(), owner.userId, created.worker.id, 1);
+    }
+    expect(() => createOmdaWorker(getDb(), owner.userId, { label: 'beyond-retention-cap' }))
+      .toThrow(/50 worker registry records/i);
+  });
+
 });
