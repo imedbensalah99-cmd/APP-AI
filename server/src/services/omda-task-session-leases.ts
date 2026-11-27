@@ -290,6 +290,7 @@ function getMutableLease(
   sessionId: string,
   input: MutateTaskSessionLeaseInput,
   nowMs: number,
+  expectedWorkerId?: string,
 ): LeaseRow {
   const session = getOwnedSession(db, userId, sessionId);
   if (session.status !== 'running') {
@@ -302,6 +303,9 @@ function getMutableLease(
   }
   if (Date.parse(lease.expires_at) <= nowMs) {
     throw new TaskSessionError(409, 'lease_expired', 'The worker lease has expired; claim a new lease');
+  }
+  if (expectedWorkerId && lease.worker_id !== expectedWorkerId) {
+    throw new TaskSessionError(403, 'lease_worker_mismatch', 'This worker does not own the active lease');
   }
   if (lease.revision !== input.expectedRevision) {
     throw new TaskSessionError(409, 'lease_revision_conflict', 'The worker lease changed; inspect it before retrying');
@@ -318,6 +322,7 @@ export function renewTaskSessionLease(
   sessionId: string,
   input: MutateTaskSessionLeaseInput,
   now = new Date(),
+  expectedWorkerId?: string,
 ) {
   assertUser(userId);
   const ttlSeconds = validateTtl(input.ttlSeconds);
@@ -325,7 +330,7 @@ export function renewTaskSessionLease(
   const nowMs = now.getTime();
   let updated: LeaseRow | undefined;
   runTransaction(db, () => {
-    const lease = getMutableLease(db, userId, sessionId, input, nowMs);
+    const lease = getMutableLease(db, userId, sessionId, input, nowMs, expectedWorkerId);
     assertEventCapacity(db, sessionId, 2);
     const expiresAt = new Date(nowMs + ttlSeconds * 1_000).toISOString();
     const nextRevision = lease.revision + 1;
@@ -348,13 +353,14 @@ export function releaseTaskSessionLease(
   sessionId: string,
   input: MutateTaskSessionLeaseInput,
   now = new Date(),
+  expectedWorkerId?: string,
 ) {
   assertUser(userId);
   const nowIso = now.toISOString();
   const nowMs = now.getTime();
   let updated: LeaseRow | undefined;
   runTransaction(db, () => {
-    const lease = getMutableLease(db, userId, sessionId, input, nowMs);
+    const lease = getMutableLease(db, userId, sessionId, input, nowMs, expectedWorkerId);
     assertEventCapacity(db, sessionId, 1);
     const nextRevision = lease.revision + 1;
     if (nextRevision > MAX_TASK_SESSION_LEASE_EVENTS) {
