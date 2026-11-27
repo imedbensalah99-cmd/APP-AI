@@ -1,7 +1,26 @@
 {
-  "generatedAt": "2026-11-26T15:29:14.348Z",
+  "generatedAt": "2026-11-27T15:22:39.750Z",
   "source": "Himalayas public API",
   "jobs": [
+    {
+      "id": "himalayas:https://himalayas.app/companies/clera/jobs/expert-talent-pool-data-operations-expert-5-years-8810923038",
+      "company": "Clera",
+      "role": "Expert Talent Pool, Data Operations (Expert, 5+ Years)",
+      "location": "Remote · worldwide listing",
+      "sourceUrl": "https://himalayas.app/companies/clera/jobs/expert-talent-pool-data-operations-expert-5-years-8810923038?utm_source=api",
+      "description": " About the Role  Join a flexible expert network supporting data operations projects for frontier AI labs. You will help ensure the datasets used to train and evaluate AI models are reliable, well-curated, and fit for purpose, working directly with project teams when a suitable project becomes available.  What You'll Do  \n  Lead data sourcing and collection programs by writing specifications, setting acceptance criteria, and tracking yield and quality.  \n  Manage media capture and document contributions at scale, then curate and validate the resulting datasets.  \n  Design or validate synthetic data generation pipelines and checks to determine which data to retain.  \n  Review annotations, resolve disagreements, and run calibration and audit rounds with annotator teams.  \n  Write and maintain labelling guidelines, identifying gaps and updating them as edge cases emerge.  \n  Coach reviewers and annotators, and share agreement, error, and other quality metrics with project teams.  \n  What We're Looking For  \n  At least 5 years of experience in data operations, annotation QA, data quality, dataset management, or a relevant domain with hands-on human-data work.  \n  Experience leading or reviewing others' work, such as as a QA lead, guideline owner, adjudicator, team lead, or data project manager.  \n  Experience running data sourcing or collection programs, setting acceptance criteria, and monitoring yield and quality.  \n  Hands-on experience writing and maintaining labelling guidelines and running annotation reviews, calibration, or audits.  \n  Familiarity with tools such as Label Studio, Labelbox, CVAT, Scale, Remotasks, or Appen, plus spreadsheets or SQL for quality analysis.  \n  Clear written communication, with experience explaining data quality issues and solutions; synthetic data, media capture, document contribution, or large-scale dataset curation experience is useful.  \n  Compensation &amp; Benefits  $45 to $90 per hour, depending on project, field, and level. Payment is for hours worked.  Location  Fully remote. Projects may run from one week to several months.  Originally posted on  Himalayas  ",
+      "source": "Himalayas",
+      "published": "2026-11-27",
+      "remote": true,
+      "sourceChecked": true,
+      "applicationChannel": {
+        "kind": "website_only",
+        "sourceUrl": "https://himalayas.app/companies/clera/jobs/expert-talent-pool-data-operations-expert-5-years-8810923038?utm_source=api",
+        "verified": false,
+        "evidence": "job_ad"
+      },
+      "eligibility": "Country filter only; verify employer requirements before applying."
+    },
     {
       "id": "himalayas:https://himalayas.app/companies/micro1/jobs/military-operations-expert-1860650404",
       "company": "micro1",
@@ -130,25 +149,6 @@
       "applicationChannel": {
         "kind": "website_only",
         "sourceUrl": "https://himalayas.app/companies/micro1/jobs/structured-finance-attorney?utm_source=api",
-        "verified": false,
-        "evidence": "job_ad"
-      },
-      "eligibility": "Country filter only; verify employer requirements before applying."
-    },
-    {
-      "id": "himalayas:https://himalayas.app/companies/micro1/jobs/domain-researcher-finance-m-a",
-      "company": "micro1",
-      "role": "Domain Researcher, Finance (M&A)",
-      "location": "Remote · worldwide listing",
-      "sourceUrl": "https://himalayas.app/companies/micro1/jobs/domain-researcher-finance-m-a?utm_source=api",
-      "description": "  Job Title:  Domain Researcher, Finance (M&amp;A)   Job Type:  Full-time  Location: Remote     The Role    Join our research team as a  Domain Researcher (DR),  where you'll help advance AI-powered financial reasoning, with a focus on Corporate Development, Mergers &amp; Acquisitions (M&amp;A), and strategic transactions.    We're looking for professionals with hands-on experience in corporate development, acquisition evaluation, and M&amp;A execution who can translate real-world financial expertise into rigorous AI evaluation frameworks.    What You'll Be Doing   \n  Design and develop evaluation frameworks, benchmarks, and scoring methodologies for AI agents operating in corporate development and M&amp;A workflows.  \n  Create realistic test cases covering acquisition screening, valuation, financial due diligence, deal structuring, and strategic investment decisions.  \n  Evaluate AI-generated financial analyses, valuation models, acquisition assessments, and investment recommendations.  \n  Translate real-world M&amp;A experience into structured datasets, research scenarios, and measurable evaluation criteria.  \n  Collaborate with AI researchers, engineers, and product teams to identify model limitations and improve financial reasoning capabilities.  \n  Conduct applied research and document findings to advance AI performance in corporate finance and acquisition-related tasks.  \n   What We're Looking For   \n  Strong professional experience in Corporate Development, M&amp;A, Investment Banking, Private Equity, or Strategic Investments, with direct exposure to acquisition-related transactions.  \n  Hands-on experience across the M&amp;A lifecycle, including target screening, valuation, due diligence, transaction analysis, or deal execution.  \n  Strong understanding of acquisition strategies, financial modeling, company valuation (DCF, comparables, precedent transactions), and strategic fit assessments.  \n  Experience preparing or evaluating investment memoranda, acquisition recommendations, and transaction-related financial analyses.  \n  Ability to translate complex financial workflows into structured research questions, evaluation frameworks, and measurable criteria.  \n  Strong analytical, critical-thinking, and communication skills, with the ability to collaborate across technical and non-technical teams.  \n  Bachelor's degree in Finance, Economics, Business, Accounting, or a related field, or equivalent professional experience.  \n   Preferred Qualifications   \n  Direct experience within an in-house Corporate Development team, particularly involving buy-side acquisitions.  \n  Experience executing or supporting M&amp;A transactions from target identification through due diligence and closing.  \n  Background in technology-sector acquisitions, SaaS businesses, or strategic investments.  \n  MBA, CFA, or relevant advanced financial qualifications.  \n  Familiarity with AI agents, large language models, AI evaluation methodologies, or financial AI applications.  \n  Proficiency with financial modeling and analytical tools such as Excel, Python, or SQL.  \n   Compensation &amp; Benefits Notice    The national pay range for this full-time position is base salary of $200,000 –$250,000. All employees are eligible for equity compensation, and employees may also receive performance-based bonuses, dependent on role and subject to company policies.  micro1  provides a comprehensive benefits package, including up to 100% reimbursement for health-insurance premiums, paid time off, a 401(K) plan with a company match, and additional benefits designed to support a high-performing, remote-first workforce.     micro1  is an equal opportunity employer. All qualified applicants will receive consideration for employment without regard to race, color, religion, sex (including pregnancy, sexual orientation, or gender identity), national origin, age, disability, genetic information, veteran status, or any other characteristic protected by applicable local laws, regulations and ordinances. If you need assistance and/or a reasonable accommodation during the application process, reach out to .    Our hiring process utilizes artificial intelligence tools to assist in candidate screening and assessment. Our AI tools are designed to complement, not replace, human decision-making.   Originally posted on  Himalayas  ",
-      "source": "Himalayas",
-      "published": "2026-10-22",
-      "remote": true,
-      "sourceChecked": true,
-      "applicationChannel": {
-        "kind": "website_only",
-        "sourceUrl": "https://himalayas.app/companies/micro1/jobs/domain-researcher-finance-m-a?utm_source=api",
         "verified": false,
         "evidence": "job_ad"
       },
