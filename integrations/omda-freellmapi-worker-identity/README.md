@@ -24,7 +24,7 @@ All requests require the existing dashboard session:
 - POST /api/omda/workers/:id/revoke — JSON body { expectedRevision: 2 }; revokes the token.
 - GET /api/omda/workers/:id/verify — verifies the append-only registry event chain.
 
-The per-account active-worker limit is 10. Registry requests are limited to 2 KiB. Unknown fields are rejected.
+The per-account active-worker limit is 10 and the retained registry-record limit is 50 (including revoked records). Registry requests are limited to 2 KiB. Unknown fields are rejected.
 
 ## Worker runtime API
 
