@@ -3,6 +3,7 @@ import type { Db } from '../db/types.js';
 import { TaskSessionError } from '../lib/omda-task-session-core.js';
 
 export const MAX_ACTIVE_OMDA_WORKERS_PER_USER = 10;
+export const MAX_OMDA_WORKER_REGISTRY_RECORDS_PER_USER = 50;
 export const MAX_OMDA_WORKER_EVENTS = 1_000;
 const ZERO_HASH = '0'.repeat(64);
 const WORKER_TOKEN_RE = /^omda_worker_[A-Za-z0-9_-]{43}$/;
@@ -98,7 +99,7 @@ function getEvents(db: Db, registryId: string): WorkerEventRow[] {
 function verifyRowHistory(db: Db, row: WorkerRow) {
   const events = getEvents(db, row.id);
   if (events.length === 0 || events.length > MAX_OMDA_WORKER_EVENTS || events.length !== row.revision) {
-    return { valid: false, reason: 'event_count_mismatch', eventCount: events.length, lastHash: events.at(-1)?.event_hash ?? null };
+    return { valid: false, reason: 'event_count_mismatch', eventCount: events.length, lastHash: (events.length ? events[events.length - 1]!.event_hash : null) };
   }
   let previousHash = ZERO_HASH;
   for (let index = 0; index < events.length; index += 1) {
@@ -121,7 +122,7 @@ function verifyRowHistory(db: Db, row: WorkerRow) {
     }
     previousHash = event.event_hash;
   }
-  const lastAction = events.at(-1)!.action;
+  const lastAction = events[events.length - 1]!.action;
   const stateMatches = row.status === 'active'
     ? lastAction === 'created' || lastAction === 'rotated'
     : lastAction === 'revoked';
@@ -184,10 +185,13 @@ export function createOmdaWorker(db: Db, userId: number, input: CreateOmdaWorker
   const nowIso = now.toISOString();
   let row: WorkerRow | undefined;
   runTransaction(db, () => {
-    const count = db.prepare(
-      'SELECT COUNT(*) AS count FROM omda_workers WHERE user_id = ? AND status = \'active\''
-    ).get(userId) as { count: number };
-    if (count.count >= MAX_ACTIVE_OMDA_WORKERS_PER_USER) {
+    const counts = db.prepare(
+      'SELECT COUNT(*) AS total, SUM(CASE WHEN status = \'active\' THEN 1 ELSE 0 END) AS active FROM omda_workers WHERE user_id = ?'
+    ).get(userId) as { total: number; active: number | null };
+    if (counts.total >= MAX_OMDA_WORKER_REGISTRY_RECORDS_PER_USER) {
+      throw new TaskSessionError(429, 'worker_registry_limit_reached', 'At most ' + MAX_OMDA_WORKER_REGISTRY_RECORDS_PER_USER + ' worker registry records are retained per user');
+    }
+    if ((counts.active ?? 0) >= MAX_ACTIVE_OMDA_WORKERS_PER_USER) {
       throw new TaskSessionError(429, 'worker_limit_reached', 'At most ' + MAX_ACTIVE_OMDA_WORKERS_PER_USER + ' active workers are allowed per user');
     }
     db.prepare(
@@ -206,7 +210,7 @@ export function listOmdaWorkers(db: Db, userId: number) {
   const rows = db.prepare(
     'SELECT id, user_id, worker_id, label, token_hash, status, revision, created_at, updated_at, last_seen_at, revoked_at ' +
     'FROM omda_workers WHERE user_id = ? ORDER BY created_at DESC, id ASC LIMIT ?'
-  ).all(userId, MAX_ACTIVE_OMDA_WORKERS_PER_USER + MAX_OMDA_WORKER_EVENTS) as WorkerRow[];
+  ).all(userId, MAX_OMDA_WORKER_REGISTRY_RECORDS_PER_USER) as WorkerRow[];
   return {
     items: rows.map(row => ({ worker: publicWorker(row), verification: verifyRowHistory(db, row) })),
     maxActiveWorkers: MAX_ACTIVE_OMDA_WORKERS_PER_USER,
@@ -283,9 +287,13 @@ export function authenticateOmdaWorker(db: Db, token: string | undefined | null)
   if (!verifyRowHistory(db, row).valid) return null;
   const now = new Date();
   const threshold = new Date(now.getTime() - 60_000).toISOString();
-  db.prepare(
-    'UPDATE omda_workers SET last_seen_at = ? WHERE id = ? AND status = \'active\' AND (last_seen_at IS NULL OR last_seen_at <= ?)'
-  ).run(now.toISOString(), row.id, threshold);
+  try {
+    db.prepare(
+      'UPDATE omda_workers SET last_seen_at = ? WHERE id = ? AND status = \'active\' AND (last_seen_at IS NULL OR last_seen_at <= ?)'
+    ).run(now.toISOString(), row.id, threshold);
+  } catch {
+    // Last-seen telemetry is advisory and must not turn a valid credential into an outage.
+  }
   return {
     registryId: row.id,
     workerId: row.worker_id,
