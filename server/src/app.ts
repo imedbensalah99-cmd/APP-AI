@@ -28,6 +28,8 @@ import { premiumRouter } from './routes/premium.js';
 import { backupsRouter } from './routes/backups.js';
 import { omdaTaskSessionsRouter } from './routes/omda-task-sessions.js';
 import { omdaTaskSessionLeasesRouter } from './routes/omda-task-session-leases.js';
+import { omdaWorkersRouter } from './routes/omda-workers.js';
+import { omdaWorkerRuntimeRouter } from './routes/omda-worker-runtime.js';
 import { cacheRouter } from './routes/cache.js';
 import { compressionRouter } from './routes/compression.js';
 import { authRouter } from './routes/auth.js';
@@ -233,6 +235,7 @@ export function createApp(config?: Config) {
   );
   // Keep OMDA lifecycle payloads small before the shared 10 MB JSON parser.
   app.use('/api/omda/task-sessions', express.json({ limit: '8kb' }));
+  app.use(['/api/omda/workers', '/api/omda/worker'], express.json({ limit: '2kb' }));
   app.use(express.json({ limit: '10mb' }));
   // Restrict the dedicated OMDA Agent profile across ALL API surfaces,
   // before Ollama, OpenAI, Anthropic, Responses, Gemini, MCP, or admin routing.
@@ -310,6 +313,9 @@ export function createApp(config?: Config) {
   // must not open this surface.
   app.use('/api/backups', requireAuth, backupsRouter);
   // Task lifecycle records are dashboard-session protected and never execute work.
+  app.use('/api/omda/workers', requireAuth, omdaWorkersRouter);
+  // Worker tokens are a distinct, revocable credential; this runtime surface must not accept dashboard sessions.
+  app.use('/api/omda/worker', omdaWorkerRuntimeRouter);
   app.use('/api/omda/task-sessions', requireAuth, omdaTaskSessionsRouter, omdaTaskSessionLeasesRouter);
   app.use('/api/cache', requireAuth, cacheRouter);
   app.use('/api/compression', requireAuth, compressionRouter);

@@ -1,0 +1,53 @@
+name: OMDA Worker Identity and Lease Runtime
+on:
+  push:
+    branches: [omda-worker-identity-20261127]
+    paths:
+      - 'server/src/app.ts'
+      - 'server/src/db/migrate/defaults.ts'
+      - 'server/src/db/migrations/20261127_000001_omda_worker_registry.ts'
+      - 'server/src/services/omda-workers.ts'
+      - 'server/src/services/omda-task-session-leases.ts'
+      - 'server/src/middleware/omdaWorkerAuth.ts'
+      - 'server/src/routes/omda-workers.ts'
+      - 'server/src/routes/omda-worker-runtime.ts'
+      - 'server/src/__tests__/routes/omda-workers.test.ts'
+      - 'server/src/__tests__/routes/omda-task-session-leases.test.ts'
+      - 'server/src/__tests__/routes/omda-task-sessions.test.ts'
+      - 'server/src/__tests__/db/migrate/roundtrip.test.ts'
+      - 'integrations/omda-freellmapi-worker-identity/**'
+      - '.github/workflows/omda-worker-identity-ci.yml'
+  pull_request:
+    branches: [omda-task-worker-leases-20261126]
+    paths:
+      - 'server/src/app.ts'
+      - 'server/src/db/migrate/defaults.ts'
+      - 'server/src/db/migrations/20261127_000001_omda_worker_registry.ts'
+      - 'server/src/services/omda-workers.ts'
+      - 'server/src/services/omda-task-session-leases.ts'
+      - 'server/src/middleware/omdaWorkerAuth.ts'
+      - 'server/src/routes/omda-workers.ts'
+      - 'server/src/routes/omda-worker-runtime.ts'
+      - 'server/src/__tests__/routes/omda-workers.test.ts'
+      - 'server/src/__tests__/routes/omda-task-session-leases.test.ts'
+      - 'server/src/__tests__/routes/omda-task-sessions.test.ts'
+      - 'server/src/__tests__/db/migrate/roundtrip.test.ts'
+      - 'integrations/omda-freellmapi-worker-identity/**'
+      - '.github/workflows/omda-worker-identity-ci.yml'
+permissions:
+  contents: read
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+          cache: npm
+      - run: npm ci
+      - name: Worker registry, authenticated lease runtime and migration tests
+        run: npm run test -w server -- src/__tests__/routes/omda-workers.test.ts src/__tests__/routes/omda-task-session-leases.test.ts src/__tests__/routes/omda-task-sessions.test.ts src/__tests__/db/migrate/roundtrip.test.ts
+      - name: Build server
+        run: npm run build -w server
