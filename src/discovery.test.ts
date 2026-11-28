@@ -52,7 +52,15 @@ describe('free job discovery', () => {
     expect(rank.scoreLabel).toContain('CV skill matches');
   });
   it('requests the live source rather than hardcoding job listings', async () => {
-    const fakeFetch = vi.fn().mockResolvedValue({ ok: true, json: async () => ({ jobs: [listing] }) });
+    // Keep this fixture valid relative to the real clock. The shared listing
+    // fixture has a fixed October 2026 expiry and becomes stale in later CI runs.
+    const currentSeconds = Math.floor(Date.now() / 1000);
+    const currentListing = {
+      ...listing,
+      pubDate: currentSeconds - 86400,
+      expiryDate: currentSeconds + 86400 * 20,
+    };
+    const fakeFetch = vi.fn().mockResolvedValue({ ok: true, json: async () => ({ jobs: [currentListing] }) });
     const jobs = await searchJobFeeds(fakeFetch as unknown as typeof fetch, 'AML');
     expect(fakeFetch).toHaveBeenCalledOnce();
     const address = String(fakeFetch.mock.calls[0][0]);
