@@ -194,7 +194,7 @@ function publicWorker(row: WorkerRow) {
     updatedAt: row.updated_at,
     lastSeenAt: row.last_seen_at,
     revokedAt: row.revoked_at,
-    scope: ['task_sessions:leases'] as const,
+    scope: ['task_sessions:leases:assigned'] as const,
   };
 }
 

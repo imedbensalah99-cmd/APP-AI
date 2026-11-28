@@ -1,0 +1,49 @@
+name: OMDA Worker Task Assignments
+on:
+  push:
+    branches: [omda-worker-assignments-20261128]
+    paths:
+      - 'server/src/db/migrate/defaults.ts'
+      - 'server/src/db/migrations/20261128_000001_omda_worker_session_assignments.ts'
+      - 'server/src/services/omda-worker-assignments.ts'
+      - 'server/src/services/omda-workers.ts'
+      - 'server/src/services/omda-task-sessions.ts'
+      - 'server/src/routes/omda-workers.ts'
+      - 'server/src/routes/omda-worker-runtime.ts'
+      - 'server/src/__tests__/routes/omda-worker-assignments.test.ts'
+      - 'server/src/__tests__/routes/omda-workers.test.ts'
+      - 'server/src/__tests__/db/migrate/roundtrip.test.ts'
+      - 'integrations/omda-freellmapi-worker-assignments/**'
+      - '.github/workflows/omda-worker-assignments-ci.yml'
+  pull_request:
+    branches: [omda-worker-identity-20261127]
+    paths:
+      - 'server/src/db/migrate/defaults.ts'
+      - 'server/src/db/migrations/20261128_000001_omda_worker_session_assignments.ts'
+      - 'server/src/services/omda-worker-assignments.ts'
+      - 'server/src/services/omda-workers.ts'
+      - 'server/src/services/omda-task-sessions.ts'
+      - 'server/src/routes/omda-workers.ts'
+      - 'server/src/routes/omda-worker-runtime.ts'
+      - 'server/src/__tests__/routes/omda-worker-assignments.test.ts'
+      - 'server/src/__tests__/routes/omda-workers.test.ts'
+      - 'server/src/__tests__/db/migrate/roundtrip.test.ts'
+      - 'integrations/omda-freellmapi-worker-assignments/**'
+      - '.github/workflows/omda-worker-assignments-ci.yml'
+permissions:
+  contents: read
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+          cache: npm
+      - run: npm ci
+      - name: Worker assignment, runtime authorization and migration tests
+        run: npm run test -w server -- src/__tests__/routes/omda-worker-assignments.test.ts src/__tests__/routes/omda-workers.test.ts src/__tests__/routes/omda-task-sessions.test.ts src/__tests__/db/migrate/roundtrip.test.ts
+      - name: Build server
+        run: npm run build -w server

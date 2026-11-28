@@ -47,6 +47,12 @@ async function createRunningSession(label: string, token = dashboardToken): Prom
   return id;
 }
 
+async function assignWorkerToSession(workerRegistryId: string, sessionId: string) {
+  const response = await request('POST', '/api/omda/workers/' + workerRegistryId + '/assignments', { sessionId });
+  expect(response.status).toBe(201);
+  return response.body;
+}
+
 async function createWorker(label: string, token = dashboardToken) {
   const response = await request('POST', '/api/omda/workers', { label }, token);
   expect(response.status).toBe(201);
@@ -82,7 +88,7 @@ describe('OMDA authenticated worker registry and runtime', () => {
       label: 'staging-worker',
       status: 'active',
       revision: 1,
-      scope: ['task_sessions:leases'],
+      scope: ['task_sessions:leases:assigned'],
     });
 
     const listed = await request('GET', '/api/omda/workers');
@@ -105,6 +111,8 @@ describe('OMDA authenticated worker registry and runtime', () => {
     const first = await createWorker('worker-alpha');
     const second = await createWorker('worker-beta');
     const sessionId = await createRunningSession('Worker authenticated lease');
+    await assignWorkerToSession(first.worker.id, sessionId);
+    await assignWorkerToSession(second.worker.id, sessionId);
 
     const claimed = await request(
       'POST',
@@ -121,7 +129,7 @@ describe('OMDA authenticated worker registry and runtime', () => {
     expect(me.body).toMatchObject({
       workerId: first.worker.workerId,
       label: 'worker-alpha',
-      scopes: ['task_sessions:leases'],
+      scopes: ['task_sessions:leases:assigned'],
     });
 
     const spoofedIdentity = await request(
