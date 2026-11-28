@@ -5,6 +5,7 @@ import { getDb } from '../db/index.js';
 import { TaskSessionError } from '../lib/omda-task-session-core.js';
 import { requireOmdaWorkerAuth } from '../middleware/omdaWorkerAuth.js';
 import type { OmdaWorkerPrincipal } from '../services/omda-workers.js';
+import { assertOmdaWorkerSessionAssignment } from '../services/omda-worker-assignments.js';
 import {
   claimTaskSessionLease,
   getTaskSessionLease,
@@ -66,7 +67,7 @@ omdaWorkerRuntimeRouter.get('/me', (req, res) => {
     workerId: principal.workerId,
     label: principal.label,
     registryRevision: principal.revision,
-    scopes: ['task_sessions:leases'],
+    scopes: ['task_sessions:leases:assigned'],
   });
 });
 
@@ -74,7 +75,10 @@ omdaWorkerRuntimeRouter.get('/task-sessions/:id/lease', (req, res) => {
   const principal = worker(req);
   const id = parseSessionId(req, res);
   if (!principal || !id) return;
-  try { res.json(getTaskSessionLease(getDb(), principal.userId, id)); } catch (error) { fail(res, error); }
+  try {
+    assertOmdaWorkerSessionAssignment(getDb(), principal, id);
+    res.json(getTaskSessionLease(getDb(), principal.userId, id));
+  } catch (error) { fail(res, error); }
 });
 
 omdaWorkerRuntimeRouter.post('/task-sessions/:id/lease/claim', (req, res) => {
@@ -88,6 +92,7 @@ omdaWorkerRuntimeRouter.post('/task-sessions/:id/lease/claim', (req, res) => {
     return;
   }
   try {
+    assertOmdaWorkerSessionAssignment(getDb(), principal, id);
     res.status(201).json(claimTaskSessionLease(getDb(), principal.userId, id, {
       workerId: principal.workerId,
       ttlSeconds: parsed.data.ttlSeconds,
@@ -106,6 +111,7 @@ omdaWorkerRuntimeRouter.post('/task-sessions/:id/lease/renew', (req, res) => {
     return;
   }
   try {
+    assertOmdaWorkerSessionAssignment(getDb(), principal, id);
     res.json(renewTaskSessionLease(getDb(), principal.userId, id, parsed.data, undefined, principal.workerId));
   } catch (error) { fail(res, error); }
 });
@@ -121,6 +127,7 @@ omdaWorkerRuntimeRouter.post('/task-sessions/:id/lease/release', (req, res) => {
     return;
   }
   try {
+    assertOmdaWorkerSessionAssignment(getDb(), principal, id);
     res.json(releaseTaskSessionLease(getDb(), principal.userId, id, parsed.data, undefined, principal.workerId));
   } catch (error) { fail(res, error); }
 });

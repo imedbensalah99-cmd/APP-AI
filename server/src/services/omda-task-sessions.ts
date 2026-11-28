@@ -1,5 +1,6 @@
 import { randomUUID } from 'node:crypto';
 import { revokeActiveTaskSessionLease } from './omda-task-session-leases.js';
+import { revokeActiveOmdaWorkerAssignmentsForSession } from './omda-worker-assignments.js';
 import type { Db } from '../db/types.js';
 import {
   createTaskSessionEvidenceBundle,
@@ -211,6 +212,7 @@ export function transitionTaskSession(
     const now = new Date().toISOString();
     if (input.action === 'pause' || input.action === 'complete' || input.action === 'cancel' || input.action === 'fail') {
       revokeActiveTaskSessionLease(db, userId, sessionId, now);
+      revokeActiveOmdaWorkerAssignmentsForSession(db, userId, sessionId, now);
     }
     const event = makeEvent({
       sessionId,

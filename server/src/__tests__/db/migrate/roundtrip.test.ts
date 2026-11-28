@@ -54,6 +54,7 @@ const KEY_LAST_HEALTHY_AT_FILENAME = '20261020_000001_key_last_healthy_at.ts';
 const OMDA_TASK_SESSIONS_FILENAME = '20261123_000001_omda_task_sessions.ts';
 const OMDA_TASK_SESSION_LEASES_FILENAME = '20261126_000001_omda_task_session_leases.ts';
 const OMDA_WORKER_REGISTRY_FILENAME = '20261127_000001_omda_worker_registry.ts';
+const OMDA_WORKER_SESSION_ASSIGNMENTS_FILENAME = '20261128_000001_omda_worker_session_assignments.ts';
 
 interface SchemaRow {
   type: string;
@@ -154,6 +155,7 @@ describe('migration round trip', () => {
         OMDA_TASK_SESSIONS_FILENAME,
         OMDA_TASK_SESSION_LEASES_FILENAME,
         OMDA_WORKER_REGISTRY_FILENAME,
+        OMDA_WORKER_SESSION_ASSIGNMENTS_FILENAME,
       ]);
     } finally {
       db.close();

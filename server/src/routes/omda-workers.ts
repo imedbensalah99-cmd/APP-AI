@@ -5,6 +5,12 @@ import { getDb } from '../db/index.js';
 import { TaskSessionError } from '../lib/omda-task-session-core.js';
 import type { SessionUser } from '../services/auth.js';
 import {
+  assignOmdaWorkerToSession,
+  listOmdaWorkerAssignments,
+  revokeOmdaWorkerSessionAssignment,
+  verifyOmdaWorkerAssignment,
+} from '../services/omda-worker-assignments.js';
+import {
   createOmdaWorker,
   listOmdaWorkers,
   revokeOmdaWorker,
@@ -14,6 +20,8 @@ import {
 
 export const omdaWorkersRouter = Router();
 const REGISTRY_ID_RE = /^[0-9a-f]{8}-[0-9a-f]{4}-4[0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/i;
+const SESSION_ID_RE = REGISTRY_ID_RE;
+const assignmentSchema = z.object({ sessionId: z.string().regex(SESSION_ID_RE) }).strict();
 const createSchema = z.object({ label: z.string().trim().min(1).max(80) }).strict();
 const revisionSchema = z.object({ expectedRevision: z.number().int().min(1).max(1_000) }).strict();
 
@@ -106,4 +114,63 @@ omdaWorkersRouter.post('/:id/revoke', (req, res) => {
     return;
   }
   try { res.json(revokeOmdaWorker(getDb(), owner, id, parsed.data.expectedRevision)); } catch (error) { fail(res, error); }
+});
+
+
+omdaWorkersRouter.get('/:id/assignments', (req, res) => {
+  const owner = ownerId(req);
+  if (!owner) { res.status(401).json({ error: { type: 'authentication_error', message: 'Authentication required' } }); return; }
+  const id = parseRegistryId(req, res);
+  if (!id) return;
+  try { res.json(listOmdaWorkerAssignments(getDb(), owner, id)); } catch (error) { fail(res, error); }
+});
+
+omdaWorkersRouter.post('/:id/assignments', (req, res) => {
+  const owner = ownerId(req);
+  if (!owner) { res.status(401).json({ error: { type: 'authentication_error', message: 'Authentication required' } }); return; }
+  const id = parseRegistryId(req, res);
+  if (!id) return;
+  if (!bodyWithinLimit(req, res)) return;
+  const parsed = assignmentSchema.safeParse(req.body);
+  if (!parsed.success) {
+    res.status(400).json({ error: { type: 'invalid_request', message: 'Provide a valid task session UUID; unknown fields are rejected' } });
+    return;
+  }
+  try {
+    const result = assignOmdaWorkerToSession(getDb(), owner, id, parsed.data.sessionId);
+    res.status(result.created ? 201 : 200).json(result);
+  } catch (error) { fail(res, error); }
+});
+
+omdaWorkersRouter.get('/:id/assignments/:sessionId/verify', (req, res) => {
+  const owner = ownerId(req);
+  if (!owner) { res.status(401).json({ error: { type: 'authentication_error', message: 'Authentication required' } }); return; }
+  const id = parseRegistryId(req, res);
+  if (!id) return;
+  const sessionId = String(req.params.sessionId ?? '');
+  if (!SESSION_ID_RE.test(sessionId)) {
+    res.status(400).json({ error: { type: 'invalid_request', message: 'Invalid task session ID' } });
+    return;
+  }
+  try { res.json(verifyOmdaWorkerAssignment(getDb(), owner, id, sessionId)); } catch (error) { fail(res, error); }
+});
+
+omdaWorkersRouter.post('/:id/assignments/:sessionId/revoke', (req, res) => {
+  const owner = ownerId(req);
+  if (!owner) { res.status(401).json({ error: { type: 'authentication_error', message: 'Authentication required' } }); return; }
+  const id = parseRegistryId(req, res);
+  if (!id) return;
+  const sessionId = String(req.params.sessionId ?? '');
+  if (!SESSION_ID_RE.test(sessionId)) {
+    res.status(400).json({ error: { type: 'invalid_request', message: 'Invalid task session ID' } });
+    return;
+  }
+  if (!bodyWithinLimit(req, res)) return;
+  const parsed = revisionSchema.safeParse(req.body);
+  if (!parsed.success) {
+    res.status(400).json({ error: { type: 'invalid_request', message: 'Provide expectedRevision; unknown fields are rejected' } });
+    return;
+  }
+  try { res.json(revokeOmdaWorkerSessionAssignment(getDb(), owner, id, sessionId, parsed.data.expectedRevision)); }
+  catch (error) { fail(res, error); }
 });
