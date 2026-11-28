@@ -92,6 +92,12 @@ describe('OMDA worker task assignments', () => {
     const verified = await request('GET', '/api/omda/workers/' + worker.worker.id + '/assignments/' + sessionId + '/verify');
     expect(verified.body).toMatchObject({ valid: true, eventCount: 2 });
     expect(() => downAssignments(getDb())).toThrow(/assignment records or audit history are retained/i);
+    const regranted = await assign(worker.worker.id, sessionId);
+    expect(regranted.status).toBe(201);
+    expect(regranted.body.assignment).toMatchObject({ status: 'active', revision: 1 });
+    expect(regranted.body.assignment.id).not.toBe(revoked.body.assignment.id);
+    const latest = await request('GET', '/api/omda/workers/' + worker.worker.id + '/assignments/' + sessionId + '/verify');
+    expect(latest.body).toMatchObject({ assignment: { status: 'active', revision: 1 }, valid: true });
   });
 
   it('isolates assignments by worker and dashboard owner', async () => {

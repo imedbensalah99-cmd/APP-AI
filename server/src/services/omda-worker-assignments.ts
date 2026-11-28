@@ -48,7 +48,7 @@ function getAssignmentRow(db: Db, userId: number, registryId: string, sessionId:
   return db.prepare(
     'SELECT id, user_id, registry_id, worker_id, session_id, status, revision, created_at, updated_at, revoked_at ' +
     'FROM omda_worker_session_assignments WHERE user_id = ? AND registry_id = ? AND session_id = ? ' +
-    (activeOnly ? 'AND status = \'active\' ' : '') + 'ORDER BY created_at DESC, id DESC LIMIT 1'
+    (activeOnly ? 'AND status = \'active\' ' : '') + 'ORDER BY rowid DESC LIMIT 1'
   ).get(userId, registryId, sessionId) as AssignmentRow | undefined;
 }
 function getAssignmentEvents(db: Db, assignmentId: string): AssignmentEventRow[] {
@@ -139,7 +139,7 @@ export function listOmdaWorkerAssignments(db: Db, userId: number, registryId: st
   const worker = assertOwnedWorker(db, userId, registryId, false);
   const rows = db.prepare(
     'SELECT id, user_id, registry_id, worker_id, session_id, status, revision, created_at, updated_at, revoked_at ' +
-    'FROM omda_worker_session_assignments WHERE user_id = ? AND registry_id = ? ORDER BY created_at DESC, id DESC LIMIT ?'
+    'FROM omda_worker_session_assignments WHERE user_id = ? AND registry_id = ? ORDER BY created_at DESC, rowid DESC LIMIT ?'
   ).all(userId, registryId, MAX_RETAINED_OMDA_ASSIGNMENTS_PER_USER + 1) as AssignmentRow[];
   if (rows.length > MAX_RETAINED_OMDA_ASSIGNMENTS_PER_USER) throw new TaskSessionError(409, 'worker_assignment_history_over_limit', 'Worker assignment history exceeded its configured limit');
   return { workerId: worker.workerId, items: rows.map(row => ({ assignment: publicAssignment(row), verification: verifyAssignmentRow(db, row) })),
